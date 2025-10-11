@@ -63,7 +63,7 @@ All features and user stories must adhere to the following testing standards:
 - **No Console Errors**: Browser console must be error/warning free for each AC.
 - **Playwright Standards**: All browser testing must follow [docs/guidelines/coding-standard-guidelines/playwright-rules.md](docs/guidelines/coding-standard-guidelines/playwright-rules.md).
 - **PostgreSQL MCP Validation**: MANDATORY use of PostgreSQL MCP server for all database operations validation (CRUD operations allowed).
-  - Database: `studymate_user`
+  - Database: `studymate`
   - Credentials: user=`studymate_user`, pwd=`studymate_user`
   - All DB schema changes, migrations, and data integrity must be verified via PostgreSQL MCP.
 
@@ -82,7 +82,7 @@ When stories involve integration between systems or services:
 | :--- | :--- |
 | **Front-End Stack** | Angular 20 (TypeScript) with Tailwind CSS. |
 | **Back-End Stack** | Spring Boot 3.5.6 (Java 17). |
-| **Database** | PostgreSQL (with transactional consistency enforced for booking). Access via PostgreSQL MCP: DB=`studymate_user`, user=`studymate_user`, pwd=`studymate_user`. |
+| **Database** | PostgreSQL (with transactional consistency enforced for booking). Access via PostgreSQL MCP: DB=`studymate`, user=`studymate_user`, pwd=`studymate_user`. |
 | **Design Reference** | All visual and interaction requirements are detailed in the **Front-End Specification** ([docs/front-end-spec.md](docs/front-end-spec.md)). |
 | **UI/UX Standards** | All UI/UX design must follow [docs/guidelines/coding-standard-guidelines/ui-ux-design-best-practices.md](docs/guidelines/coding-standard-guidelines/ui-ux-design-best-practices.md). |
 | **Coding Standards - Frontend** | All Angular development must follow [docs/guidelines/coding-standard-guidelines/angular-rules.md](docs/guidelines/coding-standard-guidelines/angular-rules.md). |

@@ -203,7 +203,7 @@ psql -U postgres -c "SELECT version();"
 psql -U postgres
 ```
 ```sql
-CREATE DATABASE studymate_user;
+CREATE DATABASE studymate;
 CREATE USER studymate_user WITH PASSWORD 'studymate_user';
 GRANT ALL PRIVILEGES ON DATABASE studymate_user TO studymate_user;
 \c studymate_user

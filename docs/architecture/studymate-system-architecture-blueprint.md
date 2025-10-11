@@ -10,7 +10,7 @@
 | **Back-End (BE)** | **Spring Boot 3.5.6** | Java 17, Spring Data JPA, REST APIs | Enterprise-grade stability and performance for transactional logic. |
 | **BE Standards** | **Spring Boot Best Practices** | Constructor Injection, Bean Validation, @RestController | See [coding standards](../guidelines/coding-standard-guidelines/java-spring-rules.md) for detailed guidelines. |
 | **Database (DB)** | **PostgreSQL** | Relational Database | Strong consistency for seat booking and reliability for payment records. ACID compliance for transactions. |
-| **DB Access** | **PostgreSQL MCP Server** | Direct CRUD Operations | Database: `studymate_user`, Credentials: user=`studymate_user`, pwd=`studymate_user` |
+| **DB Access** | **PostgreSQL MCP Server** | Direct CRUD Operations | Database: `studymate`, Credentials: user=`studymate_user`, pwd=`studymate_user` |
 | **Infrastructure** | **To Be Decided (TBD)** | AWS or GCP | Cloud-native deployment required for scalability. |
 
 ***
@@ -61,7 +61,7 @@ All database operations and service integrations must be validated with comprehe
 
 | Testing Layer | Requirement | Tools & Validation |
 | :--- | :--- | :--- |
-| **Database Operations** | All DB operations MANDATORY validated via PostgreSQL MCP server for data integrity and consistency. | PostgreSQL MCP (DB: `studymate_user`, Credentials: user=`studymate_user`, pwd=`studymate_user`) |
+| **Database Operations** | All DB operations MANDATORY validated via PostgreSQL MCP server for data integrity and consistency. | PostgreSQL MCP (DB: `studymate`, Credentials: user=`studymate_user`, pwd=`studymate_user`) |
 | **CRUD Validation** | Create, Read, Update, Delete operations tested directly via PostgreSQL MCP. | Direct SQL queries and data verification. |
 | **Schema Migrations** | All schema changes and migrations validated via PostgreSQL MCP before deployment. | Migration scripts executed and verified. |
 | **Data Integrity** | Foreign key constraints, indexes, triggers, and constraints verified via PostgreSQL MCP. | Constraint validation queries. |
@@ -123,7 +123,7 @@ See comprehensive guidelines: [docs/guidelines/context7-mcp.md](../guidelines/co
 All database operations, validation, and testing must use PostgreSQL MCP server for direct database access.
 
 ### Database Connection Details
-- **Database Name**: `studymate_user`
+- **Database Name**: `studymate`
 - **Username**: `studymate_user`
 - **Password**: `studymate_user`
 - **Access Level**: Full CRUD operations allowed

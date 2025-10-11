@@ -10,7 +10,15 @@
       "Bash(./mvnw org.flywaydb:flyway-maven-plugin:11.7.2:migrate:*)",
       "Bash(PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c \"DROP TABLE IF EXISTS users CASCADE;\")",
       "Bash(PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c \"SELECT constraint_name, table_name, constraint_type FROM information_schema.table_constraints WHERE table_schema = ''public'' ORDER BY table_name, constraint_type;\")",
-      "Bash(PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c \"SELECT indexname, tablename FROM pg_indexes WHERE schemaname = ''public'' ORDER BY tablename, indexname;\")"
+      "Bash(PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c \"SELECT indexname, tablename FROM pg_indexes WHERE schemaname = ''public'' ORDER BY tablename, indexname;\")",
+      "Bash(psql:*)",
+      "Bash(brew services:*)",
+      "Read(//Users/natarajan/Library/LaunchAgents/**)",
+      "Read(//opt/homebrew/var/log/**)",
+      "Bash(PGPASSWORD=postgres psql:*)",
+      "Read(//Library/PostgreSQL/17/data/**)",
+      "Bash(/Library/PostgreSQL/17/bin/psql:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": [],
