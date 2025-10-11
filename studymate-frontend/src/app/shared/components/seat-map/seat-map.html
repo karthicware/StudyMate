@@ -1,0 +1,61 @@
+<div class="seat-map-container">
+  @if (seats().length === 0) {
+    <div class="flex items-center justify-center h-64 text-neutral-500">
+      <p>No seat data available</p>
+    </div>
+  } @else {
+    <!-- Legend -->
+    <div class="flex flex-wrap gap-4 mb-4 p-3 bg-neutral-50 rounded-lg">
+      <div class="flex items-center gap-2">
+        <div class="w-4 h-4 rounded-full" [style.background-color]="getSeatColor('available')"></div>
+        <span class="text-sm text-neutral-700">Available</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-4 h-4 rounded-full" [style.background-color]="getSeatColor('occupied')"></div>
+        <span class="text-sm text-neutral-700">Occupied</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-4 h-4 rounded-full" [style.background-color]="getSeatColor('reserved')"></div>
+        <span class="text-sm text-neutral-700">Reserved</span>
+      </div>
+    </div>
+
+    <!-- SVG Seat Map -->
+    <div class="seat-map-svg-container border border-neutral-200 rounded-lg overflow-auto bg-neutral-50">
+      <svg
+        [attr.width]="mapWidth()"
+        [attr.height]="mapHeight()"
+        class="w-full h-auto"
+        xmlns="http://www.w3.org/2000/svg">
+
+        <!-- Render each seat -->
+        @for (seat of seats(); track seat.id) {
+          <g class="seat-group" [attr.data-seat-id]="seat.id">
+            <!-- Seat circle -->
+            <circle
+              [attr.cx]="seat.xCoord"
+              [attr.cy]="seat.yCoord"
+              r="20"
+              [attr.fill]="getSeatColor(seat.status)"
+              class="seat-circle transition-all duration-200 hover:opacity-80 cursor-pointer"
+              [attr.stroke]="'#fff'"
+              [attr.stroke-width]="2">
+              <title>{{ seat.seatNumber }} - {{ getSeatLabel(seat.status) }}</title>
+            </circle>
+
+            <!-- Seat number label -->
+            <text
+              [attr.x]="seat.xCoord"
+              [attr.y]="seat.yCoord"
+              text-anchor="middle"
+              dominant-baseline="middle"
+              class="seat-label text-xs font-semibold fill-white pointer-events-none"
+              style="user-select: none;">
+              {{ seat.seatNumber }}
+            </text>
+          </g>
+        }
+      </svg>
+    </div>
+  }
+</div>

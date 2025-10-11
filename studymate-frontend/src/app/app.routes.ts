@@ -15,6 +15,14 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'owner/dashboard/:hallId',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/owner-dashboard/owner-dashboard').then(
+        (m) => m.OwnerDashboard
+      ),
+  },
+  {
     path: 'dashboard',
     canActivate: [authGuard],
     loadComponent: () =>

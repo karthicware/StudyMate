@@ -1,0 +1,19 @@
+.seat-map-container {
+  width: 100%;
+}
+
+.seat-map-svg-container {
+  max-height: 600px;
+  min-height: 400px;
+}
+
+.seat-circle {
+  &:hover {
+    filter: brightness(1.1);
+  }
+}
+
+.seat-label {
+  font-size: 11px;
+  font-weight: 600;
+}

@@ -1,0 +1,61 @@
+<div class="min-h-screen bg-neutral-50 p-4 md:p-6 lg:p-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <header class="mb-6">
+      <h1 class="text-3xl font-bold text-neutral-900">Dashboard Overview</h1>
+      <p class="text-sm text-neutral-600 mt-1">Hall ID: {{ hallId() }}</p>
+    </header>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="flex items-center justify-center h-64">
+        <div class="text-neutral-600">Loading dashboard data...</div>
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (error()) {
+      <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <p class="text-red-800">{{ error() }}</p>
+      </div>
+    }
+
+    <!-- Dashboard Content -->
+    @if (!isLoading() && !error()) {
+      <div class="space-y-6">
+        <!-- Metrics Cards Section -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <app-metric-card
+            [label]="'Total Seats'"
+            [value]="formattedTotalSeats()"
+            [icon]="'🪑'"
+            [variant]="'default'" />
+
+          <app-metric-card
+            [label]="'Occupancy'"
+            [value]="formattedOccupancy()"
+            [icon]="'📊'"
+            [variant]="'success'" />
+
+          <app-metric-card
+            [label]="'Current Revenue'"
+            [value]="formattedRevenue()"
+            [icon]="'💰'"
+            [variant]="'primary'" />
+        </section>
+
+        <!-- Seat Map Section -->
+        <section class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-bold text-neutral-900 mb-4">Seat Map</h2>
+          @if (dashboardMetrics()) {
+            <app-seat-map [seats]="dashboardMetrics()!.seatMap" />
+          } @else {
+            <div class="border border-neutral-200 rounded-lg p-4 min-h-[400px] flex items-center justify-center">
+              <p class="text-neutral-500">Loading seat map...</p>
+            </div>
+          }
+        </section>
+      </div>
+    }
+  </div>
+</div>
