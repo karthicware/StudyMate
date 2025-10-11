@@ -50,8 +50,8 @@ public class SecurityConfig {
     /**
      * Configures security filter chain with JWT authentication.
      * <ul>
-     *   <li>Public endpoints: /auth/**, /health (no authentication required)</li>
-     *   <li>Protected endpoints: /api/** (JWT authentication required)</li>
+     *   <li>Public endpoints: /auth/register, /auth/login, /health (no authentication required)</li>
+     *   <li>Protected endpoints: /auth/me, /api/** (JWT authentication required)</li>
      *   <li>Stateless session management (no server-side sessions)</li>
      *   <li>CORS enabled for Angular frontend (http://localhost:4200)</li>
      * </ul>
@@ -72,9 +72,12 @@ public class SecurityConfig {
             // Configure authorization rules
             .authorizeHttpRequests(auth -> auth
                 // Public endpoints - no authentication required
-                .requestMatchers("/auth/**", "/health").permitAll()
+                .requestMatchers("/auth/register", "/auth/login", "/health").permitAll()
 
-                // Protected endpoints - JWT authentication required
+                // Protected auth endpoints - JWT authentication required
+                .requestMatchers("/auth/me").authenticated()
+
+                // Protected API endpoints - JWT authentication required
                 .requestMatchers("/api/**").authenticated()
 
                 // All other requests require authentication
