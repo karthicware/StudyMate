@@ -90,27 +90,86 @@ src/
 
 ## Configuration
 
+The application uses Spring Profiles for environment-specific configuration. Three profiles are available:
+
+### Profiles
+
+#### Development Profile (`dev`)
+
+Default profile for local development with detailed logging:
+
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"
+```
+
+Features:
+- PostgreSQL database (localhost:5432/studymate)
+- SQL logging enabled with formatting
+- DEBUG level logging for application code
+- Hibernate DDL auto-update mode
+
+#### Test Profile (`test`)
+
+For running automated tests with minimal logging:
+
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=test"
+```
+
+Features:
+- PostgreSQL test database
+- Hibernate DDL create-drop mode (clean state per test)
+- Minimal logging (WARN/INFO only)
+- Fast test execution
+
+#### Production Profile (`prod`)
+
+For production deployments with security and performance optimizations:
+
+```bash
+DB_URL=jdbc:postgresql://host:5432/db DB_USERNAME=user DB_PASSWORD=pass \
+./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=prod"
+```
+
+Features:
+- Environment variable-based configuration
+- Production-level logging (WARN/INFO)
+- SQL logging disabled
+- Hibernate DDL validate mode (no schema changes)
+- Enhanced error handling
+
+### Environment Variables
+
+For production, copy `.env.example` to `.env` and configure:
+
+```bash
+# Database Configuration
+DB_URL=jdbc:postgresql://localhost:5432/studymate
+DB_USERNAME=studymate_user
+DB_PASSWORD=your_secure_password_here
+
+# Spring Profile
+SPRING_PROFILES_ACTIVE=prod
+```
+
+**Security**: Never commit `.env` file to version control!
+
 ### Application Properties
 
 Main configuration in `src/main/resources/application.properties`:
 - Server port: 8080
 - Application name: studymate-backend
-- Logging levels configured for development
-
-### Development Profile
-
-Use `application-dev.properties` for local development with enhanced logging:
-
-```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
-```
+- Default active profile: dev
+- Logging levels configured for each environment
 
 ## Development Notes
 
 ### Database Configuration
-- Database setup will be completed in **Story 0.10**
-- Currently, DataSource and JPA auto-configuration are excluded in the main application class
-- This allows the application to start without a database connection
+- PostgreSQL 14+ required
+- Database name: `studymate`
+- Default credentials: `studymate_user/studymate_user`
+- Connection configured per profile (see Configuration section above)
+- Flyway migrations managed automatically on startup
 
 ### Security Configuration
 - Spring Security is included but not yet configured

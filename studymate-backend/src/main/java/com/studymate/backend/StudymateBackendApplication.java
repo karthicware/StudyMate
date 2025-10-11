@@ -5,10 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SpringBootApplication(exclude = {
-	org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class,
-	org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
-})
+@SpringBootApplication
 public class StudymateBackendApplication {
 
 	private static final Logger logger = LoggerFactory.getLogger(StudymateBackendApplication.class);
