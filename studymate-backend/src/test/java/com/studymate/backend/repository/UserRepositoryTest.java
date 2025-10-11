@@ -1,6 +1,7 @@
 package com.studymate.backend.repository;
 
 import com.studymate.backend.model.User;
+import com.studymate.backend.model.UserRole;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -27,7 +28,7 @@ class UserRepositoryTest {
         User user = new User();
         user.setEmail("test@example.com");
         user.setFirstName("Test");
-        user.setRole("OWNER");
+        user.setRole(UserRole.ROLE_OWNER);
         userRepository.save(user);
 
         // Act
@@ -44,7 +45,7 @@ class UserRepositoryTest {
         User user = new User();
         user.setEmail("exists@example.com");
         user.setFirstName("Exists");
-        user.setRole("OWNER");
+        user.setRole(UserRole.ROLE_OWNER);
         userRepository.save(user);
 
         // Act

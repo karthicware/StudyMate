@@ -2,6 +2,7 @@ package com.studymate.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studymate.backend.model.User;
+import com.studymate.backend.model.UserRole;
 import com.studymate.backend.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ class UsersControllerTest {
         testUser.setId(1L);
         testUser.setEmail("test@example.com");
         testUser.setFirstName("Test");
-        testUser.setRole("OWNER");
+        testUser.setRole(UserRole.ROLE_OWNER);
     }
 
     @Test

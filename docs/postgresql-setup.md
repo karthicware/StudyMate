@@ -1,438 +1,811 @@
-# PostgreSQL Setup Guide for StudyMate
+# 🐘 PostgreSQL Setup Guide for StudyMate
 
 ## Overview
-This guide provides step-by-step instructions for installing and configuring PostgreSQL for the StudyMate application.
+This guide provides detailed instructions for installing and configuring PostgreSQL for local development of the StudyMate application.
 
-## Database Requirements
-- **Database Name**: `studymate`
-- **Username**: `studymate_user`
-- **Password**: `studymate_user`
-- **Host**: `localhost`
-- **Port**: `5432`
-
----
-
-## Installation Instructions
-
-### macOS
-
-#### Option 1: Using Homebrew (Recommended for Development)
-
-1. **Install PostgreSQL**
-   ```bash
-   brew install postgresql@17
-   ```
-
-2. **Start PostgreSQL Service**
-   ```bash
-   brew services start postgresql@17
-   ```
-
-3. **Verify Installation**
-   ```bash
-   psql --version
-   # Expected output: psql (PostgreSQL) 17.x
-   ```
-
-#### Option 2: Native Installer
-
-1. **Download PostgreSQL**
-   - Visit: https://www.postgresql.org/download/macosx/
-   - Download the latest stable version (17.x recommended)
-   - Or download directly from: https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
-
-2. **Run the Installer**
-   - Open the downloaded `.dmg` file
-   - Follow the installation wizard
-   - Set a password for the `postgres` superuser (remember this!)
-   - Default port: 5432 (keep default)
-   - Default locale: Use default
-
-3. **Add PostgreSQL to PATH**
-   ```bash
-   # Add to ~/.zshrc or ~/.bash_profile
-   export PATH="/Library/PostgreSQL/17/bin:$PATH"
-   ```
-
-4. **Reload Shell Configuration**
-   ```bash
-   source ~/.zshrc  # or source ~/.bash_profile
-   ```
-
-5. **Verify Installation**
-   ```bash
-   psql --version
-   ```
-
-### Windows
-
-1. **Download PostgreSQL**
-   - Visit: https://www.postgresql.org/download/windows/
-   - Download the Windows installer from EnterpriseDB
-
-2. **Run the Installer**
-   - Launch the downloaded `.exe` file
-   - Follow the installation wizard:
-     - Select installation directory (default: `C:\Program Files\PostgreSQL\17`)
-     - Select components (install all)
-     - Set data directory (default: `C:\Program Files\PostgreSQL\17\data`)
-     - Set password for `postgres` superuser
-     - Set port: 5432 (default)
-     - Set locale: Default locale
-
-3. **Add PostgreSQL to PATH**
-   - The installer usually adds it automatically
-   - If not, add manually:
-     - Right-click "This PC" → Properties → Advanced system settings
-     - Environment Variables → System Variables → Path → Edit
-     - Add: `C:\Program Files\PostgreSQL\17\bin`
-
-4. **Verify Installation**
-   ```cmd
-   psql --version
-   ```
-
-### Linux (Ubuntu/Debian)
-
-1. **Update Package List**
-   ```bash
-   sudo apt update
-   ```
-
-2. **Install PostgreSQL**
-   ```bash
-   sudo apt install postgresql postgresql-contrib
-   ```
-
-3. **Start PostgreSQL Service**
-   ```bash
-   sudo systemctl start postgresql
-   sudo systemctl enable postgresql  # Enable auto-start on boot
-   ```
-
-4. **Verify Installation**
-   ```bash
-   psql --version
-   ```
-
-### Linux (RHEL/CentOS/Fedora)
-
-1. **Install PostgreSQL Repository**
-   ```bash
-   sudo dnf install -y postgresql-server postgresql-contrib
-   ```
-
-2. **Initialize Database**
-   ```bash
-   sudo postgresql-setup --initdb
-   ```
-
-3. **Start PostgreSQL Service**
-   ```bash
-   sudo systemctl start postgresql
-   sudo systemctl enable postgresql
-   ```
-
-4. **Verify Installation**
-   ```bash
-   psql --version
-   ```
+**Database Details:**
+- **Database Name:** `studymate`
+- **Username:** `studymate_user`
+- **Password:** `studymate_user` (development only)
+- **Port:** `5432` (default)
 
 ---
 
-## Database Setup
+## 📋 Quick Start
 
-### Step 1: Connect as PostgreSQL Superuser
+### 1. Install PostgreSQL
+Choose your operating system below and follow installation instructions.
 
-**macOS/Linux (Homebrew or native):**
+### 2. Create Database and User
+```sql
+-- Create database
+CREATE DATABASE studymate;
+
+-- Create user
+CREATE USER studymate_user WITH PASSWORD 'studymate_user';
+
+-- Grant privileges
+GRANT ALL PRIVILEGES ON DATABASE studymate TO studymate_user;
+```
+
+### 3. Test Connection
 ```bash
+psql -h localhost -U studymate_user -d studymate
+```
+
+---
+
+## 🍎 macOS Installation
+
+### Option 1: Homebrew (Recommended)
+
+**Install Homebrew** (if not already installed):
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+**Install PostgreSQL:**
+```bash
+# Install latest version
+brew install postgresql@17
+
+# Or install specific version
+brew install postgresql@16
+```
+
+**Start PostgreSQL Service:**
+```bash
+# Start PostgreSQL
+brew services start postgresql@17
+
+# Or start manually (doesn't restart on reboot)
+pg_ctl -D /opt/homebrew/var/postgresql@17 start
+```
+
+**Check Status:**
+```bash
+brew services list | grep postgresql
+```
+
+**Initial Setup:**
+```bash
+# Create initial database (if needed)
+initdb /opt/homebrew/var/postgresql@17
+```
+
+### Option 2: PostgreSQL.app (GUI)
+
+**Download and Install:**
+1. Visit [https://postgresapp.com/](https://postgresapp.com/)
+2. Download PostgreSQL.app
+3. Move to Applications folder
+4. Double-click to open
+5. Click "Initialize" to create database
+
+**Add to PATH:**
+```bash
+echo 'export PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+### Option 3: Official Installer
+
+**Download:**
+1. Visit [https://www.enterprisedb.com/downloads/postgres-postgresql-downloads](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
+2. Download macOS installer
+3. Run the installer
+4. Follow installation wizard
+
+**Default Installation Path:**
+- `/Library/PostgreSQL/17/`
+
+**Start Service:**
+```bash
+# Using pg_ctl
+sudo -u postgres /Library/PostgreSQL/17/bin/pg_ctl start -D /Library/PostgreSQL/17/data
+
+# Or use the application manager
+# Applications → PostgreSQL 17 → Start Server
+```
+
+---
+
+## 🪟 Windows Installation
+
+### Option 1: Official Installer (Recommended)
+
+**Download:**
+1. Visit [https://www.enterprisedb.com/downloads/postgres-postgresql-downloads](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
+2. Download Windows x86-64 installer
+3. Run the installer
+
+**Installation Steps:**
+1. Choose installation directory (default: `C:\Program Files\PostgreSQL\17`)
+2. Select components (PostgreSQL Server, pgAdmin 4, Command Line Tools)
+3. Set data directory (default: `C:\Program Files\PostgreSQL\17\data`)
+4. Set password for `postgres` user (remember this!)
+5. Set port: `5432`
+6. Set locale: Default locale
+7. Complete installation
+
+**Add to PATH:**
+1. Right-click "This PC" → Properties
+2. Advanced system settings → Environment Variables
+3. Edit "Path" variable
+4. Add: `C:\Program Files\PostgreSQL\17\bin`
+5. Click OK
+
+**Start/Stop Service:**
+```cmd
+# Start service
+net start postgresql-x64-17
+
+# Stop service
+net stop postgresql-x64-17
+
+# Or use Services.msc to manage PostgreSQL service
+```
+
+### Option 2: Chocolatey
+
+**Install Chocolatey** (if not installed):
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+```
+
+**Install PostgreSQL:**
+```powershell
+choco install postgresql17
+```
+
+---
+
+## 🐧 Linux Installation
+
+### Ubuntu/Debian
+
+**Install PostgreSQL:**
+```bash
+# Update package list
+sudo apt update
+
+# Install PostgreSQL
+sudo apt install postgresql postgresql-contrib
+
+# Install specific version
+sudo apt install postgresql-17 postgresql-contrib-17
+```
+
+**Start Service:**
+```bash
+# Start PostgreSQL
+sudo systemctl start postgresql
+
+# Enable auto-start on boot
+sudo systemctl enable postgresql
+
+# Check status
+sudo systemctl status postgresql
+```
+
+### Fedora/RHEL/CentOS
+
+**Install PostgreSQL:**
+```bash
+# Install PostgreSQL
+sudo dnf install postgresql-server postgresql-contrib
+
+# Or using yum
+sudo yum install postgresql-server postgresql-contrib
+```
+
+**Initialize Database:**
+```bash
+sudo postgresql-setup --initdb
+```
+
+**Start Service:**
+```bash
+# Start PostgreSQL
+sudo systemctl start postgresql
+
+# Enable auto-start
+sudo systemctl enable postgresql
+
+# Check status
+sudo systemctl status postgresql
+```
+
+### Arch Linux
+
+**Install PostgreSQL:**
+```bash
+sudo pacman -S postgresql
+```
+
+**Initialize Database:**
+```bash
+sudo -u postgres initdb --locale=en_US.UTF-8 -D /var/lib/postgres/data
+```
+
+**Start Service:**
+```bash
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+---
+
+## 🔧 Post-Installation Setup
+
+### 1. Access PostgreSQL
+
+**macOS/Linux:**
+```bash
+# Switch to postgres user
+sudo -u postgres psql
+
+# Or connect directly
 psql -U postgres
 ```
 
 **Windows:**
 ```cmd
+# Open Command Prompt or PowerShell
 psql -U postgres
+
+# If prompted, enter the password you set during installation
 ```
 
-If prompted for a password, enter the password you set during installation.
-
-### Step 2: Create Database and User
-
-Execute the following SQL commands in the psql prompt:
+### 2. Create StudyMate Database and User
 
 ```sql
--- Create the database
+-- Create database
 CREATE DATABASE studymate;
 
--- Create the user with password
+-- Create user with password
 CREATE USER studymate_user WITH PASSWORD 'studymate_user';
 
--- Grant all privileges on the database
+-- Grant all privileges on database
 GRANT ALL PRIVILEGES ON DATABASE studymate TO studymate_user;
 
--- Connect to the new database
-\c studymate;
-
 -- Grant schema privileges (PostgreSQL 15+)
+\c studymate
 GRANT ALL ON SCHEMA public TO studymate_user;
-
--- Grant default privileges for future tables
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO studymate_user;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO studymate_user;
+GRANT CREATE ON SCHEMA public TO studymate_user;
 
 -- Exit psql
 \q
 ```
 
-### Step 3: Verify Connection
+### 3. Configure Authentication (pg_hba.conf)
 
-Test the connection with the new user:
-
-```bash
-# Using environment variable for password
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c "SELECT version();"
+**Find pg_hba.conf location:**
+```sql
+SHOW hba_file;
 ```
 
-Expected output should show the PostgreSQL version.
+**Edit pg_hba.conf:**
+
+**macOS (Homebrew):**
+```bash
+sudo nano /opt/homebrew/var/postgresql@17/pg_hba.conf
+```
+
+**Linux:**
+```bash
+sudo nano /etc/postgresql/17/main/pg_hba.conf
+```
+
+**Windows:**
+```
+C:\Program Files\PostgreSQL\17\data\pg_hba.conf
+```
+
+**Add/Update these lines:**
+```conf
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+
+# IPv4 local connections:
+host    studymate       studymate_user  127.0.0.1/32            md5
+host    studymate       studymate_user  localhost               md5
+
+# IPv6 local connections:
+host    studymate       studymate_user  ::1/128                 md5
+
+# Allow local socket connections
+local   studymate       studymate_user                          md5
+```
+
+**Reload PostgreSQL:**
+```bash
+# macOS (Homebrew)
+brew services restart postgresql@17
+
+# Linux
+sudo systemctl restart postgresql
+
+# Windows (Command Prompt as Administrator)
+net stop postgresql-x64-17 && net start postgresql-x64-17
+```
 
 ---
 
-## Application Configuration
+## ✅ Test Connection
 
-The StudyMate backend application is already configured to connect to PostgreSQL. The configuration is located in:
+### Command Line (psql)
 
-**File**: `studymate-backend/src/main/resources/application-dev.properties`
+```bash
+# Test connection
+psql -h localhost -U studymate_user -d studymate
 
+# Enter password when prompted: studymate_user
+```
+
+**Successful Connection:**
+```
+psql (17.0)
+Type "help" for help.
+
+studymate=>
+```
+
+### Basic SQL Test
+
+```sql
+-- Check connection
+SELECT version();
+
+-- Create a test table
+CREATE TABLE test_connection (
+    id SERIAL PRIMARY KEY,
+    message VARCHAR(100)
+);
+
+-- Insert test data
+INSERT INTO test_connection (message) VALUES ('Connection successful!');
+
+-- Query test data
+SELECT * FROM test_connection;
+
+-- Drop test table
+DROP TABLE test_connection;
+
+-- Exit
+\q
+```
+
+### Test from Spring Boot
+
+**Update `studymate-backend/src/main/resources/application-dev.properties`:**
 ```properties
-# Database Configuration
 spring.datasource.url=jdbc:postgresql://localhost:5432/studymate
 spring.datasource.username=studymate_user
 spring.datasource.password=studymate_user
-spring.datasource.driver-class-name=org.postgresql.Driver
+```
 
-# JPA/Hibernate
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.format_sql=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+**Run Spring Boot:**
+```bash
+cd studymate-backend
+./mvnw spring-boot:run
+```
+
+**Check logs for successful connection:**
+```
+HikariPool-1 - Starting...
+HikariPool-1 - Start completed.
 ```
 
 ---
 
-## Verification
+## 🔍 Troubleshooting
 
-### Test Spring Boot Connection
+### Problem: `psql: command not found`
 
-1. **Navigate to backend directory**
-   ```bash
-   cd studymate-backend
-   ```
+**macOS:**
+```bash
+# Add PostgreSQL to PATH
+echo 'export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
 
-2. **Run the application**
-   ```bash
-   ./mvnw spring-boot:run
-   ```
+**Linux:**
+```bash
+# PostgreSQL should be in PATH after installation
+# If not, find psql location
+which psql
 
-3. **Check logs for successful connection**
-   Look for these log messages:
-   - `HikariPool-1 - Start completed`
-   - `Database: jdbc:postgresql://localhost:5432/studymate (PostgreSQL 17.x)`
-   - `Successfully applied X migration(s)`
+# Or use full path
+/usr/bin/psql --version
+```
 
-4. **Test API endpoint**
-   ```bash
-   curl http://localhost:8080/api/users
-   ```
-   Expected: `[]` (empty array)
+**Windows:**
+- Ensure PostgreSQL bin directory is in PATH
+- Restart Command Prompt after adding to PATH
 
-### Verify Database Schema
+---
 
-Check that Flyway migrations created the tables:
+### Problem: `connection refused` or `could not connect`
+
+**Check if PostgreSQL is running:**
+```bash
+# macOS (Homebrew)
+brew services list | grep postgresql
+
+# Linux
+sudo systemctl status postgresql
+
+# Windows
+sc query postgresql-x64-17
+```
+
+**Start PostgreSQL if not running:**
+```bash
+# macOS
+brew services start postgresql@17
+
+# Linux
+sudo systemctl start postgresql
+
+# Windows (as Administrator)
+net start postgresql-x64-17
+```
+
+**Check port 5432 is not in use:**
+```bash
+# macOS/Linux
+lsof -i :5432
+
+# Windows
+netstat -ano | findstr :5432
+```
+
+---
+
+### Problem: `password authentication failed`
+
+**Reset User Password:**
+```sql
+-- Connect as postgres superuser
+psql -U postgres
+
+-- Reset password
+ALTER USER studymate_user WITH PASSWORD 'studymate_user';
+
+-- Verify user exists
+\du
+```
+
+**Check pg_hba.conf:**
+- Ensure `md5` or `scram-sha-256` authentication is configured
+- Reload PostgreSQL after changes
+
+---
+
+### Problem: `database does not exist`
+
+**Create Database:**
+```bash
+# Connect as postgres
+psql -U postgres
+
+# Create database
+CREATE DATABASE studymate;
+
+# Grant privileges
+GRANT ALL PRIVILEGES ON DATABASE studymate TO studymate_user;
+```
+
+---
+
+### Problem: `permission denied for schema public`
+
+**Grant Schema Permissions (PostgreSQL 15+):**
+```sql
+-- Connect to studymate database
+\c studymate
+
+-- Grant schema privileges
+GRANT ALL ON SCHEMA public TO studymate_user;
+GRANT CREATE ON SCHEMA public TO studymate_user;
+
+-- Grant privileges on all tables
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO studymate_user;
+
+-- Grant privileges on all sequences
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO studymate_user;
+```
+
+---
+
+### Problem: Port 5432 already in use
+
+**Find and stop conflicting process:**
+```bash
+# macOS/Linux
+sudo lsof -ti :5432 | xargs kill -9
+
+# Or change PostgreSQL port in postgresql.conf
+sudo nano /path/to/postgresql.conf
+# Change: port = 5433
+```
+
+---
+
+## 🛠️ Useful PostgreSQL Commands
+
+### Service Management
 
 ```bash
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c "\dt"
+# macOS (Homebrew)
+brew services start postgresql@17
+brew services stop postgresql@17
+brew services restart postgresql@17
+
+# Linux
+sudo systemctl start postgresql
+sudo systemctl stop postgresql
+sudo systemctl restart postgresql
+sudo systemctl status postgresql
+
+# Windows (as Administrator)
+net start postgresql-x64-17
+net stop postgresql-x64-17
 ```
 
-Expected tables:
-- `users`
-- `study_halls`
-- `seats`
-- `bookings`
-- `flyway_schema_history`
+### psql Commands
+
+```sql
+-- List databases
+\l
+
+-- Connect to database
+\c studymate
+
+-- List tables
+\dt
+
+-- List users/roles
+\du
+
+-- Describe table
+\d table_name
+
+-- Show table schema
+\d+ table_name
+
+-- Execute SQL from file
+\i /path/to/file.sql
+
+-- Quit psql
+\q
+
+-- Show help
+\?
+
+-- Show SQL command help
+\h CREATE TABLE
+```
+
+### Database Management
+
+```sql
+-- Create database
+CREATE DATABASE database_name;
+
+-- Drop database
+DROP DATABASE database_name;
+
+-- Create user
+CREATE USER username WITH PASSWORD 'password';
+
+-- Grant privileges
+GRANT ALL PRIVILEGES ON DATABASE database_name TO username;
+
+-- Revoke privileges
+REVOKE ALL PRIVILEGES ON DATABASE database_name FROM username;
+
+-- Change password
+ALTER USER username WITH PASSWORD 'new_password';
+
+-- Drop user
+DROP USER username;
+```
 
 ---
 
-## Troubleshooting
+## 🌐 PostgreSQL MCP Integration
 
-### Issue: "psql: command not found"
+### What is PostgreSQL MCP?
 
-**Solution**: PostgreSQL bin directory is not in PATH
-- **macOS**: Add to `~/.zshrc`: `export PATH="/Library/PostgreSQL/17/bin:$PATH"`
-- **Windows**: Add to System PATH: `C:\Program Files\PostgreSQL\17\bin`
-- **Linux**: Usually added automatically, try: `sudo apt install postgresql-client`
+PostgreSQL MCP (Model Context Protocol) allows direct database access from your development environment for testing and validation.
 
-### Issue: "password authentication failed for user postgres"
+### Configure PostgreSQL MCP
 
-**Solution**:
-1. Reset the postgres password:
-   ```bash
-   # macOS/Linux
-   sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'newpassword';"
-   ```
-
-2. Or use peer authentication on Linux:
-   ```bash
-   sudo -u postgres psql
-   ```
-
-### Issue: "could not connect to server"
-
-**Solution**: PostgreSQL service is not running
-- **macOS (Homebrew)**: `brew services start postgresql@17`
-- **macOS (Native)**: Check System Preferences → PostgreSQL
-- **Windows**: Start from Services panel or `pg_ctl start`
-- **Linux**: `sudo systemctl start postgresql`
-
-### Issue: "port 5432 is already in use"
-
-**Solution**: Another PostgreSQL instance is running
-1. Find the process:
-   ```bash
-   # macOS/Linux
-   lsof -i :5432
-
-   # Windows
-   netstat -ano | findstr :5432
-   ```
-
-2. Stop conflicting service or change port in `postgresql.conf`
-
-### Issue: "relation does not exist"
-
-**Solution**: Flyway migrations haven't run
-1. Check Flyway migration files exist in: `studymate-backend/src/main/resources/db/migration/`
-2. Restart Spring Boot application to trigger migrations
-3. Verify migrations:
-   ```bash
-   PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate \
-     -c "SELECT * FROM flyway_schema_history;"
-   ```
-
-### Issue: Spring Boot can't connect to database
-
-**Solution**: Check configuration
-1. Verify database exists:
-   ```bash
-   PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c "SELECT current_database();"
-   ```
-
-2. Check application-dev.properties has correct credentials
-
-3. Ensure `spring.profiles.active=dev` in application.properties
-
----
-
-## PostgreSQL MCP Integration
-
-The PostgreSQL MCP server requires the following connection details:
-
+**Add to your MCP settings (e.g., `claude_desktop_config.json`):**
 ```json
 {
-  "host": "localhost",
-  "port": 5432,
-  "database": "studymate",
-  "username": "studymate_user",
-  "password": "studymate_user"
+  "mcpServers": {
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://studymate_user:studymate_user@localhost:5432/studymate"
+      ]
+    }
+  }
 }
 ```
 
-Test MCP connection by running SQL queries through the MCP interface.
+### Using PostgreSQL MCP
+
+**Query Database:**
+```sql
+-- Check tables
+SELECT table_name FROM information_schema.tables
+WHERE table_schema = 'public';
+
+-- Verify data
+SELECT * FROM users LIMIT 10;
+
+-- Check constraints
+SELECT constraint_name, table_name, constraint_type
+FROM information_schema.table_constraints
+WHERE table_schema = 'public';
+```
+
+**Validate Schema:**
+```sql
+-- Check Flyway migrations
+SELECT * FROM flyway_schema_history;
+
+-- Verify indexes
+SELECT indexname, tablename
+FROM pg_indexes
+WHERE schemaname = 'public';
+```
 
 ---
 
-## Useful PostgreSQL Commands
+## 📊 GUI Tools
 
-### Database Management
-```sql
--- List all databases
-\l
+### pgAdmin 4 (Official)
 
--- Switch to database
-\c studymate
+**Installation:**
+- **macOS:** Download from [https://www.pgadmin.org/download/](https://www.pgadmin.org/download/)
+- **Windows:** Included with PostgreSQL installer
+- **Linux:** `sudo apt install pgadmin4`
 
--- List all tables
-\dt
+**Connect to StudyMate:**
+1. Open pgAdmin
+2. Right-click "Servers" → Create → Server
+3. General tab: Name = "StudyMate Local"
+4. Connection tab:
+   - Host: `localhost`
+   - Port: `5432`
+   - Database: `studymate`
+   - Username: `studymate_user`
+   - Password: `studymate_user`
+5. Click "Save"
 
--- Describe table structure
-\d users
+### DBeaver (Cross-Platform)
 
--- List all users/roles
-\du
-
--- Show current database and user
-SELECT current_database(), current_user;
-```
-
-### Monitoring
-```sql
--- Show active connections
-SELECT * FROM pg_stat_activity WHERE datname = 'studymate';
-
--- Show database size
-SELECT pg_size_pretty(pg_database_size('studymate'));
-
--- Show table sizes
-SELECT
-    schemaname,
-    tablename,
-    pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size
-FROM pg_tables
-WHERE schemaname = 'public'
-ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
-```
-
-### Backup and Restore
+**Installation:**
 ```bash
-# Backup database
-pg_dump -h localhost -U studymate_user -d studymate -F c -f studymate_backup.dump
+# macOS
+brew install --cask dbeaver-community
 
-# Restore database
-pg_restore -h localhost -U studymate_user -d studymate studymate_backup.dump
+# Windows: Download from https://dbeaver.io/download/
+
+# Linux
+sudo snap install dbeaver-ce
 ```
+
+**Connect:**
+1. Database → New Database Connection
+2. Select PostgreSQL
+3. Enter connection details
+4. Test Connection
+5. Finish
+
+### TablePlus (macOS/Windows)
+
+**Installation:**
+- Download from [https://tableplus.com/](https://tableplus.com/)
+
+**Connect:**
+1. Click "Create a new connection"
+2. Select PostgreSQL
+3. Enter connection details
+4. Test → Connect
 
 ---
 
-## Security Best Practices
+## 🔐 Security Best Practices
 
 ### Development Environment
-- ⚠️ Current setup uses simple credentials for development only
-- Database password is intentionally weak for local development
-- PostgreSQL is configured to accept local connections only
+
+✅ **DO:**
+- Use simple passwords for local development (`studymate_user`)
+- Keep PostgreSQL bound to localhost only
+- Use `md5` or `scram-sha-256` authentication
+
+❌ **DON'T:**
+- Use production credentials locally
+- Expose PostgreSQL to public networks
+- Use `trust` authentication method
 
 ### Production Environment
-- ✅ Use strong, unique passwords
-- ✅ Enable SSL/TLS connections
-- ✅ Implement connection pooling with HikariCP
-- ✅ Use environment variables for credentials (never commit secrets)
-- ✅ Restrict database access with firewall rules
-- ✅ Enable PostgreSQL audit logging
-- ✅ Regular security updates and patches
-- ✅ Use read-only database users for reporting
+
+✅ **DO:**
+- Use strong, randomly generated passwords
+- Enable SSL/TLS connections
+- Restrict access by IP address
+- Regular security updates
+- Enable connection logging
+- Use read-only users for reporting
+
+❌ **DON'T:**
+- Store passwords in code
+- Use default ports without firewall
+- Grant superuser privileges unnecessarily
+- Allow public internet access
 
 ---
 
-## References
+## 📚 Additional Resources
 
-- [PostgreSQL Official Documentation](https://www.postgresql.org/docs/)
-- [Spring Boot Data JPA Documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/data.html#data.sql.jpa-and-spring-data)
-- [Flyway Database Migrations](https://flywaydb.org/documentation/)
-- [HikariCP Connection Pool](https://github.com/brettwooldridge/HikariCP)
+### Official Documentation
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+- [PostgreSQL Tutorial](https://www.postgresqltutorial.com/)
+- [psql Commands](https://www.postgresql.org/docs/current/app-psql.html)
+
+### Project Documentation
+- [Environment Setup Guide](./environment-setup.md) *(Story 0.16)*
+- [System Architecture](./architecture/studymate-system-architecture-blueprint.md)
+- [Database Migrations (Flyway)](../studymate-backend/docs/flyway-migrations.md)
+
+### Community Resources
+- [PostgreSQL Community](https://www.postgresql.org/community/)
+- [Stack Overflow - PostgreSQL](https://stackoverflow.com/questions/tagged/postgresql)
+- [PostgreSQL Reddit](https://www.reddit.com/r/PostgreSQL/)
 
 ---
 
-## Support
+## ✅ Setup Checklist
 
-For issues specific to StudyMate setup, refer to:
-- [Tech Stack Documentation](./architecture/tech-stack.md)
-- [System Architecture Blueprint](./architecture/studymate-system-architecture-blueprint.md)
-- [Coding Standards](./architecture/coding-standards.md)
+After following this guide, verify:
+
+- [ ] PostgreSQL installed and running
+- [ ] `studymate` database created
+- [ ] `studymate_user` user created with correct password
+- [ ] User has all privileges on `studymate` database
+- [ ] Can connect via `psql -h localhost -U studymate_user -d studymate`
+- [ ] Can connect from Spring Boot application
+- [ ] GUI tool (pgAdmin/DBeaver) configured (optional)
+- [ ] PostgreSQL MCP configured (optional)
+- [ ] Service starts automatically on system boot
+- [ ] Port 5432 is accessible from localhost
+
+---
+
+## 🆘 Getting Help
+
+If you encounter issues:
+1. Check this troubleshooting section
+2. Verify PostgreSQL is running
+3. Check PostgreSQL logs
+4. Review authentication configuration (pg_hba.conf)
+5. Consult team documentation
+6. Ask a team member for assistance
+
+**PostgreSQL Logs Location:**
+- **macOS (Homebrew):** `/opt/homebrew/var/log/postgresql@17.log`
+- **Linux:** `/var/log/postgresql/postgresql-17-main.log`
+- **Windows:** `C:\Program Files\PostgreSQL\17\data\log\`
+
+---
+
+**Last Updated:** October 2025
+**Related Stories:** 0.18 (PostgreSQL Local Installation Guide)

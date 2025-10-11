@@ -1,6 +1,7 @@
 package com.studymate.backend.service;
 
 import com.studymate.backend.model.User;
+import com.studymate.backend.model.UserRole;
 import com.studymate.backend.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ class UserServiceTest {
         testUser.setId(1L);
         testUser.setEmail("test@example.com");
         testUser.setFirstName("Test");
-        testUser.setRole("OWNER");
+        testUser.setRole(UserRole.ROLE_OWNER);
     }
 
     @Test
