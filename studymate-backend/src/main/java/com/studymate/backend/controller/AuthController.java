@@ -4,7 +4,7 @@ import com.studymate.backend.dto.ApiResponse;
 import com.studymate.backend.dto.AuthResponse;
 import com.studymate.backend.dto.LoginRequest;
 import com.studymate.backend.dto.RegisterRequest;
-import com.studymate.backend.model.User;
+import com.studymate.backend.dto.UserDTO;
 import com.studymate.backend.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -66,15 +66,15 @@ public class AuthController {
      *
      * GET /auth/me
      *
-     * @return current user details
+     * @return current user details (without sensitive information)
      */
     @GetMapping("/me")
-    public ResponseEntity<User> getCurrentUser() {
+    public ResponseEntity<UserDTO> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
         log.info("GET /auth/me - Fetching profile for: {}", email);
-        User user = authService.getCurrentUser(email);
+        UserDTO user = authService.getCurrentUser(email);
         return ResponseEntity.ok(user);
     }
 }

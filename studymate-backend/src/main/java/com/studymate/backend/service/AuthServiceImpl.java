@@ -3,6 +3,7 @@ package com.studymate.backend.service;
 import com.studymate.backend.dto.AuthResponse;
 import com.studymate.backend.dto.LoginRequest;
 import com.studymate.backend.dto.RegisterRequest;
+import com.studymate.backend.dto.UserDTO;
 import com.studymate.backend.exception.DuplicateResourceException;
 import com.studymate.backend.exception.ResourceNotFoundException;
 import com.studymate.backend.model.User;
@@ -55,12 +56,7 @@ public class AuthServiceImpl implements AuthService {
         log.info("User registered successfully: {}", savedUser.getEmail());
 
         // Generate JWT token
-        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
-                .username(savedUser.getEmail())
-                .password(savedUser.getPasswordHash())
-                .authorities(savedUser.getRole().name())
-                .build();
-
+        UserDetails userDetails = buildUserDetails(savedUser);
         String token = jwtTokenService.generateToken(userDetails);
 
         // Return auth response
@@ -99,12 +95,7 @@ public class AuthServiceImpl implements AuthService {
         log.info("Login successful for user: {}", user.getEmail());
 
         // Generate JWT token
-        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())
-                .password(user.getPasswordHash())
-                .authorities(user.getRole().name())
-                .build();
-
+        UserDetails userDetails = buildUserDetails(user);
         String token = jwtTokenService.generateToken(userDetails);
 
         // Return auth response
@@ -113,13 +104,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional(readOnly = true)
-    public User getCurrentUser(String email) {
+    public UserDTO getCurrentUser(String email) {
         log.debug("Fetching current user: {}", email);
-        return userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     log.error("Current user not found: {}", email);
                     return new ResourceNotFoundException("User not found: " + email);
                 });
+        return mapUserToDTO(user);
     }
 
     /**
@@ -137,6 +129,39 @@ public class AuthServiceImpl implements AuthService {
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName()
+        );
+    }
+
+    /**
+     * Builds Spring Security UserDetails from user entity.
+     *
+     * @param user the user entity
+     * @return UserDetails for JWT generation
+     */
+    private UserDetails buildUserDetails(User user) {
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())
+                .password(user.getPasswordHash())
+                .authorities(user.getRole().name())
+                .build();
+    }
+
+    /**
+     * Maps User entity to UserDTO (without sensitive fields).
+     *
+     * @param user the user entity
+     * @return user DTO
+     */
+    private UserDTO mapUserToDTO(User user) {
+        return new UserDTO(
+                user.getId(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getRole().name(),
+                user.getEnabled(),
+                user.getLocked(),
+                user.getCreatedAt()
         );
     }
 }

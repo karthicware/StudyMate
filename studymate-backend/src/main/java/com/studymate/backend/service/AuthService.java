@@ -3,7 +3,7 @@ package com.studymate.backend.service;
 import com.studymate.backend.dto.AuthResponse;
 import com.studymate.backend.dto.LoginRequest;
 import com.studymate.backend.dto.RegisterRequest;
-import com.studymate.backend.model.User;
+import com.studymate.backend.dto.UserDTO;
 
 /**
  * Service interface for authentication operations.
@@ -35,8 +35,8 @@ public interface AuthService {
      * Gets the currently authenticated user.
      *
      * @param email email of the authenticated user from security context
-     * @return the authenticated user
+     * @return user DTO without sensitive information
      * @throws com.studymate.backend.exception.ResourceNotFoundException if user not found
      */
-    User getCurrentUser(String email);
+    UserDTO getCurrentUser(String email);
 }
