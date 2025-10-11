@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router, ActivatedRoute, provideRouter } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { of, throwError } from 'rxjs';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../core/services/auth.service';
@@ -34,9 +35,13 @@ describe('LoginComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [LoginComponent, ReactiveFormsModule, HttpClientTestingModule],
+      imports: [
+        LoginComponent,
+        ReactiveFormsModule,
+        HttpClientTestingModule,
+        RouterTestingModule
+      ],
       providers: [
-        provideRouter([]),
         { provide: AuthService, useValue: authServiceSpy },
         { provide: ActivatedRoute, useValue: activatedRoute },
         AuthStore,
@@ -45,6 +50,7 @@ describe('LoginComponent', () => {
 
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
     router = TestBed.inject(Router);
+    router.initialNavigation(); // Initialize router for RouterLink directive
     spyOn(router, 'navigate');
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;

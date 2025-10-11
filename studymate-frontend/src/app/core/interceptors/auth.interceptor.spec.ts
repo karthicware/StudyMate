@@ -65,8 +65,14 @@ describe('authInterceptor', () => {
       },
     });
 
+    // First request fails with 401
     const req = httpMock.expectOne('/api/protected');
     req.flush({ message: 'Unauthorized' }, { status: 401, statusText: 'Unauthorized' });
+
+    // Interceptor attempts to refresh token
+    const refreshReq = httpMock.expectOne('/api/auth/refresh');
+    // Refresh also fails with 401, triggering logout
+    refreshReq.flush({ message: 'Unauthorized' }, { status: 401, statusText: 'Unauthorized' });
   });
 
   it('should not handle non-401 errors', () => {
