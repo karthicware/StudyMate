@@ -4,7 +4,7 @@
 This guide provides step-by-step instructions for installing and configuring PostgreSQL for the StudyMate application.
 
 ## Database Requirements
-- **Database Name**: `studymate_user`
+- **Database Name**: `studymate`
 - **Username**: `studymate_user`
 - **Password**: `studymate_user`
 - **Host**: `localhost`
@@ -162,16 +162,16 @@ Execute the following SQL commands in the psql prompt:
 
 ```sql
 -- Create the database
-CREATE DATABASE studymate_user;
+CREATE DATABASE studymate;
 
 -- Create the user with password
 CREATE USER studymate_user WITH PASSWORD 'studymate_user';
 
 -- Grant all privileges on the database
-GRANT ALL PRIVILEGES ON DATABASE studymate_user TO studymate_user;
+GRANT ALL PRIVILEGES ON DATABASE studymate TO studymate_user;
 
 -- Connect to the new database
-\c studymate_user
+\c studymate;
 
 -- Grant schema privileges (PostgreSQL 15+)
 GRANT ALL ON SCHEMA public TO studymate_user;
@@ -190,7 +190,7 @@ Test the connection with the new user:
 
 ```bash
 # Using environment variable for password
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_user -c "SELECT version();"
+PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c "SELECT version();"
 ```
 
 Expected output should show the PostgreSQL version.
@@ -250,7 +250,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 Check that Flyway migrations created the tables:
 
 ```bash
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_user -c "\dt"
+PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c "\dt"
 ```
 
 Expected tables:
@@ -314,7 +314,7 @@ Expected tables:
 2. Restart Spring Boot application to trigger migrations
 3. Verify migrations:
    ```bash
-   PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_user \
+   PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate \
      -c "SELECT * FROM flyway_schema_history;"
    ```
 
@@ -323,7 +323,7 @@ Expected tables:
 **Solution**: Check configuration
 1. Verify database exists:
    ```bash
-   PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_user -c "SELECT current_database();"
+   PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c "SELECT current_database();"
    ```
 
 2. Check application-dev.properties has correct credentials
@@ -340,7 +340,7 @@ The PostgreSQL MCP server requires the following connection details:
 {
   "host": "localhost",
   "port": 5432,
-  "database": "studymate_user",
+  "database": "studymate",
   "username": "studymate_user",
   "password": "studymate_user"
 }
@@ -358,7 +358,7 @@ Test MCP connection by running SQL queries through the MCP interface.
 \l
 
 -- Switch to database
-\c studymate_user
+\c studymate
 
 -- List all tables
 \dt
@@ -376,10 +376,10 @@ SELECT current_database(), current_user;
 ### Monitoring
 ```sql
 -- Show active connections
-SELECT * FROM pg_stat_activity WHERE datname = 'studymate_user';
+SELECT * FROM pg_stat_activity WHERE datname = 'studymate';
 
 -- Show database size
-SELECT pg_size_pretty(pg_database_size('studymate_user'));
+SELECT pg_size_pretty(pg_database_size('studymate'));
 
 -- Show table sizes
 SELECT
@@ -394,10 +394,10 @@ ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 ### Backup and Restore
 ```bash
 # Backup database
-pg_dump -h localhost -U studymate_user -d studymate_user -F c -f studymate_backup.dump
+pg_dump -h localhost -U studymate_user -d studymate -F c -f studymate_backup.dump
 
 # Restore database
-pg_restore -h localhost -U studymate_user -d studymate_user studymate_backup.dump
+pg_restore -h localhost -U studymate_user -d studymate studymate_backup.dump
 ```
 
 ---

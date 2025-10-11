@@ -205,8 +205,8 @@ psql -U postgres
 ```sql
 CREATE DATABASE studymate;
 CREATE USER studymate_user WITH PASSWORD 'studymate_user';
-GRANT ALL PRIVILEGES ON DATABASE studymate_user TO studymate_user;
-\c studymate_user
+GRANT ALL PRIVILEGES ON DATABASE studymate TO studymate_user;
+\c studymate
 GRANT ALL ON SCHEMA public TO studymate_user;
 \q
 ```
@@ -335,7 +335,7 @@ Use this checklist to verify your development environment is ready:
 - [ ] Java 17 installed and JAVA_HOME set
 - [ ] Maven 3.8+ installed
 - [ ] PostgreSQL installed and running
-- [ ] PostgreSQL studymate_user database created
+- [ ] PostgreSQL studymate database created
 - [ ] PostgreSQL studymate_user user created with proper privileges
 - [ ] Angular CLI installed globally
 - [ ] Git installed and configured
@@ -357,7 +357,7 @@ mvn --version
 
 # PostgreSQL
 psql --version
-psql -U studymate_user -d studymate_user -c "SELECT 1"
+psql -U studymate_user -d studymate -c "SELECT 1"
 
 # Angular CLI
 ng version

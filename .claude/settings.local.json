@@ -18,7 +18,13 @@
       "Bash(PGPASSWORD=postgres psql:*)",
       "Read(//Library/PostgreSQL/17/data/**)",
       "Bash(/Library/PostgreSQL/17/bin/psql:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(./mvnw org.flywaydb:flyway-maven-plugin:11.7.2:info:*)",
+      "Bash(./mvnw org.flywaydb:flyway-maven-plugin:11.7.2:validate:*)",
+      "Bash(PGPASSWORD=studymate_user psql:*)",
+      "Bash(./mvnw:*)",
+      "Bash(timeout:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": [],
