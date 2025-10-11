@@ -113,8 +113,12 @@ public class JwtTokenService {
     /**
      * Extracts the username from the JWT token.
      *
+     * <p><b>Important:</b> This method assumes the token is valid.
+     * Call {@link #validateToken(String)} first to ensure token validity.
+     *
      * @param token the JWT token
      * @return the username (subject)
+     * @throws io.jsonwebtoken.JwtException if token is invalid or expired
      */
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -123,20 +127,40 @@ public class JwtTokenService {
     /**
      * Extracts roles from the JWT token.
      *
+     * <p><b>Important:</b> This method assumes the token is valid.
+     * Call {@link #validateToken(String)} first to ensure token validity.
+     *
      * @param token the JWT token
-     * @return list of roles
+     * @return list of roles, or empty list if roles claim is missing
+     * @throws io.jsonwebtoken.JwtException if token is invalid or expired
      */
     @SuppressWarnings("unchecked")
     public List<String> extractRoles(String token) {
         Claims claims = extractAllClaims(token);
-        return (List<String>) claims.get(ROLES_CLAIM);
+        Object rolesClaim = claims.get(ROLES_CLAIM);
+
+        if (rolesClaim == null) {
+            logger.debug("No roles claim found in token");
+            return List.of();
+        }
+
+        if (!(rolesClaim instanceof List)) {
+            logger.warn("Roles claim is not a List. Found type: {}", rolesClaim.getClass().getName());
+            return List.of();
+        }
+
+        return (List<String>) rolesClaim;
     }
 
     /**
      * Extracts the expiration date from the JWT token.
      *
+     * <p><b>Important:</b> This method assumes the token is valid.
+     * Call {@link #validateToken(String)} first to ensure token validity.
+     *
      * @param token the JWT token
      * @return the expiration date
+     * @throws io.jsonwebtoken.JwtException if token is invalid or expired
      */
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
