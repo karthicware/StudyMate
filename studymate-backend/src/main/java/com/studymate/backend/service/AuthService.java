@@ -39,4 +39,14 @@ public interface AuthService {
      * @throws com.studymate.backend.exception.ResourceNotFoundException if user not found
      */
     UserDTO getCurrentUser(String email);
+
+    /**
+     * Refreshes the JWT token for an authenticated user.
+     * Validates the current token and generates a new one.
+     *
+     * @param email email of the authenticated user from security context
+     * @return authentication response with new JWT token and user info
+     * @throws com.studymate.backend.exception.ResourceNotFoundException if user not found
+     */
+    AuthResponse refreshToken(String email);
 }

@@ -114,6 +114,39 @@ public class AuthServiceImpl implements AuthService {
         return mapUserToDTO(user);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public AuthResponse refreshToken(String email) {
+        log.info("Refreshing token for user: {}", email);
+
+        // Find user by email
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    log.error("Token refresh failed: User not found: {}", email);
+                    return new ResourceNotFoundException("User not found: " + email);
+                });
+
+        // Check if account is still active
+        if (!user.getEnabled()) {
+            log.warn("Token refresh failed: Account disabled: {}", email);
+            throw new BadCredentialsException("Account is disabled");
+        }
+
+        if (user.getLocked()) {
+            log.warn("Token refresh failed: Account locked: {}", email);
+            throw new BadCredentialsException("Account is locked");
+        }
+
+        log.info("Token refresh successful for user: {}", email);
+
+        // Generate new JWT token
+        UserDetails userDetails = buildUserDetails(user);
+        String newToken = jwtTokenService.generateToken(userDetails);
+
+        // Return auth response with new token
+        return buildAuthResponse(user, newToken);
+    }
+
     /**
      * Builds an AuthResponse from user and token.
      *

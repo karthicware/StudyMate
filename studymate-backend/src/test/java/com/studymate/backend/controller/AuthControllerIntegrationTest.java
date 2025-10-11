@@ -235,4 +235,67 @@ class AuthControllerIntegrationTest {
                         .header("Authorization", "Bearer invalid-token"))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    void shouldRefreshTokenWithValidToken() throws Exception {
+        // Given - register a user and get token
+        RegisterRequest registerRequest = new RegisterRequest(
+                "refresh@test.com",
+                "password123",
+                "Refresh",
+                "User",
+                UserRole.ROLE_STUDENT
+        );
+
+        MvcResult registerResult = mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerRequest)))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        String responseBody = registerResult.getResponse().getContentAsString();
+        AuthResponse authResponse = objectMapper.readValue(responseBody, AuthResponse.class);
+        String oldToken = authResponse.getToken();
+
+        // Wait 1 second to ensure different issued-at timestamp
+        Thread.sleep(1000);
+
+        // When & Then - use token to refresh
+        MvcResult refreshResult = mockMvc.perform(post("/auth/refresh")
+                        .header("Authorization", "Bearer " + oldToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").exists())
+                .andExpect(jsonPath("$.email").value("refresh@test.com"))
+                .andExpect(jsonPath("$.role").value("STUDENT"))
+                .andExpect(jsonPath("$.firstName").value("Refresh"))
+                .andExpect(jsonPath("$.lastName").value("User"))
+                .andReturn();
+
+        // Verify new token is different from old token
+        String refreshResponseBody = refreshResult.getResponse().getContentAsString();
+        AuthResponse refreshResponse = objectMapper.readValue(refreshResponseBody, AuthResponse.class);
+        String newToken = refreshResponse.getToken();
+        assertThat(newToken).isNotEqualTo(oldToken);
+
+        // Verify new token works
+        mockMvc.perform(get("/auth/me")
+                        .header("Authorization", "Bearer " + newToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value("refresh@test.com"));
+    }
+
+    @Test
+    void shouldRejectRefreshWithoutToken() throws Exception {
+        // When & Then - no authorization header
+        mockMvc.perform(post("/auth/refresh"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void shouldRejectRefreshWithInvalidToken() throws Exception {
+        // When & Then - invalid token
+        mockMvc.perform(post("/auth/refresh")
+                        .header("Authorization", "Bearer invalid-token"))
+                .andExpect(status().isForbidden());
+    }
 }

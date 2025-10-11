@@ -145,4 +145,126 @@ describe('AuthService', () => {
       expect(authStore.selectIsAuthenticated()).toBe(false);
     });
   });
+
+  describe('refreshToken', () => {
+    it('should refresh token and update stored token', (done) => {
+      const newAuthResponse: AuthResponse = {
+        token: 'new-jwt-token',
+        user: mockAuthResponse.user,
+      };
+
+      service.refreshToken().subscribe({
+        next: (response) => {
+          expect(response).toEqual(newAuthResponse);
+          expect(localStorage.getItem('token')).toBe('new-jwt-token');
+          expect(authStore.selectUser()).toEqual(newAuthResponse.user);
+          done();
+        },
+      });
+
+      const req = httpMock.expectOne('/api/auth/refresh');
+      expect(req.request.method).toBe('POST');
+      req.flush(newAuthResponse);
+    });
+
+    it('should handle refresh token failure', (done) => {
+      service.refreshToken().subscribe({
+        error: (error) => {
+          expect(error.status).toBe(401);
+          done();
+        },
+      });
+
+      const req = httpMock.expectOne('/api/auth/refresh');
+      req.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
+    });
+  });
+
+  describe('getTokenExpiry', () => {
+    it('should extract expiration from valid JWT', () => {
+      // JWT with exp: 1760200000 (Jan 11, 2026 16:00:00 GMT)
+      const token =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiZXhwIjoxNzYwMjAwMDAwfQ.signature';
+      const expiry = service.getTokenExpiry(token);
+      expect(expiry).toBe(1760200000000); // Should be in milliseconds
+    });
+
+    it('should return null for invalid token', () => {
+      const invalidToken = 'invalid-token';
+      const expiry = service.getTokenExpiry(invalidToken);
+      expect(expiry).toBeNull();
+    });
+
+    it('should return null for token without exp claim', () => {
+      // JWT without exp claim
+      const token =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0QGV4YW1wbGUuY29tIn0.signature';
+      const expiry = service.getTokenExpiry(token);
+      expect(expiry).toBeNull();
+    });
+  });
+
+  describe('token refresh timer', () => {
+    beforeEach(() => {
+      jasmine.clock().install();
+    });
+
+    afterEach(() => {
+      jasmine.clock().uninstall();
+    });
+
+    it('should schedule token refresh before expiration', () => {
+      // Create a token that expires in 10 minutes
+      const futureTime = Date.now() + 10 * 60 * 1000;
+      const tokenWithExpiry = createTokenWithExpiry(futureTime / 1000);
+
+      const authResponse: AuthResponse = {
+        token: tokenWithExpiry,
+        user: mockAuthResponse.user,
+      };
+
+      service.login({ email: 'test@example.com', password: 'password' }).subscribe();
+
+      const req = httpMock.expectOne('/api/auth/login');
+      req.flush(authResponse);
+
+      // Fast-forward to 5 minutes before expiry (when refresh should happen)
+      jasmine.clock().tick(5 * 60 * 1000);
+
+      // Verify refresh was called
+      httpMock.expectOne('/api/auth/refresh');
+    });
+
+    it('should clear timer on logout', () => {
+      // Create a token
+      const futureTime = Date.now() + 10 * 60 * 1000;
+      const tokenWithExpiry = createTokenWithExpiry(futureTime / 1000);
+
+      localStorage.setItem('token', tokenWithExpiry);
+      authStore.setUser(mockAuthResponse.user);
+
+      service.logout();
+
+      // Fast-forward time
+      jasmine.clock().tick(10 * 60 * 1000);
+
+      // Verify no refresh was attempted
+      httpMock.expectNone('/api/auth/refresh');
+    });
+  });
 });
+
+/**
+ * Helper function to create a JWT token with specific expiration
+ */
+function createTokenWithExpiry(expSeconds: number): string {
+  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+  const payload = btoa(
+    JSON.stringify({
+      sub: 'test@example.com',
+      exp: expSeconds,
+      roles: ['ROLE_STUDENT'],
+    })
+  );
+  return `${header}.${payload}.signature`;
+}

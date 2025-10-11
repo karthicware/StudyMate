@@ -77,4 +77,22 @@ public class AuthController {
         UserDTO user = authService.getCurrentUser(email);
         return ResponseEntity.ok(user);
     }
+
+    /**
+     * Refresh JWT token for authenticated user.
+     * Requires valid JWT token in Authorization header.
+     *
+     * POST /auth/refresh
+     *
+     * @return authentication response with new JWT token
+     */
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refreshToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        log.info("POST /auth/refresh - Refreshing token for: {}", email);
+        AuthResponse response = authService.refreshToken(email);
+        return ResponseEntity.ok(response);
+    }
 }
