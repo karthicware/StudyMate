@@ -3,6 +3,8 @@ package com.studymate.backend.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studymate.backend.model.User;
 import com.studymate.backend.model.UserRole;
+import com.studymate.backend.security.CustomUserDetailsService;
+import com.studymate.backend.service.JwtTokenService;
 import com.studymate.backend.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
+/**
+ * Unit tests for UsersController with JWT security.
+ * Uses @WithMockUser to bypass JWT authentication for testing controller logic.
+ */
 @WebMvcTest(UsersController.class)
 @WithMockUser
 class UsersControllerTest {
@@ -35,6 +41,13 @@ class UsersControllerTest {
 
     @MockBean
     private UserService userService;
+
+    // Mock JWT security beans required by SecurityConfig
+    @MockBean
+    private JwtTokenService jwtTokenService;
+
+    @MockBean
+    private CustomUserDetailsService customUserDetailsService;
 
     private User testUser;
 
