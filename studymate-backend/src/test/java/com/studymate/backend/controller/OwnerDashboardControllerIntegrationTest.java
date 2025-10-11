@@ -48,7 +48,7 @@ class OwnerDashboardControllerIntegrationTest {
         when(dashboardService.getDashboardMetrics(eq(1L), any())).thenReturn(response);
 
         // Act & Assert
-        mockMvc.perform(get("/owner/dashboard/1"))
+        mockMvc.perform(get("/api/v1/owner/dashboard/1"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.totalSeats").value(50))
             .andExpect(jsonPath("$.occupancyPercentage").value(75.0))
@@ -58,7 +58,7 @@ class OwnerDashboardControllerIntegrationTest {
     @Test
     void getDashboard_WithoutAuthentication_ReturnsUnauthorized() throws Exception {
         // Act & Assert
-        mockMvc.perform(get("/owner/dashboard/1"))
+        mockMvc.perform(get("/api/v1/owner/dashboard/1"))
             .andExpect(status().isUnauthorized());
     }
 
@@ -66,7 +66,7 @@ class OwnerDashboardControllerIntegrationTest {
     @WithMockUser(username = "student@test.com", roles = {"STUDENT"})
     void getDashboard_WithNonOwnerRole_ReturnsForbidden() throws Exception {
         // Act & Assert
-        mockMvc.perform(get("/owner/dashboard/1"))
+        mockMvc.perform(get("/api/v1/owner/dashboard/1"))
             .andExpect(status().isForbidden());
     }
 }

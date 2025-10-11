@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * Provides endpoints for hall owners to view metrics and seat status.
  */
 @RestController
-@RequestMapping("/owner/dashboard")
+@RequestMapping("/api/v1/owner/dashboard")
 @Slf4j
 public class OwnerDashboardController {
 
