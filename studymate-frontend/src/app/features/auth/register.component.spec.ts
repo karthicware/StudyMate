@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { RegisterComponent } from './register.component';
 import { AuthService } from '../../core/services/auth.service';
 import { AuthStore } from '../../store/auth/auth.store';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { provideLocationMocks } from '@angular/common/testing';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
   let authService: jasmine.SpyObj<AuthService>;
-  let router: jasmine.SpyObj<Router>;
+  let router: Router;
 
   const mockAuthResponse = {
     token: 'mock-token',
@@ -26,22 +25,19 @@ describe('RegisterComponent', () => {
 
   beforeEach(async () => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['register']);
-    const routerSpy = jasmine.createSpyObj('Router', ['navigate', 'createUrlTree', 'serializeUrl']);
-    routerSpy.createUrlTree.and.returnValue({} as any);
-    routerSpy.serializeUrl.and.returnValue('');
 
     await TestBed.configureTestingModule({
       imports: [RegisterComponent, ReactiveFormsModule, HttpClientTestingModule],
       providers: [
+        provideRouter([]),
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: Router, useValue: routerSpy },
         AuthStore,
-        provideLocationMocks(),
       ],
     }).compileComponents();
 
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
-    router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
+    router = TestBed.inject(Router);
+    spyOn(router, 'navigate');
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
