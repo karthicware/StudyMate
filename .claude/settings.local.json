@@ -33,7 +33,10 @@
       "Bash(git gc:*)",
       "Bash(git rebase:*)",
       "Bash(git stash:*)",
-      "Bash(git for-each-ref:*)"
+      "Bash(git for-each-ref:*)",
+      "Bash(git branch:*)",
+      "Bash(mvn clean:*)",
+      "Bash(mvn test:*)"
     ],
     "deny": [],
     "ask": [],

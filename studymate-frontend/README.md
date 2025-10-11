@@ -87,13 +87,47 @@ ng test
 
 ## Running end-to-end tests
 
-For end-to-end (e2e) testing, run:
+This project uses **Playwright** for end-to-end testing with cross-browser support.
+
+### Running E2E Tests
 
 ```bash
-ng e2e
+# Run tests in headless mode (CI)
+npm run e2e
+
+# Run tests with UI mode (interactive)
+npm run e2e:ui
+
+# Run tests with visible browser
+npm run e2e:headed
+
+# Run tests in debug mode
+npm run e2e:debug
+
+# View test report
+npm run e2e:report
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### Playwright MCP Integration
+
+Playwright is configured with MCP (Model Context Protocol) support for browser automation. The following MCP tools are available through Claude Code:
+- `mcp__playwright__browser_navigate` - Navigate to URLs
+- `mcp__playwright__browser_snapshot` - Capture accessibility snapshots
+- `mcp__playwright__browser_click` - Click elements
+- `mcp__playwright__browser_type` - Type into inputs
+- `mcp__playwright__browser_screenshot` - Take screenshots
+- `mcp__playwright__browser_console_messages` - Get console logs
+
+### Test Configuration
+
+Playwright is configured to:
+- Test on Chromium, Firefox, and WebKit browsers
+- Automatically start the Angular dev server on port 4200
+- Capture screenshots and videos on test failures
+- Run in parallel for faster execution
+- Retry failed tests in CI environments
+
+See `playwright.config.ts` for full configuration details.
 
 ## Additional Resources
 
