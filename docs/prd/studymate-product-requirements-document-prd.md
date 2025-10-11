@@ -1,6 +1,6 @@
-## 📝 StudyMate Product Requirements Document (PRD)
+# 📝 StudyMate Product Requirements Document (PRD)
 
-### 1. Project Context & Goals
+## 1. Project Context & Goals
 
 | Field | Detail |
 | :--- | :--- |
@@ -13,7 +13,7 @@
 
 ***
 
-### 2. Target User Profiles & Needs
+## 2. Target User Profiles & Needs
 
 | User | Needs (Why they use StudyMate) |
 | :--- | :--- |
@@ -22,7 +22,7 @@
 
 ***
 
-### 3. Core Modules, Features, and Requirements
+## 3. Core Modules, Features, and Requirements
 
 The following requirements are the confirmed scope for the Minimum Viable Product (MVP).
 
@@ -45,7 +45,7 @@ The following requirements are the confirmed scope for the Minimum Viable Produc
 
 ***
 
-### 4. Story Testing & Acceptance Requirements
+## 4. Story Testing & Acceptance Requirements
 
 All features and user stories must adhere to the following testing standards:
 
@@ -57,7 +57,7 @@ All features and user stories must adhere to the following testing standards:
 | **Database Validation** | All database operations in AC/story must be validated via PostgreSQL MCP server. | Integration test execution. |
 | **Evidence** | All testing must provide verifiable evidence of completion (screenshots, test reports, logs). | Attached to story completion. |
 
-#### Database/Entity/Migration Story Requirements
+### Database/Entity/Migration Story Requirements
 - **Playwright AC Validation**: Every acceptance criterion validated with Playwright, including browser console check.
 - **AC Report**: For each AC, report pass/fail status. If fail, Playwright must take a screenshot and reference it in the report.
 - **No Console Errors**: Browser console must be error/warning free for each AC.
@@ -67,7 +67,7 @@ All features and user stories must adhere to the following testing standards:
   - Credentials: user=`studymate_user`, pwd=`studymate_user`
   - All DB schema changes, migrations, and data integrity must be verified via PostgreSQL MCP.
 
-#### Integration Story Requirements
+### Integration Story Requirements
 When stories involve integration between systems or services:
 - **End-to-End Testing**: Complete business workflows tested across integrated components.
 - **Cross-System Validation**: Data consistency validated across integrated systems.
@@ -76,7 +76,7 @@ When stories involve integration between systems or services:
 
 ***
 
-### 5. Technical Constraints & Design References
+## 5. Technical Constraints & Design References
 
 | Field | Detail |
 | :--- | :--- |

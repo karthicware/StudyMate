@@ -1,6 +1,6 @@
-## 🏗️ StudyMate System Architecture Blueprint
+# 🏗️ StudyMate System Architecture Blueprint
 
-### 1. Technology Stack & Environment
+## 1. Technology Stack & Environment
 
 | Layer | Technology | Version / Stack | Reasoning |
 | :--- | :--- | :--- | :--- |
@@ -15,7 +15,7 @@
 
 ***
 
-### 2. High-Level System Architecture
+## 2. High-Level System Architecture
 
 The system utilizes a **3-Tier Architecture** with services decomposed by domain, accessible via a single API Gateway.
 
@@ -30,7 +30,7 @@ The system utilizes a **3-Tier Architecture** with services decomposed by domain
 
 ***
 
-### 3. Core Data Model (PostgreSQL Schema)
+## 3. Core Data Model (PostgreSQL Schema)
 
 | Table Name | Key Fields | Relationship Note | Criticality |
 | :--- | :--- | :--- | :--- |
@@ -41,7 +41,7 @@ The system utilizes a **3-Tier Architecture** with services decomposed by domain
 
 ***
 
-### 4. Key REST API Endpoints
+## 4. Key REST API Endpoints
 
 | Method | Endpoint | Service | Purpose |
 | :--- | :--- | :--- | :--- |
@@ -54,9 +54,9 @@ The system utilizes a **3-Tier Architecture** with services decomposed by domain
 
 ***
 
-### 5. Testing Architecture & Quality Assurance
+## 5. Testing Architecture & Quality Assurance
 
-#### Database & Integration Testing Requirements
+### Database & Integration Testing Requirements
 All database operations and service integrations must be validated with comprehensive testing:
 
 | Testing Layer | Requirement | Tools & Validation |
@@ -69,7 +69,7 @@ All database operations and service integrations must be validated with comprehe
 | **System Integration** | Complete workflow testing across all integrated components. | End-to-end test scenarios. |
 | **Performance** | System performance validated under integrated load scenarios. | Load testing with realistic data volumes. |
 
-#### Testing Framework Requirements
+### Testing Framework Requirements
 1. **Unit Integration**: Component-to-component interaction validation.
 2. **Service Integration**: Service-to-service communication testing (REST APIs, WebSockets).
 3. **System Integration**: Complete business workflow testing across all services.
@@ -77,18 +77,18 @@ All database operations and service integrations must be validated with comprehe
 5. **Data Integration**: Cross-system data consistency validation with rollback testing.
 6. **E2E Browser Testing**: Playwright for end-to-end user workflows following [coding standards](../guidelines/coding-standard-guidelines/playwright-rules.md).
 
-#### Error Handling & Recovery
+### Error Handling & Recovery
 - **Error Propagation**: Errors must be properly handled and propagated across service boundaries.
 - **Rollback Mechanisms**: System recovery from integration failures must be tested and validated.
 - **Transaction Integrity**: ACID compliance for all critical booking and payment operations.
 
 ***
 
-### 6. Backend Development Standards
+## 6. Backend Development Standards
 
 All backend development must follow Spring Boot best practices defined in [docs/guidelines/coding-standard-guidelines/java-spring-rules.md](../guidelines/coding-standard-guidelines/java-spring-rules.md).
 
-#### Key Spring Boot Requirements
+### Key Spring Boot Requirements
 
 | Requirement | Implementation |
 | :--- | :--- |
@@ -104,7 +104,7 @@ All backend development must follow Spring Boot best practices defined in [docs/
 | **Documentation** | Springdoc OpenAPI for API documentation. |
 | **Monitoring** | Spring Boot Actuator for metrics and health checks. |
 
-#### context7 MCP Integration (MANDATORY)
+### context7 MCP Integration (MANDATORY)
 All development must use context7 MCP for accessing up-to-date, version-specific documentation:
 
 - **Pre-Implementation**: ALWAYS consult context7 before writing code for latest patterns.
@@ -118,17 +118,17 @@ See comprehensive guidelines: [docs/guidelines/context7-mcp.md](../guidelines/co
 
 ***
 
-### 7. PostgreSQL MCP Integration (MANDATORY)
+## 7. PostgreSQL MCP Integration (MANDATORY)
 
 All database operations, validation, and testing must use PostgreSQL MCP server for direct database access.
 
-#### Database Connection Details
+### Database Connection Details
 - **Database Name**: `studymate_user`
 - **Username**: `studymate_user`
 - **Password**: `studymate_user`
 - **Access Level**: Full CRUD operations allowed
 
-#### Mandatory Usage Scenarios
+### Mandatory Usage Scenarios
 
 | Scenario | PostgreSQL MCP Usage | Purpose |
 | :--- | :--- | :--- |
@@ -140,14 +140,36 @@ All database operations, validation, and testing must use PostgreSQL MCP server 
 | **Performance Testing** | EXPLAIN queries, index usage analysis | Optimize query performance |
 | **Data Cleanup** | DELETE or TRUNCATE for test data | Maintain clean test environments |
 
-#### Integration with Story Testing
+### Integration with Story Testing
 - Every database-related acceptance criterion MUST be validated via PostgreSQL MCP
 - All entity/migration stories require PostgreSQL MCP verification before marking as "Done"
 - Test reports must include PostgreSQL MCP query results as evidence
 - Schema changes must be validated in real-time during development
 
-#### Best Practices
+### API Validation Testing Requirements (MANDATORY)
+**ALL API endpoints MUST be validated using PostgreSQL MCP with dummy data sourced from the database:**
+
+1. **Test Data Setup**: Use PostgreSQL MCP to create all test data (users, study halls, seats, bookings, payments, subscriptions, announcements)
+2. **Database-Sourced Credentials**: Use login credentials from PostgreSQL MCP database for authentication testing
+3. **API Testing**: Test all endpoints with data from database (form submissions, API calls, etc.)
+4. **Verification Queries**: Write SQL queries via PostgreSQL MCP to verify API responses match database state
+5. **Evidence Capture**: All test results MUST be documented in story files including:
+   - SQL queries used for test data setup
+   - API request/response details
+   - SQL verification queries and results
+   - Screenshots or formatted output as evidence
+6. **Validation Stories**: Each Epic must have a dedicated API validation story (e.g., 1.99, 2.99, 3.99, 4.99) covering all endpoints with PostgreSQL MCP testing
+
+**Story Naming Convention for API Validation:**
+- Epic 1: `1.99-api-validation.story.md` (Owner Dashboard & Analytics APIs)
+- Epic 2: `2.99-api-validation.story.md` (Student Booking & Seat Management APIs)
+- Epic 3: `3.99-api-validation.story.md` (Payment & Subscription APIs)
+- Epic 4: `4.99-api-validation.story.md` (Communication & Announcement APIs)
+
+### Best Practices
 - Use PostgreSQL MCP for immediate feedback during development
 - Validate all Spring Data JPA entities against actual database schema
 - Test transaction rollback scenarios directly via PostgreSQL MCP
 - Monitor database state changes during integration testing
+- Create comprehensive test data sets in database before API testing
+- Document all SQL queries and API responses as evidence in story files

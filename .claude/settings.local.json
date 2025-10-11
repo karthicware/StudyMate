@@ -1,9 +1,42 @@
 {
   "permissions": {
     "allow": [
-      "Bash(md-tree explode:*)"
+      "Bash(md-tree explode:*)",
+      "Read(//Users/natarajan/**)",
+      "Bash(npm install:*)",
+      "Bash(npx playwright:*)",
+      "Bash(claude mcp add:*)",
+      "Bash(pip install:*)",
+      "Bash(claude mcp list:*)",
+      "Bash(ng version)",
+      "Bash(ng new:*)",
+      "Bash(tree:*)",
+      "Bash(cat:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm start)",
+      "Bash(npm test:*)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(./node_modules/.bin/tailwindcss:*)",
+      "Bash(ng add:*)",
+      "Bash(test -d .vscode)",
+      "Bash(test:*)",
+      "Bash(npx husky init:*)",
+      "Bash(chmod:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run format:*)",
+      "Bash(git add:*)",
+      "Bash(git -c user.useConfigOnly=true commit --quiet --allow-empty-message --file -)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git reflog:*)",
+      "Bash(git gc:*)",
+      "Bash(git rebase:*)",
+      "Bash(git stash:*)",
+      "Bash(git for-each-ref:*)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "defaultMode": "bypassPermissions"
   }
 }

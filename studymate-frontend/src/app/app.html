@@ -1,0 +1,83 @@
+<main class="flex min-h-screen items-center justify-center p-4">
+  <div class="max-w-4xl w-full bg-primary text-white p-8 rounded-lg shadow-md">
+    <h1 class="text-4xl font-bold mb-4">StudyMate - NgRx Signals Store Demo</h1>
+    <p class="text-lg mb-6">NgRx with Signals is now configured and working! 🚀</p>
+
+    <!-- NgRx Store Demo Section -->
+    <div class="mb-6 p-4 bg-gray-800 rounded-lg">
+      <h3 class="text-xl font-semibold mb-3">Auth Store State</h3>
+      <div class="space-y-2 text-sm">
+        <p>
+          <span class="font-semibold">Authenticated:</span>
+          {{ authStore.selectIsAuthenticated() ? '✅ Yes' : '❌ No' }}
+        </p>
+        <p>
+          <span class="font-semibold">User Email:</span>
+          {{ authStore.selectUser()?.email || 'None' }}
+        </p>
+        <p>
+          <span class="font-semibold">User Role:</span> {{ authStore.selectUser()?.role || 'None' }}
+        </p>
+        <p><span class="font-semibold">Loading:</span> {{ authStore.loading() ? 'Yes' : 'No' }}</p>
+      </div>
+      <div class="mt-4 space-x-2">
+        <button
+          (click)="testLogin()"
+          class="bg-success hover:bg-green-600 px-4 py-2 rounded font-semibold transition"
+        >
+          Test Login
+        </button>
+        <button
+          (click)="testLogout()"
+          class="bg-error hover:bg-red-600 px-4 py-2 rounded font-semibold transition"
+        >
+          Test Logout
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-success p-4 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-2">Success Color</h2>
+        <p class="text-sm">This card uses the success theme color (#10B981)</p>
+      </div>
+
+      <div class="bg-warning text-gray-900 p-4 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-2">Warning Color</h2>
+        <p class="text-sm">This card uses the warning theme color (#F59E0B)</p>
+      </div>
+
+      <div class="bg-error p-4 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-2">Error Color</h2>
+        <p class="text-sm">This card uses the error theme color (#EF4444)</p>
+      </div>
+
+      <div class="bg-info p-4 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-2">Info Color</h2>
+        <p class="text-sm">This card uses the info theme color (#3B82F6)</p>
+      </div>
+    </div>
+
+    <div class="mt-6 p-4 bg-gray-100 text-gray-900 rounded-lg">
+      <h3 class="font-bold mb-2">Tailwind Utility Classes Working:</h3>
+      <ul class="list-disc list-inside text-sm space-y-1">
+        <li>✅ Custom theme colors (primary, success, warning, error, info)</li>
+        <li>✅ Responsive grid layouts (grid, grid-cols)</li>
+        <li>✅ Spacing utilities (p-4, m-6, gap-4)</li>
+        <li>✅ Typography (text-4xl, font-bold)</li>
+        <li>✅ Border radius (rounded-lg)</li>
+        <li>✅ Shadows (shadow, shadow-md)</li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * The content above * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * * -->
+<!-- * * * * * * * * * * and can be replaced.  * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * End of Placeholder  * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+
+<router-outlet />
