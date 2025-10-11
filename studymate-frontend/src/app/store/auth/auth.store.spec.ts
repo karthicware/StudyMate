@@ -22,8 +22,10 @@ describe('AuthStore', () => {
 
   it('should set user and update authenticated state', () => {
     const testUser: User = {
-      id: '1',
+      id: 1,
       email: 'test@example.com',
+      firstName: 'Test',
+      lastName: 'User',
       role: 'OWNER',
     };
 
@@ -37,8 +39,10 @@ describe('AuthStore', () => {
 
   it('should logout and reset state to initial values', () => {
     const testUser: User = {
-      id: '1',
+      id: 1,
       email: 'test@example.com',
+      firstName: 'Test',
+      lastName: 'User',
       role: 'OWNER',
     };
 
@@ -77,8 +81,10 @@ describe('AuthStore', () => {
     expect(store.selectIsAuthenticated()).toBeFalse();
 
     const testUser: User = {
-      id: '1',
+      id: 1,
       email: 'test@example.com',
+      firstName: 'Test',
+      lastName: 'User',
       role: 'STUDENT',
     };
 
@@ -94,8 +100,10 @@ describe('AuthStore', () => {
     expect(store.error()).toBe('Previous error');
 
     const testUser: User = {
-      id: '2',
+      id: 2,
       email: 'newuser@example.com',
+      firstName: 'New',
+      lastName: 'User',
       role: 'OWNER',
     };
 

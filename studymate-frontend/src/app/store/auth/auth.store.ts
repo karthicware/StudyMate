@@ -2,9 +2,11 @@ import { computed } from '@angular/core';
 import { signalStore, withState, withComputed, withMethods, patchState } from '@ngrx/signals';
 
 export interface User {
-  id: string;
+  id: number;
   email: string;
-  role: string;
+  firstName: string;
+  lastName: string;
+  role?: string;
 }
 
 interface AuthState {
