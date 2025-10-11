@@ -6,6 +6,7 @@ import com.studymate.backend.repository.BookingRepository;
 import com.studymate.backend.repository.SeatRepository;
 import com.studymate.backend.repository.StudyHallRepository;
 import com.studymate.backend.repository.UserRepository;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     "spring.jpa.show-sql=false",
     "logging.level.org.hibernate.SQL=ERROR"
 })
-@Transactional
 class DashboardServicePerformanceTest {
 
     @Autowired
@@ -51,11 +52,16 @@ class DashboardServicePerformanceTest {
     @Autowired
     private BookingRepository bookingRepository;
 
+    @Autowired
+    private EntityManager entityManager;
+
     private com.studymate.backend.model.User testOwner;
     private StudyHall testHall;
     private UserDetails userDetails;
 
     @BeforeEach
+    @Transactional
+    @Commit  // Force commit so data is visible to subsequent queries
     void setUp() {
         // Create test owner
         testOwner = new com.studymate.backend.model.User();
@@ -102,21 +108,26 @@ class DashboardServicePerformanceTest {
         testStudent.setRole(UserRole.ROLE_STUDENT);
         testStudent = userRepository.save(testStudent);
 
+        // Create 70 active bookings with times that will definitely be considered "active"
+        // endTime must be > CURRENT_TIMESTAMP per the repository query
+        LocalDateTime now = LocalDateTime.now();
         List<Booking> bookings = new ArrayList<>();
         for (int i = 0; i < 70; i++) {
             Booking booking = new Booking();
             booking.setUser(testStudent);
             booking.setSeat(seats.get(i));
-            booking.setStartTime(LocalDateTime.now().minusHours(2));
-            booking.setEndTime(LocalDateTime.now().plusHours(2));
+            booking.setStartTime(now.minusHours(2));
+            booking.setEndTime(now.plusDays(1));  // End time well into the future to ensure it's > CURRENT_TIMESTAMP
             booking.setStatus("CONFIRMED");
             booking.setAmount(new BigDecimal("100.00"));
             bookings.add(booking);
         }
         bookingRepository.saveAll(bookings);
+        // @Commit ensures data is committed and visible to subsequent queries
     }
 
     @AfterEach
+    @Transactional
     void tearDown() {
         // Cleanup in reverse order to respect foreign keys
         bookingRepository.deleteAll();
