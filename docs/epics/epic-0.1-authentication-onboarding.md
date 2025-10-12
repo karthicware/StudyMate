@@ -229,7 +229,7 @@ Establish the foundational authentication and onboarding system for the StudyMat
 - **HTTP Client:** Angular HttpClient with JWT interceptor
 - **Google Maps:** @angular/google-maps for location selection
 - **Coding Standards:** [docs/guidelines/coding-standard-guidelines/angular-rules.md](../guidelines/coding-standard-guidelines/angular-rules.md)
-- **UI/UX Standards:** [docs/guidelines/coding-standard-guidelines/ui-ux-design-best-practices.md](../guidelines/coding-standard-guidelines/ui-ux-design-best-practices.md)
+- **UI/UX Standards:** [docs/guidelines/airbnb-inspired-design-system.md](../guidelines/airbnb-inspired-design-system.md)
 
 ### Backend Stack
 - **Framework:** Spring Boot 3.5.6 (Java 17)

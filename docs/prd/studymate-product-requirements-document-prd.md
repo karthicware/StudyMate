@@ -83,8 +83,8 @@ When stories involve integration between systems or services:
 | **Front-End Stack** | Angular 20 (TypeScript) with Tailwind CSS. |
 | **Back-End Stack** | Spring Boot 3.5.6 (Java 17). |
 | **Database** | PostgreSQL (with transactional consistency enforced for booking). Access via PostgreSQL MCP: DB=`studymate_user`, user=`studymate_user`, pwd=`studymate_user`. |
-| **Design Reference** | All visual and interaction requirements are detailed in the **Front-End Specification** ([docs/front-end-spec.md](docs/front-end-spec.md)). |
-| **UI/UX Standards** | All UI/UX design must follow [docs/guidelines/coding-standard-guidelines/ui-ux-design-best-practices.md](docs/guidelines/coding-standard-guidelines/ui-ux-design-best-practices.md). |
+| **Design Reference** | All visual and interaction requirements are detailed in the **Front-End Specification** ([docs/guidelines/airbnb-inspired-design-system.md](docs/guidelines/airbnb-inspired-design-system.md)). |
+| **UI/UX Standards** | All UI/UX design must follow [docs/guidelines/airbnb-inspired-design-system.md](docs/guidelines/airbnb-inspired-design-system.md). |
 | **Coding Standards - Frontend** | All Angular development must follow [docs/guidelines/coding-standard-guidelines/angular-rules.md](docs/guidelines/coding-standard-guidelines/angular-rules.md). |
 | **Coding Standards - Backend** | All Java/Spring Boot development must follow [docs/guidelines/coding-standard-guidelines/java-spring-rules.md](docs/guidelines/coding-standard-guidelines/java-spring-rules.md). |
 | **Documentation & Research** | MANDATORY use of context7 MCP for version-specific documentation (Angular 20, Java 17, Spring Boot 3.5.6). See [docs/guidelines/context7-mcp.md](docs/guidelines/context7-mcp.md). |

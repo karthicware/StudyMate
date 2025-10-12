@@ -433,4 +433,4 @@ Closes #123
 - [Java/Spring Boot Detailed Rules](../guidelines/coding-standard-guidelines/java-spring-rules.md)
 - [Angular Detailed Rules](../guidelines/coding-standard-guidelines/angular-rules.md)
 - [Playwright Testing Rules](../guidelines/coding-standard-guidelines/playwright-rules.md)
-- [UI/UX Design Best Practices](../guidelines/coding-standard-guidelines/ui-ux-design-best-practices.md)
+- [UI/UX Design Best Practices](../guidelines/airbnb-inspired-design-system.md)

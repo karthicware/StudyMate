@@ -162,7 +162,7 @@ Enable study hall owners to efficiently manage their facilities (multiple study 
 - **Framework:** Angular 20 (TypeScript) with Tailwind CSS
 - **State Management:** NgRx with Signals
 - **Coding Standards:** [docs/guidelines/coding-standard-guidelines/angular-rules.md](../guidelines/coding-standard-guidelines/angular-rules.md)
-- **UI/UX Standards:** [docs/guidelines/coding-standard-guidelines/ui-ux-design-best-practices.md](../guidelines/coding-standard-guidelines/ui-ux-design-best-practices.md)
+- **UI/UX Standards:** [docs/guidelines/airbnb-inspired-design-system.md](../guidelines/airbnb-inspired-design-system.md)
 
 ### Backend Stack
 - **Framework:** Spring Boot 3.5.6 (Java 17)

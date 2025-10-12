@@ -15,9 +15,8 @@ studyhall/
 ├── docs/                        # Project documentation
 │   ├── architecture/            # Architecture documentation
 │   ├── epics/                   # Epic and story definitions
-│   ├── guidelines/              # Coding standards and guidelines
-│   ├── prd.md                   # Product Requirements Document
-│   └── front-end-spec.md        # Frontend specifications
+│   ├── guidelines/              # Coding standards and guidelines (includes Airbnb design system)
+│   └── prd.md                   # Product Requirements Document
 ├── .bmad-core/                  # BMAD agent configuration
 ├── .ai/                         # AI development artifacts
 └── README.md                    # Project overview
@@ -161,11 +160,10 @@ docs/
 │   ├── coding-standard-guidelines/
 │   │   ├── angular-rules.md
 │   │   ├── java-spring-rules.md
-│   │   ├── playwright-rules.md
-│   │   └── ui-ux-design-best-practices.md
+│   │   └── playwright-rules.md
+│   ├── airbnb-inspired-design-system.md  # Official design system (colors, typography, shadows, spacing)
 │   └── context7-mcp.md                   # Context7 usage guidelines
-├── prd.md                                # Product Requirements Document
-└── front-end-spec.md                     # Frontend specifications
+└── prd.md                                # Product Requirements Document
 ```
 
 ---

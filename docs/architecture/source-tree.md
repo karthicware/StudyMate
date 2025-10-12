@@ -64,8 +64,8 @@ studyhall/
 │   │   ├── coding-standard-guidelines/  # Language-specific rules
 │   │   │   ├── java-spring-rules.md
 │   │   │   ├── angular-rules.md
-│   │   │   ├── playwright-rules.md
-│   │   │   └── ui-ux-design-best-practices.md
+│   │   │   └── playwright-rules.md
+│   │   ├── airbnb-inspired-design-system.md  # Official design system
 │   │   ├── index.md
 │   │   ├── context7-mcp.md    # context7 usage guidelines
 │   │   ├── unit-testing-story-guidelines.md
@@ -73,7 +73,6 @@ studyhall/
 │   │
 │   ├── prd.md                 # Main PRD document
 │   ├── architecture.md        # Main architecture document
-│   ├── front-end-spec.md      # Frontend specifications
 │   └── mvp-coverage-report.md # MVP coverage analysis
 │
 ├── studymate-backend/         # Spring Boot backend application

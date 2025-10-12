@@ -959,5 +959,5 @@ private router = inject(Router);
 
 - [Frontend Architecture](./frontend-architecture.md)
 - [Angular Coding Standards](../guidelines/coding-standard-guidelines/angular-rules.md)
-- [UI/UX Design Best Practices](../guidelines/coding-standard-guidelines/ui-ux-design-best-practices.md)
+- [UI/UX Design Best Practices](../guidelines/airbnb-inspired-design-system.md)
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)

@@ -175,7 +175,7 @@ Provide students with a complete end-to-end experience: discovering study halls 
 - **State Management:** NgRx with Signals for real-time updates
 - **WebSocket/Polling:** For real-time seat availability updates
 - **Coding Standards:** [docs/guidelines/coding-standard-guidelines/angular-rules.md](../guidelines/coding-standard-guidelines/angular-rules.md)
-- **UI/UX Standards:** [docs/guidelines/coding-standard-guidelines/ui-ux-design-best-practices.md](../guidelines/coding-standard-guidelines/ui-ux-design-best-practices.md)
+- **UI/UX Standards:** [docs/guidelines/airbnb-inspired-design-system.md](../guidelines/airbnb-inspired-design-system.md)
 
 ### Backend Stack
 - **Framework:** Spring Boot 3.5.6 (Java 17)

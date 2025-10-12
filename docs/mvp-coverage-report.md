@@ -214,7 +214,7 @@ This coverage report validates features against the following documentation:
    - Testing Architecture
 
 4. **Front-End Specification**
-   - File: `docs/front-end-spec.md`
+   - File: `docs/guidelines/airbnb-inspired-design-system.md`
    - Owner Dashboard wireframe
    - Student Booking Map wireframe
    - Design System (60-30-10 Rule)
@@ -311,7 +311,7 @@ This coverage report validates features against the following documentation:
 
 - [Product Requirements Document](prd.md)
 - [System Architecture Blueprint](architecture.md)
-- [Front-End Specification](front-end-spec.md)
+- [Airbnb-Inspired Design System](guidelines/airbnb-inspired-design-system.md)
 - [Epic 0: Project Foundation & Setup](stories/epic-0-project-foundation-setup.md)
 - [Epic 1: Owner Dashboard & Analytics](stories/epic-1-owner-dashboard-analytics.md)
 - [Epic 2: Student Experience & Booking Management](stories/epic-2-student-booking-seat-management.md)

@@ -19,7 +19,7 @@
 ---
 
 ## 🎨 Visual Quality Checklist
-- [ ] Design System: Tailwind CSS compliance (refer to [docs/front-end-spec.md](../front-end-spec.md)).
+- [ ] Design System: Tailwind CSS compliance (refer to [docs/guidelines/airbnb-inspired-design-system.md](../guidelines/airbnb-inspired-design-system.md)).
 - [ ] S-Tier SaaS: Adherence to top SaaS standards.
 - [ ] Animations: Smooth animations and micro-interactions.
 - [ ] Consistency: Consistent spacing and typography.
