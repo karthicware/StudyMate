@@ -1,6 +1,9 @@
 import { provideRouter } from '@angular/router';
 import { Router, Routes } from '@angular/router';
 
+// Type declaration for Jasmine (for test files only)
+declare const jasmine: any;
+
 /**
  * Provides empty router configuration for isolated component tests.
  *
