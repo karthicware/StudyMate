@@ -1,0 +1,180 @@
+<!-- Fixed Header -->
+<header class="fixed top-0 left-0 right-0 h-16 bg-blue-600 text-white shadow-md z-50" role="banner">
+  <nav class="flex items-center justify-between px-4 md:px-6 h-full max-w-screen-2xl mx-auto" role="navigation" aria-label="Main navigation">
+
+    <!-- Left Section: Logo -->
+    <div class="flex items-center gap-4">
+      <button
+        (click)="navigateToDashboard()"
+        class="flex items-center gap-2 hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600 rounded"
+        aria-label="Go to Dashboard">
+        <svg class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        <span class="text-lg font-bold hidden sm:inline">StudyMate</span>
+      </button>
+    </div>
+
+    <!-- Center Section: Hall Name (hidden on mobile) -->
+    <div class="hidden md:block text-center">
+      <span class="text-sm font-medium" role="status" aria-live="polite">{{ hallName() }}</span>
+    </div>
+
+    <!-- Desktop Navigation Menu (≥1024px) -->
+    <div class="hidden lg:flex items-center gap-2">
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="bg-blue-700 font-semibold border-b-2 border-white"
+          [attr.aria-label]="item.ariaLabel"
+          ariaCurrentWhenActive="page"
+          class="px-4 py-2 rounded-t hover:bg-blue-500 transition-colors focus:outline-none focus:ring-2 focus:ring-white">
+          {{ item.label }}
+        </a>
+      }
+    </div>
+
+    <!-- Right Section: User Info & Actions -->
+    <div class="flex items-center gap-4">
+
+      <!-- Hall Name (mobile only) -->
+      <span class="text-xs md:hidden truncate max-w-[100px]" role="status" aria-live="polite">{{ hallName() }}</span>
+
+      <!-- User Avatar & Dropdown (desktop/tablet) -->
+      <div class="hidden md:block relative">
+        <button
+          (click)="toggleAvatarMenu()"
+          class="flex items-center gap-2 hover:bg-blue-500 px-3 py-1 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-white"
+          [attr.aria-expanded]="avatarMenuOpen()"
+          aria-haspopup="true"
+          aria-label="User menu">
+          <div class="w-8 h-8 rounded-full bg-blue-400 flex items-center justify-center text-sm font-semibold" aria-hidden="true">
+            {{ userInitials() }}
+          </div>
+          <span class="text-sm hidden lg:inline">{{ userName() }}</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        <!-- Avatar Dropdown Menu -->
+        @if (avatarMenuOpen()) {
+          <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 text-gray-700 z-50" role="menu" aria-orientation="vertical">
+            <button
+              (click)="navigateToProfile()"
+              class="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors focus:outline-none focus:bg-gray-100"
+              role="menuitem">
+              Profile
+            </button>
+            <button
+              (click)="navigateToSettings()"
+              class="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors focus:outline-none focus:bg-gray-100"
+              role="menuitem">
+              Settings
+            </button>
+            <hr class="my-1 border-gray-200">
+            <button
+              (click)="logout()"
+              class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition-colors focus:outline-none focus:bg-red-50"
+              role="menuitem">
+              Logout
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Logout Button (mobile only) -->
+      <button
+        (click)="logout()"
+        class="md:hidden px-3 py-1 text-sm bg-blue-500 hover:bg-blue-400 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-white"
+        aria-label="Logout">
+        Logout
+      </button>
+
+      <!-- Hamburger Menu Button (mobile/tablet <1024px) -->
+      <button
+        (click)="toggleMobileMenu()"
+        class="lg:hidden p-2 hover:bg-blue-500 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-white"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        aria-label="Toggle navigation menu"
+        aria-controls="mobile-menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          @if (!mobileMenuOpen()) {
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          } @else {
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          }
+        </svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<!-- Mobile/Tablet Navigation Drawer -->
+@if (mobileMenuOpen()) {
+  <!-- Overlay -->
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+    (click)="closeMobileMenu()"
+    aria-hidden="true">
+  </div>
+
+  <!-- Slide-out Drawer -->
+  <div
+    id="mobile-menu"
+    class="fixed top-16 right-0 bottom-0 w-64 bg-white shadow-xl z-40 lg:hidden overflow-y-auto"
+    role="menu"
+    aria-orientation="vertical">
+    <div class="flex flex-col p-4">
+
+      <!-- User Info (mobile) -->
+      <div class="md:hidden pb-4 mb-4 border-b border-gray-200">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center text-lg font-semibold" aria-hidden="true">
+            {{ userInitials() }}
+          </div>
+          <div>
+            <p class="font-semibold text-gray-900">{{ userName() }}</p>
+            <p class="text-sm text-gray-600">{{ hallName() }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Items -->
+      @for (item of navItems; track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="bg-blue-50 text-blue-600 font-semibold"
+          (click)="closeMobileMenu()"
+          [attr.aria-label]="item.ariaLabel"
+          ariaCurrentWhenActive="page"
+          class="px-4 py-3 rounded text-gray-700 hover:bg-gray-100 transition-colors focus:outline-none focus:bg-gray-100"
+          role="menuitem">
+          {{ item.label }}
+        </a>
+      }
+
+      <!-- Tablet Profile/Settings (768-1023px) -->
+      <div class="hidden md:block lg:hidden mt-4 pt-4 border-t border-gray-200">
+        <button
+          (click)="navigateToProfile()"
+          class="w-full text-left px-4 py-3 rounded text-gray-700 hover:bg-gray-100 transition-colors focus:outline-none focus:bg-gray-100"
+          role="menuitem">
+          Profile
+        </button>
+        <button
+          (click)="navigateToSettings()"
+          class="w-full text-left px-4 py-3 rounded text-gray-700 hover:bg-gray-100 transition-colors focus:outline-none focus:bg-gray-100"
+          role="menuitem">
+          Settings
+        </button>
+        <button
+          (click)="logout()"
+          class="w-full text-left px-4 py-3 rounded text-red-600 hover:bg-red-50 transition-colors focus:outline-none focus:bg-red-50"
+          role="menuitem">
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+}

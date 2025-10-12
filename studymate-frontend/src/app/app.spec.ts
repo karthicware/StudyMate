@@ -14,36 +14,11 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', () => {
+  it('should render router outlet', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain(
-      'StudyMate - NgRx Signals Store Demo',
-    );
-  });
-
-  it('should have Tailwind CSS classes applied', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const mainElement = compiled.querySelector('main');
-    expect(mainElement?.classList.contains('flex')).toBeTruthy();
-    expect(mainElement?.classList.contains('min-h-screen')).toBeTruthy();
-  });
-
-  it('should render custom theme color cards', () => {
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    const successCard = compiled.querySelector('.bg-success');
-    const warningCard = compiled.querySelector('.bg-warning');
-    const errorCard = compiled.querySelector('.bg-error');
-    const infoCard = compiled.querySelector('.bg-info');
-
-    expect(successCard).toBeTruthy();
-    expect(warningCard).toBeTruthy();
-    expect(errorCard).toBeTruthy();
-    expect(infoCard).toBeTruthy();
+    const routerOutlet = compiled.querySelector('router-outlet');
+    expect(routerOutlet).toBeTruthy();
   });
 });

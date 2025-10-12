@@ -1,9 +1,8 @@
-<div class="metric-card bg-white rounded-lg p-6 transition-all duration-200 hover:shadow-lg"
+<div class="metric-card bg-white rounded-lg p-6 shadow-md transition-all duration-200 hover:shadow-lg"
      [ngClass]="{
-       'shadow-md': variant() === 'default',
-       'shadow-md border-l-4 border-blue-500': variant() === 'primary',
-       'shadow-md border-l-4 border-green-500': variant() === 'success',
-       'shadow-md border-l-4 border-yellow-500': variant() === 'warning'
+       'border-l-4 border-blue-500': variant() === 'primary',
+       'border-l-4 border-green-500': variant() === 'success',
+       'border-l-4 border-yellow-500': variant() === 'warning'
      }">
   <div class="flex items-start justify-between">
     <div class="flex-1">

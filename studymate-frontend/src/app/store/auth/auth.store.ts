@@ -7,6 +7,7 @@ export interface User {
   firstName: string;
   lastName: string;
   role?: string;
+  hallName?: string;
 }
 
 interface AuthState {
