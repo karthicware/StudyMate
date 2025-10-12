@@ -98,5 +98,5 @@ export const TEST_ROUTES: Routes = [
   { path: 'student/bookings', component: {} as any },
 
   // Root
-  { path: '', redirectTo: '/auth/login', pathMatch: 'full' }
+  { path: '', redirectTo: '/auth/login', pathMatch: 'full' },
 ];

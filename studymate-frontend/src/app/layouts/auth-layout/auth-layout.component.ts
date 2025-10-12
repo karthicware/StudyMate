@@ -23,9 +23,7 @@ import { RouterModule } from '@angular/router';
       <!-- Footer -->
       <footer class="bg-white py-4 px-6 border-t border-gray-200">
         <div class="max-w-7xl mx-auto text-center">
-          <p class="text-sm text-gray-600">
-            © 2025 StudyMate. All rights reserved.
-          </p>
+          <p class="text-sm text-gray-600">© 2025 StudyMate. All rights reserved.</p>
           <div class="mt-2 space-x-4 text-sm">
             <a href="/privacy" class="text-blue-600 hover:text-blue-800">Privacy Policy</a>
             <span class="text-gray-400">|</span>
@@ -36,6 +34,6 @@ import { RouterModule } from '@angular/router';
         </div>
       </footer>
     </div>
-  `
+  `,
 })
 export class AuthLayoutComponent {}

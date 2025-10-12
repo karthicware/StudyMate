@@ -28,15 +28,11 @@ describe('RegisterComponent', () => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['register']);
 
     await TestBed.configureTestingModule({
-      imports: [
-        RegisterComponent,
-        ReactiveFormsModule,
-        HttpClientTestingModule,
-      ],
+      imports: [RegisterComponent, ReactiveFormsModule, HttpClientTestingModule],
       providers: [
         { provide: AuthService, useValue: authServiceSpy },
         provideRouterMock(), // Use Pattern 1: Isolated component tests
-        AuthStore
+        AuthStore,
       ],
     }).compileComponents();
 

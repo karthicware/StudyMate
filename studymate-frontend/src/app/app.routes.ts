@@ -23,7 +23,8 @@ export const routes: Routes = [
     children: [
       {
         path: 'login',
-        loadComponent: () => import('./features/auth/login.component').then((m) => m.LoginComponent),
+        loadComponent: () =>
+          import('./features/auth/login.component').then((m) => m.LoginComponent),
       },
       {
         path: 'register',
@@ -33,7 +34,9 @@ export const routes: Routes = [
       {
         path: 'owner/register',
         loadComponent: () =>
-          import('./features/auth/owner-register/owner-register.component').then((m) => m.OwnerRegisterComponent),
+          import('./features/auth/owner-register/owner-register.component').then(
+            (m) => m.OwnerRegisterComponent,
+          ),
       },
       {
         path: '',

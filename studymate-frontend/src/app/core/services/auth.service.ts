@@ -3,7 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
-import { LoginRequest, RegisterRequest, OwnerRegistrationRequest, AuthResponse } from '../models/auth.models';
+import {
+  LoginRequest,
+  RegisterRequest,
+  OwnerRegistrationRequest,
+  AuthResponse,
+} from '../models/auth.models';
 import { AuthStore } from '../../store/auth/auth.store';
 
 @Injectable({ providedIn: 'root' })

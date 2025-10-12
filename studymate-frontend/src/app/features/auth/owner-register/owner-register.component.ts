@@ -1,6 +1,13 @@
 import { Component, signal, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
@@ -11,7 +18,7 @@ import { OwnerRegistrationRequest } from '../../../core/models/auth.models';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './owner-register.component.html',
-  styleUrls: ['./owner-register.component.scss']
+  styleUrls: ['./owner-register.component.scss'],
 })
 export class OwnerRegisterComponent implements OnDestroy {
   private fb = inject(FormBuilder);
@@ -30,21 +37,26 @@ export class OwnerRegisterComponent implements OnDestroy {
   private passwordSubscription?: Subscription;
 
   constructor() {
-    this.registerForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(2)]],
-      lastName: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, this.passwordStrengthValidator]],
-      confirmPassword: ['', [Validators.required]],
-      phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
-      businessName: ['', [Validators.required, Validators.minLength(3)]],
-      termsAccepted: [false, [Validators.requiredTrue]]
-    }, { validators: this.passwordMatchValidator });
+    this.registerForm = this.fb.group(
+      {
+        firstName: ['', [Validators.required, Validators.minLength(2)]],
+        lastName: ['', [Validators.required, Validators.minLength(2)]],
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.required, this.passwordStrengthValidator]],
+        confirmPassword: ['', [Validators.required]],
+        phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+        businessName: ['', [Validators.required, Validators.minLength(3)]],
+        termsAccepted: [false, [Validators.requiredTrue]],
+      },
+      { validators: this.passwordMatchValidator },
+    );
 
     // Update password strength on password changes
-    this.passwordSubscription = this.registerForm.get('password')?.valueChanges.subscribe(value => {
-      this.updatePasswordStrength(value || '');
-    });
+    this.passwordSubscription = this.registerForm
+      .get('password')
+      ?.valueChanges.subscribe((value) => {
+        this.updatePasswordStrength(value || '');
+      });
 
     // Clear error messages on form value changes
     this.registerForm.valueChanges.subscribe(() => {
@@ -70,24 +82,27 @@ export class OwnerRegisterComponent implements OnDestroy {
         email: this.registerForm.value.email,
         password: this.registerForm.value.password,
         phone: this.registerForm.value.phone,
-        businessName: this.registerForm.value.businessName
+        businessName: this.registerForm.value.businessName,
       };
 
       this.authService.registerOwner(request).subscribe({
         next: (response) => {
           this.isLoading.set(false);
-          this.successMessage.set(response.message || 'Registration successful! Please check your email to verify your account.');
+          this.successMessage.set(
+            response.message ||
+              'Registration successful! Please check your email to verify your account.',
+          );
           // Navigate to email verification page after short delay
           setTimeout(() => {
             this.router.navigate(['/auth/verify-email'], {
-              queryParams: { email: request.email }
+              queryParams: { email: request.email },
             });
           }, 2000);
         },
         error: (error) => {
           this.isLoading.set(false);
           this.handleError(error);
-        }
+        },
       });
     } else {
       this.markFormGroupTouched(this.registerForm);
@@ -104,17 +119,20 @@ export class OwnerRegisterComponent implements OnDestroy {
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
     const isLengthValid = value.length >= 8;
 
-    const passwordValid = hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar && isLengthValid;
+    const passwordValid =
+      hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar && isLengthValid;
 
-    return passwordValid ? null : {
-      passwordStrength: {
-        hasUpperCase,
-        hasLowerCase,
-        hasNumber,
-        hasSpecialChar,
-        isLengthValid
-      }
-    };
+    return passwordValid
+      ? null
+      : {
+          passwordStrength: {
+            hasUpperCase,
+            hasLowerCase,
+            hasNumber,
+            hasSpecialChar,
+            isLengthValid,
+          },
+        };
   }
 
   private passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
@@ -135,7 +153,9 @@ export class OwnerRegisterComponent implements OnDestroy {
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
     const isLengthValid = password.length >= 8;
 
-    const strength = [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar, isLengthValid].filter(Boolean).length;
+    const strength = [hasUpperCase, hasLowerCase, hasNumber, hasSpecialChar, isLengthValid].filter(
+      Boolean,
+    ).length;
 
     if (strength === 5) {
       this.passwordStrength.set('strong');
@@ -148,16 +168,20 @@ export class OwnerRegisterComponent implements OnDestroy {
 
   private handleError(error: any): void {
     if (error.status === 409) {
-      this.errorMessage.set('An account with this email already exists. Please use a different email or try logging in.');
+      this.errorMessage.set(
+        'An account with this email already exists. Please use a different email or try logging in.',
+      );
     } else if (error.status === 400) {
-      this.errorMessage.set(error.error?.message || 'Validation failed. Please check your input and try again.');
+      this.errorMessage.set(
+        error.error?.message || 'Validation failed. Please check your input and try again.',
+      );
     } else {
       this.errorMessage.set('An unexpected error occurred. Please try again later.');
     }
   }
 
   private markFormGroupTouched(formGroup: FormGroup): void {
-    Object.keys(formGroup.controls).forEach(key => {
+    Object.keys(formGroup.controls).forEach((key) => {
       const control = formGroup.get(key);
       control?.markAsTouched();
       if (control instanceof FormGroup) {
@@ -167,35 +191,44 @@ export class OwnerRegisterComponent implements OnDestroy {
   }
 
   togglePasswordVisibility(): void {
-    this.showPassword.update(value => !value);
+    this.showPassword.update((value) => !value);
   }
 
   toggleConfirmPasswordVisibility(): void {
-    this.showConfirmPassword.update(value => !value);
+    this.showConfirmPassword.update((value) => !value);
   }
 
   // Helper methods for template
   get passwordStrengthColor(): string {
     switch (this.passwordStrength()) {
-      case 'strong': return 'bg-green-500';
-      case 'medium': return 'bg-yellow-500';
-      default: return 'bg-red-500';
+      case 'strong':
+        return 'bg-green-500';
+      case 'medium':
+        return 'bg-yellow-500';
+      default:
+        return 'bg-red-500';
     }
   }
 
   get passwordStrengthWidth(): string {
     switch (this.passwordStrength()) {
-      case 'strong': return 'w-full';
-      case 'medium': return 'w-2/3';
-      default: return 'w-1/3';
+      case 'strong':
+        return 'w-full';
+      case 'medium':
+        return 'w-2/3';
+      default:
+        return 'w-1/3';
     }
   }
 
   get passwordStrengthText(): string {
     switch (this.passwordStrength()) {
-      case 'strong': return 'Strong password';
-      case 'medium': return 'Medium strength';
-      default: return 'Weak password';
+      case 'strong':
+        return 'Strong password';
+      case 'medium':
+        return 'Medium strength';
+      default:
+        return 'Weak password';
     }
   }
 }

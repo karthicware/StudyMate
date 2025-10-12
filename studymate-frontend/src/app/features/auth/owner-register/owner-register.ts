@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-owner-register',
   imports: [],
   templateUrl: './owner-register.html',
-  styleUrl: './owner-register.scss'
+  styleUrl: './owner-register.scss',
 })
-export class OwnerRegister {
-
-}
+export class OwnerRegister {}

@@ -18,10 +18,7 @@ describe('OwnerRegisterComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [OwnerRegisterComponent, HttpClientTestingModule],
-      providers: [
-        { provide: AuthService, useValue: authServiceSpy },
-        provideRouter([])
-      ]
+      providers: [{ provide: AuthService, useValue: authServiceSpy }, provideRouter([])],
     }).compileComponents();
 
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
@@ -116,12 +113,12 @@ describe('OwnerRegisterComponent', () => {
     it('should validate password match', () => {
       component.registerForm.patchValue({
         password: 'Test@1234',
-        confirmPassword: 'Different@1234'
+        confirmPassword: 'Different@1234',
       });
       expect(component.registerForm.hasError('passwordMismatch')).toBeTruthy();
 
       component.registerForm.patchValue({
-        confirmPassword: 'Test@1234'
+        confirmPassword: 'Test@1234',
       });
       expect(component.registerForm.hasError('passwordMismatch')).toBeFalsy();
     });
@@ -136,9 +133,9 @@ describe('OwnerRegisterComponent', () => {
           email: 'test@example.com',
           firstName: 'John',
           lastName: 'Doe',
-          role: 'OWNER'
+          role: 'OWNER',
         },
-        message: 'Registration successful'
+        message: 'Registration successful',
       };
       authService.registerOwner.and.returnValue(of(mockResponse));
 
@@ -150,7 +147,7 @@ describe('OwnerRegisterComponent', () => {
         confirmPassword: 'Strong@123',
         phone: '9876543210',
         businessName: 'Test Business',
-        termsAccepted: true
+        termsAccepted: true,
       });
 
       component.onSubmit();
@@ -161,12 +158,12 @@ describe('OwnerRegisterComponent', () => {
         email: 'test@example.com',
         password: 'Strong@123',
         phone: '9876543210',
-        businessName: 'Test Business'
+        businessName: 'Test Business',
       });
 
       tick(2100); // Wait for navigation delay
       expect(router.navigate).toHaveBeenCalledWith(['/auth/verify-email'], {
-        queryParams: { email: 'test@example.com' }
+        queryParams: { email: 'test@example.com' },
       });
     }));
 
@@ -186,7 +183,7 @@ describe('OwnerRegisterComponent', () => {
         confirmPassword: 'Strong@123',
         phone: '9876543210',
         businessName: 'Test Business',
-        termsAccepted: true
+        termsAccepted: true,
       });
 
       component.onSubmit();
@@ -204,14 +201,12 @@ describe('OwnerRegisterComponent', () => {
         confirmPassword: 'Strong@123',
         phone: '9876543210',
         businessName: 'Test Business',
-        termsAccepted: true
+        termsAccepted: true,
       });
     });
 
     it('should handle 409 Conflict error (duplicate email)', () => {
-      authService.registerOwner.and.returnValue(
-        throwError(() => ({ status: 409 }))
-      );
+      authService.registerOwner.and.returnValue(throwError(() => ({ status: 409 })));
 
       component.onSubmit();
 
@@ -222,8 +217,8 @@ describe('OwnerRegisterComponent', () => {
       authService.registerOwner.and.returnValue(
         throwError(() => ({
           status: 400,
-          error: { message: 'Invalid data' }
-        }))
+          error: { message: 'Invalid data' },
+        })),
       );
 
       component.onSubmit();
@@ -232,9 +227,7 @@ describe('OwnerRegisterComponent', () => {
     });
 
     it('should handle generic error', () => {
-      authService.registerOwner.and.returnValue(
-        throwError(() => ({ status: 500 }))
-      );
+      authService.registerOwner.and.returnValue(throwError(() => ({ status: 500 })));
 
       component.onSubmit();
 

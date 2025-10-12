@@ -187,7 +187,9 @@ describe('OwnerLayoutComponent', () => {
       expect(footer).toBeTruthy();
 
       // Verify order in DOM
-      const allElements = Array.from(compiled.querySelectorAll('app-owner-header, main, app-owner-footer'));
+      const allElements = Array.from(
+        compiled.querySelectorAll('app-owner-header, main, app-owner-footer'),
+      );
       expect(allElements[0].tagName.toLowerCase()).toBe('app-owner-header');
       expect(allElements[1].tagName.toLowerCase()).toBe('main');
       expect(allElements[2].tagName.toLowerCase()).toBe('app-owner-footer');
