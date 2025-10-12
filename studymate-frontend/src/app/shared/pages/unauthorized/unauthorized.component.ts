@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthStore } from '../../../store/auth/auth.store';
@@ -143,17 +143,8 @@ import { AuthStore } from '../../../store/auth/auth.store';
   `,
 })
 export class UnauthorizedComponent {
-  private authStore = this.router.getCurrentNavigation()?.extras.state?.['authStore'] || null;
-
-  constructor(
-    private router: Router,
-    private defaultAuthStore: AuthStore,
-  ) {
-    // Use injected store if not passed via state
-    if (!this.authStore) {
-      this.authStore = this.defaultAuthStore;
-    }
-  }
+  private router = inject(Router);
+  private defaultAuthStore = inject(AuthStore);
 
   // Expose auth state
   isAuthenticated = this.defaultAuthStore.selectIsAuthenticated;

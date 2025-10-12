@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
-import { LoginRequest, RegisterRequest, AuthResponse } from '../models/auth.models';
+import { LoginRequest, RegisterRequest, OwnerRegistrationRequest, AuthResponse } from '../models/auth.models';
 import { AuthStore } from '../../store/auth/auth.store';
 
 @Injectable({ providedIn: 'root' })
@@ -45,6 +45,20 @@ export class AuthService {
   register(userData: RegisterRequest): Observable<AuthResponse> {
     this.authStore.setLoading(true);
     return this.http.post<AuthResponse>(`${this.API_URL}/register`, userData).pipe(
+      tap((response) => {
+        this.storeToken(response.token);
+        this.authStore.setUser(response.user);
+        this.startTokenRefresh(response.token);
+      }),
+    );
+  }
+
+  /**
+   * Register new owner account
+   */
+  registerOwner(userData: OwnerRegistrationRequest): Observable<AuthResponse> {
+    this.authStore.setLoading(true);
+    return this.http.post<AuthResponse>(`${this.API_URL}/owner/register`, userData).pipe(
       tap((response) => {
         this.storeToken(response.token);
         this.authStore.setUser(response.user);

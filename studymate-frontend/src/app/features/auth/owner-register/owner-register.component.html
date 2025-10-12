@@ -1,0 +1,320 @@
+<div class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+  <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Create Owner Account</h2>
+
+  <!-- Success Message -->
+  @if (successMessage()) {
+    <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded" role="alert" data-testid="success-message">
+      <p class="font-medium">{{ successMessage() }}</p>
+    </div>
+  }
+
+  <!-- Error Message -->
+  @if (errorMessage()) {
+    <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded" role="alert" data-testid="error-message">
+      <p class="font-medium">{{ errorMessage() }}</p>
+    </div>
+  }
+
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+    <!-- First Name -->
+    <div class="mb-4">
+      <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">
+        First Name <span class="text-red-600">*</span>
+      </label>
+      <input
+        id="firstName"
+        type="text"
+        formControlName="firstName"
+        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="John"
+        data-testid="firstName"
+        aria-required="true"
+        aria-describedby="firstName-error"
+        [attr.aria-invalid]="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched"
+      />
+      @if (registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched) {
+        <p class="text-red-600 text-sm mt-1" id="firstName-error" data-testid="firstName-error" role="alert">
+          @if (registerForm.get('firstName')?.errors?.['required']) {
+            First name is required
+          }
+          @if (registerForm.get('firstName')?.errors?.['minlength']) {
+            First name must be at least 2 characters
+          }
+        </p>
+      }
+    </div>
+
+    <!-- Last Name -->
+    <div class="mb-4">
+      <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">
+        Last Name <span class="text-red-600">*</span>
+      </label>
+      <input
+        id="lastName"
+        type="text"
+        formControlName="lastName"
+        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Doe"
+        data-testid="lastName"
+        aria-required="true"
+        aria-describedby="lastName-error"
+        [attr.aria-invalid]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched"
+      />
+      @if (registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched) {
+        <p class="text-red-600 text-sm mt-1" id="lastName-error" data-testid="lastName-error" role="alert">
+          @if (registerForm.get('lastName')?.errors?.['required']) {
+            Last name is required
+          }
+          @if (registerForm.get('lastName')?.errors?.['minlength']) {
+            Last name must be at least 2 characters
+          }
+        </p>
+      }
+    </div>
+
+    <!-- Email -->
+    <div class="mb-4">
+      <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+        Email Address <span class="text-red-600">*</span>
+      </label>
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="owner@example.com"
+        data-testid="email"
+        aria-required="true"
+        aria-describedby="email-error"
+        [attr.aria-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+      />
+      @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+        <p class="text-red-600 text-sm mt-1" id="email-error" data-testid="email-error" role="alert">
+          @if (registerForm.get('email')?.errors?.['required']) {
+            Email is required
+          }
+          @if (registerForm.get('email')?.errors?.['email']) {
+            Please enter a valid email address
+          }
+        </p>
+      }
+    </div>
+
+    <!-- Phone -->
+    <div class="mb-4">
+      <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
+        Phone Number <span class="text-red-600">*</span>
+      </label>
+      <input
+        id="phone"
+        type="tel"
+        formControlName="phone"
+        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="9876543210"
+        data-testid="phone"
+        aria-required="true"
+        aria-describedby="phone-error"
+        [attr.aria-invalid]="registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched"
+      />
+      @if (registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched) {
+        <p class="text-red-600 text-sm mt-1" id="phone-error" data-testid="phone-error" role="alert">
+          @if (registerForm.get('phone')?.errors?.['required']) {
+            Phone number is required
+          }
+          @if (registerForm.get('phone')?.errors?.['pattern']) {
+            Please enter a valid 10-digit phone number
+          }
+        </p>
+      }
+    </div>
+
+    <!-- Business Name -->
+    <div class="mb-4">
+      <label for="businessName" class="block text-sm font-medium text-gray-700 mb-1">
+        Business Name <span class="text-red-600">*</span>
+      </label>
+      <input
+        id="businessName"
+        type="text"
+        formControlName="businessName"
+        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        placeholder="Study Hub Pvt Ltd"
+        data-testid="businessName"
+        aria-required="true"
+        aria-describedby="businessName-error"
+        [attr.aria-invalid]="registerForm.get('businessName')?.invalid && registerForm.get('businessName')?.touched"
+      />
+      @if (registerForm.get('businessName')?.invalid && registerForm.get('businessName')?.touched) {
+        <p class="text-red-600 text-sm mt-1" id="businessName-error" data-testid="businessName-error" role="alert">
+          @if (registerForm.get('businessName')?.errors?.['required']) {
+            Business name is required
+          }
+          @if (registerForm.get('businessName')?.errors?.['minlength']) {
+            Business name must be at least 3 characters
+          }
+        </p>
+      }
+    </div>
+
+    <!-- Password -->
+    <div class="mb-4">
+      <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+        Password <span class="text-red-600">*</span>
+      </label>
+      <div class="relative">
+        <input
+          id="password"
+          [type]="showPassword() ? 'text' : 'password'"
+          formControlName="password"
+          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="••••••••"
+          data-testid="password"
+          aria-required="true"
+          aria-describedby="password-error password-strength"
+          [attr.aria-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+        />
+        <button
+          type="button"
+          (click)="togglePasswordVisibility()"
+          class="absolute right-3 top-2.5 text-gray-600 hover:text-gray-800"
+          aria-label="Toggle password visibility"
+        >
+          {{ showPassword() ? '👁️' : '👁️‍🗨️' }}
+        </button>
+      </div>
+
+      <!-- Password Strength Indicator -->
+      @if (registerForm.get('password')?.value) {
+        <div class="mt-2" id="password-strength" data-testid="password-strength" [attr.data-strength]="passwordStrength()">
+          <div class="flex items-center gap-2 mb-1">
+            <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div [class]="'h-full transition-all duration-300 ' + passwordStrengthColor + ' ' + passwordStrengthWidth"></div>
+            </div>
+            <span [class]="'text-xs font-medium ' + (passwordStrength() === 'strong' ? 'text-green-600' : passwordStrength() === 'medium' ? 'text-yellow-600' : 'text-red-600')">
+              {{ passwordStrengthText }}
+            </span>
+          </div>
+        </div>
+      }
+
+      @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+        <p class="text-red-600 text-sm mt-1" id="password-error" data-testid="password-error" role="alert">
+          @if (registerForm.get('password')?.errors?.['required']) {
+            Password is required
+          }
+          @if (registerForm.get('password')?.errors?.['passwordStrength']) {
+            <span class="block">Password must contain:</span>
+            <ul class="list-disc ml-5 mt-1">
+              @if (!registerForm.get('password')?.errors?.['passwordStrength']?.['isLengthValid']) {
+                <li>At least 8 characters</li>
+              }
+              @if (!registerForm.get('password')?.errors?.['passwordStrength']?.['hasUpperCase']) {
+                <li>One uppercase letter</li>
+              }
+              @if (!registerForm.get('password')?.errors?.['passwordStrength']?.['hasLowerCase']) {
+                <li>One lowercase letter</li>
+              }
+              @if (!registerForm.get('password')?.errors?.['passwordStrength']?.['hasNumber']) {
+                <li>One number</li>
+              }
+              @if (!registerForm.get('password')?.errors?.['passwordStrength']?.['hasSpecialChar']) {
+                <li>One special character</li>
+              }
+            </ul>
+          }
+        </p>
+      }
+    </div>
+
+    <!-- Confirm Password -->
+    <div class="mb-4">
+      <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1">
+        Confirm Password <span class="text-red-600">*</span>
+      </label>
+      <div class="relative">
+        <input
+          id="confirmPassword"
+          [type]="showConfirmPassword() ? 'text' : 'password'"
+          formControlName="confirmPassword"
+          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="••••••••"
+          data-testid="confirmPassword"
+          aria-required="true"
+          aria-describedby="confirmPassword-error"
+          [attr.aria-invalid]="(registerForm.get('confirmPassword')?.invalid || registerForm.errors?.['passwordMismatch']) && registerForm.get('confirmPassword')?.touched"
+        />
+        <button
+          type="button"
+          (click)="toggleConfirmPasswordVisibility()"
+          class="absolute right-3 top-2.5 text-gray-600 hover:text-gray-800"
+          aria-label="Toggle confirm password visibility"
+        >
+          {{ showConfirmPassword() ? '👁️' : '👁️‍🗨️' }}
+        </button>
+      </div>
+      @if ((registerForm.get('confirmPassword')?.invalid || registerForm.errors?.['passwordMismatch']) && registerForm.get('confirmPassword')?.touched) {
+        <p class="text-red-600 text-sm mt-1" id="confirmPassword-error" data-testid="confirmPassword-error" role="alert">
+          @if (registerForm.get('confirmPassword')?.errors?.['required']) {
+            Please confirm your password
+          }
+          @if (registerForm.errors?.['passwordMismatch']) {
+            Passwords do not match
+          }
+        </p>
+      }
+    </div>
+
+    <!-- Terms & Conditions -->
+    <div class="mb-6">
+      <label class="flex items-start">
+        <input
+          id="termsAccepted"
+          type="checkbox"
+          formControlName="termsAccepted"
+          class="mt-1 mr-2"
+          data-testid="termsAccepted"
+          aria-required="true"
+          aria-describedby="terms-error"
+        />
+        <span class="text-sm text-gray-700">
+          I agree to the <a href="/terms" class="text-blue-600 hover:text-blue-800 underline">Terms & Conditions</a> and <a href="/privacy" class="text-blue-600 hover:text-blue-800 underline">Privacy Policy</a>
+          <span class="text-red-600">*</span>
+        </span>
+      </label>
+      @if (registerForm.get('termsAccepted')?.invalid && registerForm.get('termsAccepted')?.touched) {
+        <p class="text-red-600 text-sm mt-1" id="terms-error" data-testid="terms-error" role="alert">
+          You must accept the terms and conditions
+        </p>
+      }
+    </div>
+
+    <!-- Submit Button -->
+    <button
+      type="submit"
+      [disabled]="isLoading()"
+      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      data-testid="register-button"
+      [attr.aria-busy]="isLoading()"
+    >
+      @if (isLoading()) {
+        <span class="inline-flex items-center">
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Creating Account...
+        </span>
+      } @else {
+        Sign Up
+      }
+    </button>
+  </form>
+
+  <!-- Login Link -->
+  <div class="mt-6 text-center text-sm text-gray-600">
+    Already have an account?
+    <a routerLink="/auth/login" class="text-blue-600 hover:text-blue-800 font-medium">
+      Log in
+    </a>
+  </div>
+</div>

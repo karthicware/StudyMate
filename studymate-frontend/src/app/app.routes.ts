@@ -2,12 +2,13 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
 import { OwnerLayoutComponent } from './owner/owner-layout/owner-layout.component';
+import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 
 /**
  * Application Routes Configuration
  *
  * Routing structure:
- * - /login, /register - Public authentication routes
+ * - /auth/* - Public authentication routes (with auth layout)
  * - /owner/* - Owner Portal routes (protected by authGuard + roleGuard)
  *   - Uses OwnerLayoutComponent as parent for consistent layout
  *   - All child routes lazy loaded for optimal performance
@@ -15,15 +16,43 @@ import { OwnerLayoutComponent } from './owner/owner-layout/owner-layout.componen
  * - /** - 404 Not Found page (wildcard route)
  */
 export const routes: Routes = [
-  // Public Routes - Authentication
+  // Authentication Routes - Public with Auth Layout
+  {
+    path: 'auth',
+    component: AuthLayoutComponent, // Auth layout with header/footer
+    children: [
+      {
+        path: 'login',
+        loadComponent: () => import('./features/auth/login.component').then((m) => m.LoginComponent),
+      },
+      {
+        path: 'register',
+        loadComponent: () =>
+          import('./features/auth/register.component').then((m) => m.RegisterComponent),
+      },
+      {
+        path: 'owner/register',
+        loadComponent: () =>
+          import('./features/auth/owner-register/owner-register.component').then((m) => m.OwnerRegisterComponent),
+      },
+      {
+        path: '',
+        redirectTo: 'login',
+        pathMatch: 'full',
+      },
+    ],
+  },
+
+  // Legacy routes - redirect to /auth/* for backward compatibility
   {
     path: 'login',
-    loadComponent: () => import('./features/auth/login.component').then((m) => m.LoginComponent),
+    redirectTo: '/auth/login',
+    pathMatch: 'full',
   },
   {
     path: 'register',
-    loadComponent: () =>
-      import('./features/auth/register.component').then((m) => m.RegisterComponent),
+    redirectTo: '/auth/register',
+    pathMatch: 'full',
   },
 
   // Owner Portal Routes - Protected by Auth & Role Guards
@@ -100,7 +129,7 @@ export const routes: Routes = [
   // Root redirect
   {
     path: '',
-    redirectTo: '/login',
+    redirectTo: '/auth/login',
     pathMatch: 'full',
   },
 
