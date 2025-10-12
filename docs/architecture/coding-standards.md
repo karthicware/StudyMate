@@ -295,6 +295,29 @@ describe('BookingComponent', () => {
 });
 ```
 
+#### Router Testing
+For components using Router or RouterLink, use the router test utilities:
+```typescript
+import { provideRouterMock, createRouterSpy, TEST_ROUTES } from '@testing/router-test-utils';
+
+// Pattern 1: Components with RouterLink (most common)
+TestBed.configureTestingModule({
+  providers: [provideRouterMock()]
+});
+
+// Pattern 2: Testing navigation calls
+const routerSpy = createRouterSpy();
+TestBed.configureTestingModule({
+  providers: [{ provide: Router, useValue: routerSpy }]
+});
+
+// Pattern 3: Integration tests with routes
+TestBed.configureTestingModule({
+  providers: [provideRouter(TEST_ROUTES)]
+});
+```
+📖 **Full Guide**: [Router Testing Patterns](../../testing/router-mocking-patterns.md)
+
 ### Accessibility
 - Use semantic HTML elements
 - Include appropriate ARIA attributes

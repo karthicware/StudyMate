@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 import { of, throwError } from 'rxjs';
 import { RegisterComponent } from './register.component';
 import { AuthService } from '../../core/services/auth.service';
 import { AuthStore } from '../../store/auth/auth.store';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideRouterMock } from '../../../testing/router-test-utils';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
@@ -32,15 +32,17 @@ describe('RegisterComponent', () => {
         RegisterComponent,
         ReactiveFormsModule,
         HttpClientTestingModule,
-        RouterTestingModule,
       ],
-      providers: [{ provide: AuthService, useValue: authServiceSpy }, AuthStore],
+      providers: [
+        { provide: AuthService, useValue: authServiceSpy },
+        provideRouterMock(), // Use Pattern 1: Isolated component tests
+        AuthStore
+      ],
     }).compileComponents();
 
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
     router = TestBed.inject(Router);
-    router.initialNavigation(); // Initialize router for RouterLink directive
-    spyOn(router, 'navigate');
+    spyOn(router, 'navigate'); // Spy on the real router's navigate method
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

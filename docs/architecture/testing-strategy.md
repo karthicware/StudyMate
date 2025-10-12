@@ -118,6 +118,34 @@ describe('BookingService', () => {
 });
 ```
 
+#### Router Test Utilities
+
+**Location**: `src/testing/router-test-utils.ts`
+
+To simplify and standardize Router testing across components, use the provided router test utilities:
+
+| Utility | Purpose | When to Use |
+|---------|---------|-------------|
+| `provideRouterMock()` | Empty router configuration | Components with RouterLink but no navigation logic |
+| `createRouterSpy()` | Router spy for navigation verification | Testing navigation calls without actual routing |
+| `TEST_ROUTES` | Common test routes | Integration tests with route guards or parameters |
+
+**Example Usage:**
+```typescript
+import { provideRouterMock } from '@testing/router-test-utils';
+
+describe('RegisterComponent', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [RegisterComponent],
+      providers: [provideRouterMock()] // Provides empty router for RouterLink
+    });
+  });
+});
+```
+
+📖 **Full Documentation**: [Router Mocking Patterns](../testing/router-mocking-patterns.md)
+
 #### Component Integration Testing
 
 Test interaction between parent and child components, service integration.

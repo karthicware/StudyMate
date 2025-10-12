@@ -1,8 +1,8 @@
 # Epic-1: Story Implementation Order
 
 **Epic:** Owner Dashboard & Analytics
-**Total Stories:** 27
-**Total Estimated Story Points:** ~100+ SP
+**Total Stories:** 29
+**Total Estimated Story Points:** ~105+ SP
 **Estimated Duration:** 3-4 Sprints (assuming 2-week sprints, team velocity ~25-30 SP)
 
 ---
@@ -12,6 +12,8 @@
 | Story ID | Title | Story Points | Type | Status |
 |----------|-------|-------------|------|--------|
 | 1.14a | Fix Router Test Configuration Issues | 3 SP | Test Infrastructure | 🔴 **BLOCKER** |
+| 1.2.1 | Fix OwnerRegisterComponent Tests | 2 SP | Test Infrastructure | Draft |
+| 1.14b | Create Router Test Utilities | 3 SP | Test Infrastructure | Draft |
 | 1.15 | Owner Portal Header & Navigation | 3 SP | Infrastructure (FE) | Ready |
 | 1.16 | Owner Portal Footer | 2 SP | Infrastructure (FE) | Ready |
 | 1.17 | Owner Portal Layout Shell & Routing | 5 SP | Infrastructure (FE) | 🔴 **BLOCKER** |
@@ -45,8 +47,10 @@
 
 ### Critical Dependencies
 1. **Story 1.14a** must complete before ANY routing work (Stories 1.15-1.17)
-2. **Story 1.17** must complete before implementing feature pages (Stories 1.1-1.14, 1.18, 1.20)
-3. Backend stories can run in parallel with frontend when appropriate
+2. **Story 1.2.1** fixes OwnerRegisterComponent tests (can run after Story 1.14a, benefits from Story 1.14b utilities)
+3. **Story 1.14b** creates reusable Router test utilities (enables efficient testing in Stories 1.15-1.21)
+4. **Story 1.17** must complete before implementing feature pages (Stories 1.1-1.14, 1.18, 1.20)
+5. Backend stories can run in parallel with frontend when appropriate
 
 ### Parallel Execution Opportunities
 - Frontend + Backend pairs can run simultaneously
@@ -57,7 +61,7 @@
 
 ## 📅 Recommended Sprint Plan
 
-### **SPRINT N - PHASE 0: Infrastructure Foundation** (13 SP)
+### **SPRINT N - PHASE 0: Infrastructure Foundation** (18 SP)
 
 #### Week 1: Test Stabilization & Layout Foundation
 **Priority:** Critical Blockers
@@ -65,12 +69,16 @@
 | Order | Story ID | Title | SP | Can Run In Parallel? | Notes |
 |-------|----------|-------|-----|---------------------|-------|
 | 1 | **1.14a** | Fix Router Test Configuration Issues | 3 | ❌ No (BLOCKER) | Must complete first |
-| 2 | **1.15** | Owner Portal Header & Navigation | 3 | ✅ With 1.16 | After 1.14a complete |
-| 3 | **1.16** | Owner Portal Footer | 2 | ✅ With 1.15 | After 1.14a complete |
-| 4 | **1.17** | Owner Portal Layout Shell & Routing | 5 | ❌ No (BLOCKER) | After 1.15 & 1.16 |
+| 2 | **1.2.1** | Fix OwnerRegisterComponent Tests | 2 | ✅ With 1.14b | Quick win, achieves 100% pass rate |
+| 3 | **1.14b** | Create Router Test Utilities | 3 | ✅ With 1.2.1 | Enables Stories 1.15-1.21 |
+| 4 | **1.15** | Owner Portal Header & Navigation | 3 | ✅ With 1.16 | After 1.14a complete |
+| 5 | **1.16** | Owner Portal Footer | 2 | ✅ With 1.15 | After 1.14a complete |
+| 6 | **1.17** | Owner Portal Layout Shell & Routing | 5 | ❌ No (BLOCKER) | After 1.15 & 1.16 |
 
 **Sprint N Deliverables:**
-- ✅ All router tests passing
+- ✅ All router tests passing (Story 1.14a)
+- ✅ 100% test suite pass rate achieved (Story 1.2.1)
+- ✅ Reusable Router test utilities created (Story 1.14b)
 - ✅ Owner Portal layout shell with header & footer
 - ✅ Routing infrastructure complete with guards
 - ✅ Ready for feature development
@@ -212,12 +220,15 @@
 SPRINT N (Weeks 1-2)
 ═══════════════════════════════════════════════════
 Week 1:
-  Day 1-3:  [1.14a: Fix Router Tests] ← BLOCKER
+  Day 1-2:  [1.14a: Fix Router Tests] ← BLOCKER
+  Day 3:    [1.2.1: Fix OwnerRegister Tests] ∥ [1.14b: Test Utilities] ← Parallel
   Day 4-5:  [1.15: Header] ∥ [1.16: Footer] ← Parallel
 
 Week 2:
   Day 1-5:  [1.17: Layout Shell & Routing] ← BLOCKER
 
+  ✓ Checkpoint: Test infrastructure complete (100% pass rate)
+  ✓ Checkpoint: Router test utilities available
   ✓ Checkpoint: Layout infrastructure complete
   ✓ All future stories unblocked
 
@@ -266,7 +277,8 @@ Frontend Track 2 (Developer B):
 Final Validation:
   Week 8:   [1.99: API Validation] ← Entire Team
 
-  ✓ Checkpoint: Epic-1 complete, ready for production
+  ✓ Checkpoint: All 29 stories complete
+  ✓ Checkpoint: Epic-1 ready for production
 ```
 
 ---
@@ -296,11 +308,11 @@ Final Validation:
 
 | Sprint | Story Points | Stories Completed | Key Deliverables |
 |--------|-------------|-------------------|------------------|
-| **Sprint N** | 13 SP | 1.14a, 1.15, 1.16, 1.17 | Layout infrastructure |
+| **Sprint N** | 18 SP | 1.14a, 1.2.1, 1.14b, 1.15, 1.16, 1.17 | Test fixes, utilities, layout infrastructure |
 | **Sprint N+1** | 26 SP | 1.1-1.6 + backends | Dashboard & Seat Mgmt |
 | **Sprint N+2** | 28 SP | 1.7-1.11, 1.18-1.19 | User Mgmt & Profile |
 | **Sprint N+3** | 31 SP | 1.12-1.14, 1.20-1.21, 1.99 | Reports, Settings, Validation |
-| **Total** | **98 SP** | **27 stories** | **Complete Epic-1** |
+| **Total** | **103 SP** | **29 stories** | **Complete Epic-1** |
 
 ---
 
@@ -329,7 +341,7 @@ Final Validation:
 Epic-1 is complete when:
 
 ### Functionality
-- [ ] All 27 stories completed and tested
+- [ ] All 29 stories completed and tested
 - [ ] Dashboard displays metrics correctly
 - [ ] Seat map editor functional
 - [ ] User management CRUD working
@@ -381,7 +393,13 @@ Epic-1 is complete when:
 
 ### If Story 1.14a is NOT complete:
 - ⛔ Cannot start: 1.15, 1.16, 1.17 (routing depends on tests)
+- ⛔ Cannot start: 1.2.1, 1.14b (require 1.14a fixes first)
 - ✅ Can start: All backend stories (1.1-backend, 1.4-backend, 1.7-backend, etc.)
+
+### If Story 1.14a IS complete:
+- ✅ Can start: 1.2.1 (Fix OwnerRegisterComponent tests - quick win)
+- ✅ Can start: 1.14b (Create Router test utilities)
+- ✅ Recommended: Do 1.2.1 + 1.14b before 1.15-1.17 for test infrastructure
 
 ### If Story 1.17 is NOT complete:
 - ⛔ Cannot start: Any frontend feature pages

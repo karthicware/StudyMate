@@ -25,7 +25,7 @@ describe('roleGuard', () => {
         role: 'OWNER',
       });
 
-      const mockRoute = { data: { role: 'OWNER' } } as ActivatedRouteSnapshot;
+      const mockRoute = { data: { role: 'OWNER' } } as unknown as ActivatedRouteSnapshot;
       const mockState = { url: '/owner/dashboard' } as RouterStateSnapshot;
 
       const result = TestBed.runInInjectionContext(() => roleGuard(mockRoute, mockState));
@@ -43,7 +43,7 @@ describe('roleGuard', () => {
         role: 'STUDENT',
       });
 
-      const mockRoute = { data: { role: 'OWNER' } } as ActivatedRouteSnapshot;
+      const mockRoute = { data: { role: 'OWNER' } } as unknown as ActivatedRouteSnapshot;
       const mockState = { url: '/owner/dashboard' } as RouterStateSnapshot;
 
       const result = TestBed.runInInjectionContext(() => roleGuard(mockRoute, mockState));
@@ -62,7 +62,7 @@ describe('roleGuard', () => {
         role: 'STUDENT',
       });
 
-      const mockRoute = { data: {} } as ActivatedRouteSnapshot; // No role requirement
+      const mockRoute = { data: {} } as unknown as ActivatedRouteSnapshot; // No role requirement
       const mockState = { url: '/public-page' } as RouterStateSnapshot;
 
       const result = TestBed.runInInjectionContext(() => roleGuard(mockRoute, mockState));
@@ -98,7 +98,7 @@ describe('roleGuard', () => {
         role: 'STUDENT',
       });
 
-      const mockRoute = { data: { role: 'OWNER' } } as ActivatedRouteSnapshot;
+      const mockRoute = { data: { role: 'OWNER' } } as unknown as ActivatedRouteSnapshot;
       const mockState = { url: '/owner/seat-map-config' } as RouterStateSnapshot;
 
       const result = TestBed.runInInjectionContext(() => roleGuard(mockRoute, mockState));
@@ -116,7 +116,7 @@ describe('roleGuard', () => {
         role: 'OWNER',
       });
 
-      const mockRoute = { data: { role: 'OWNER' } } as ActivatedRouteSnapshot;
+      const mockRoute = { data: { role: 'OWNER' } } as unknown as ActivatedRouteSnapshot;
       const mockState = { url: '/owner/user-management' } as RouterStateSnapshot;
 
       const result = TestBed.runInInjectionContext(() => roleGuard(mockRoute, mockState));
@@ -133,7 +133,7 @@ describe('roleGuard', () => {
         // role is undefined
       });
 
-      const mockRoute = { data: { role: 'OWNER' } } as ActivatedRouteSnapshot;
+      const mockRoute = { data: { role: 'OWNER' } } as unknown as ActivatedRouteSnapshot;
       const mockState = { url: '/owner/dashboard' } as RouterStateSnapshot;
 
       const result = TestBed.runInInjectionContext(() => roleGuard(mockRoute, mockState));
@@ -145,7 +145,7 @@ describe('roleGuard', () => {
     it('should handle null user (no user logged in)', () => {
       authStore.logout(); // Ensure no user is set
 
-      const mockRoute = { data: { role: 'OWNER' } } as ActivatedRouteSnapshot;
+      const mockRoute = { data: { role: 'OWNER' } } as unknown as ActivatedRouteSnapshot;
       const mockState = { url: '/owner/dashboard' } as RouterStateSnapshot;
 
       const result = TestBed.runInInjectionContext(() => roleGuard(mockRoute, mockState));
@@ -165,7 +165,7 @@ describe('roleGuard', () => {
         role: 'owner', // lowercase
       });
 
-      const mockRoute = { data: { role: 'OWNER' } } as ActivatedRouteSnapshot; // uppercase
+      const mockRoute = { data: { role: 'OWNER' } } as unknown as ActivatedRouteSnapshot; // uppercase
       const mockState = { url: '/owner/dashboard' } as RouterStateSnapshot;
 
       const result = TestBed.runInInjectionContext(() => roleGuard(mockRoute, mockState));
@@ -184,7 +184,7 @@ describe('roleGuard', () => {
         role: 'OWNER',
       });
 
-      const mockRoute = { data: { role: 'OWNER' } } as ActivatedRouteSnapshot;
+      const mockRoute = { data: { role: 'OWNER' } } as unknown as ActivatedRouteSnapshot;
       const mockState = { url: '/owner/dashboard' } as RouterStateSnapshot;
 
       const result = TestBed.runInInjectionContext(() => roleGuard(mockRoute, mockState));
@@ -203,7 +203,7 @@ describe('roleGuard', () => {
         role: 'OWNER',
       });
 
-      const mockRoute = { data: { role: 'OWNER' } } as ActivatedRouteSnapshot;
+      const mockRoute = { data: { role: 'OWNER' } } as unknown as ActivatedRouteSnapshot;
       const mockState = { url: '/owner/reports/monthly/2024' } as RouterStateSnapshot;
 
       const result = TestBed.runInInjectionContext(() => roleGuard(mockRoute, mockState));
@@ -220,7 +220,7 @@ describe('roleGuard', () => {
         role: 'OWNER',
       });
 
-      const mockRoute = { data: { role: 'OWNER' } } as ActivatedRouteSnapshot;
+      const mockRoute = { data: { role: 'OWNER' } } as unknown as ActivatedRouteSnapshot;
       const mockState = {
         url: '/owner/dashboard?hallId=123&view=detailed',
       } as RouterStateSnapshot;
@@ -241,7 +241,7 @@ describe('roleGuard', () => {
         role: 'OWNER',
       });
 
-      const mockRoute = { data: { role: 'OWNER' } } as ActivatedRouteSnapshot;
+      const mockRoute = { data: { role: 'OWNER' } } as unknown as ActivatedRouteSnapshot;
       const mockState = { url: '/owner/dashboard' } as RouterStateSnapshot;
 
       const result = TestBed.runInInjectionContext(() => roleGuard(mockRoute, mockState));
@@ -252,7 +252,7 @@ describe('roleGuard', () => {
     });
 
     it('should react to role changes', () => {
-      const mockRoute = { data: { role: 'OWNER' } } as ActivatedRouteSnapshot;
+      const mockRoute = { data: { role: 'OWNER' } } as unknown as ActivatedRouteSnapshot;
       const mockState = { url: '/owner/dashboard' } as RouterStateSnapshot;
 
       // User with STUDENT role
@@ -289,7 +289,7 @@ describe('roleGuard', () => {
         role: 'STUDENT',
       });
 
-      const mockRoute = { data: { role: 'OWNER' } } as ActivatedRouteSnapshot;
+      const mockRoute = { data: { role: 'OWNER' } } as unknown as ActivatedRouteSnapshot;
       const mockState = { url: '/owner/settings' } as RouterStateSnapshot;
 
       const result = TestBed.runInInjectionContext(() => roleGuard(mockRoute, mockState));
@@ -308,7 +308,7 @@ describe('roleGuard', () => {
         role: 'STUDENT',
       });
 
-      const mockRoute = { data: { role: 'OWNER' } } as ActivatedRouteSnapshot;
+      const mockRoute = { data: { role: 'OWNER' } } as unknown as ActivatedRouteSnapshot;
       const mockState = { url: '/owner/profile' } as RouterStateSnapshot;
 
       const result = TestBed.runInInjectionContext(() => roleGuard(mockRoute, mockState));

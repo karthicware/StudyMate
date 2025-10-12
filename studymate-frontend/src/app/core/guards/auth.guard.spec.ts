@@ -135,19 +135,23 @@ describe('authGuard', () => {
 
   describe('Signal Store Integration', () => {
     it('should use AuthStore signal for authentication status', () => {
-      // Spy on the selectIsAuthenticated computed signal
-      const selectIsAuthenticatedSpy = spyOn(
-        authStore.selectIsAuthenticated,
-        'call',
-      ).and.returnValue(true);
+      // Set up authenticated user
+      authStore.setUser({
+        id: 1,
+        email: 'test@example.com',
+        firstName: 'Test',
+        lastName: 'User',
+        role: 'OWNER',
+      });
 
       const mockRoute = {} as ActivatedRouteSnapshot;
       const mockState = { url: '/owner/dashboard' } as RouterStateSnapshot;
 
-      TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
+      const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
 
-      // Verify the signal was accessed
-      expect(selectIsAuthenticatedSpy).toHaveBeenCalled();
+      // Verify the signal value is being used correctly
+      expect(authStore.selectIsAuthenticated()).toBe(true);
+      expect(result).toBe(true);
     });
 
     it('should react to authentication state changes', () => {
