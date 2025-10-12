@@ -36,8 +36,8 @@ export const roleGuard: CanActivateFn = (route, _state) => {
   const authStore = inject(AuthStore);
   const router = inject(Router);
 
-  // Get required role from route data
-  const requiredRole = route.data['role'] as string | undefined;
+  // Get required role from route data (handle undefined route.data)
+  const requiredRole = route.data?.['role'] as string | undefined;
 
   // If no role requirement specified, allow access
   if (!requiredRole) {

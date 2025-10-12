@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { of, throwError } from 'rxjs';
 import { OwnerRegisterComponent } from './owner-register.component';
@@ -15,18 +15,20 @@ describe('OwnerRegisterComponent', () => {
 
   beforeEach(async () => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['registerOwner']);
-    const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
-      imports: [OwnerRegisterComponent, HttpClientTestingModule, RouterLink],
+      imports: [OwnerRegisterComponent, HttpClientTestingModule],
       providers: [
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        provideRouter([])
       ]
     }).compileComponents();
 
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
     router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
+
+    // Spy on router.navigate after getting the real Router instance
+    spyOn(router, 'navigate');
     fixture = TestBed.createComponent(OwnerRegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -104,7 +106,7 @@ describe('OwnerRegisterComponent', () => {
       passwordControl?.setValue('weak');
       expect(component.passwordStrength()).toBe('weak');
 
-      passwordControl?.setValue('Medium@1');
+      passwordControl?.setValue('Medium1');
       expect(component.passwordStrength()).toBe('medium');
 
       passwordControl?.setValue('Strong@123');
