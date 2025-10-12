@@ -217,18 +217,6 @@ Enable study hall owners to efficiently manage their facilities through a compre
 
 ---
 
-## Story Breakdown (27 Stories)
-
-1. **Dashboard & Analytics** (4 stories): 1.1, 1.1-backend, 1.2, 1.3
-2. **Seat Map Configuration** (4 stories): 1.4, 1.4-backend, 1.5, 1.6
-3. **User Management** (6 stories): 1.7, 1.7-backend, 1.8, 1.9, 1.10, 1.11
-4. **Performance Reports** (4 stories): 1.12, 1.12-backend, 1.13, 1.14
-5. **Test Infrastructure Fix** (1 story): 1.14a (BLOCKER for infrastructure work)
-6. **Owner Portal Infrastructure** (7 stories): 1.15, 1.16, 1.17, 1.18, 1.19, 1.20, 1.21
-7. **API Validation & Testing** (1 story): 1.99
-
----
-
 ## Change Log
 
 | Date | Version | Description | Author |
