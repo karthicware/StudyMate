@@ -10,7 +10,7 @@
 
 ### Epic Description
 
-Enable study hall owners to efficiently manage their facilities through a comprehensive dashboard that provides real-time metrics, configurable seat maps, and detailed performance analytics.
+Enable study hall owners to efficiently manage their facilities (multiple study halls per owner) through a comprehensive dashboard that provides real-time metrics, configurable seat maps, and detailed performance analytics. Owners can select a specific hall or view aggregate metrics across all their halls.
 
 ### Business Value
 
@@ -29,12 +29,14 @@ Enable study hall owners to efficiently manage their facilities through a compre
 
 ### Feature 1.1: Admin Dashboard
 **As an** Owner,
-**I want** a Dashboard
-**so that** I can see real-time metrics (Revenue, Occupancy, Active Students).
+**I want** a Dashboard with hall selection capability
+**so that** I can see real-time metrics (Revenue, Occupancy, Active Students) for a specific hall or across all my halls.
 
 **Acceptance Criteria:**
-1. Display Total Seats, Occupancy %, and Current Revenue
-2. Show graphical, real-time seat map occupancy
+1. Dashboard includes dropdown to select specific hall or "All Halls" aggregate view
+2. Display Total Seats, Occupancy %, and Current Revenue (for selected hall or all halls)
+3. Show graphical, real-time seat map occupancy for selected hall
+4. All Halls view shows aggregated metrics across owner's study halls
 
 **Related Stories:**
 - Story 1.1: Dashboard Overview Page (Frontend)
@@ -46,12 +48,14 @@ Enable study hall owners to efficiently manage their facilities through a compre
 
 ### Feature 1.2: Seat Map Configuration
 **As an** Owner,
-**I want** to Add/Edit the seat map and define shift timings
+**I want** to Add/Edit the seat map and define shift timings for a selected hall
 **so that** I can accurately reflect the physical layout and business hours of my hall.
 
 **Acceptance Criteria:**
-1. Owner can drag-and-drop to place seats and assign seat numbers (using `POST /owner/seats/config/{hallId}`)
-2. Owner can define customizable shift names and start/end times
+1. Owner must select a specific hall first before configuring seat map
+2. Owner can drag-and-drop to place seats and assign seat numbers (using `POST /owner/seats/config/{hallId}`)
+3. Owner can define customizable shift names and start/end times
+4. Seat map configuration scoped to selected hall
 
 **Related Stories:**
 - Story 1.4: Seat Map Editor - Drag & Drop Interface (Frontend)
@@ -67,11 +71,12 @@ Enable study hall owners to efficiently manage their facilities through a compre
 **so that** I can maintain accurate user records and control access to my study hall system.
 
 **Acceptance Criteria:**
-1. View all students with their profiles, booking history, and attendance records
-2. Add/edit/delete student accounts with proper validation
-3. Manage staff accounts and assign role-based permissions
-4. Search and filter users by name, email, subscription status
-5. View detailed student booking and payment history
+1. View all students with bookings at owner's halls (scoped to owner's study halls)
+2. View student profiles, booking history, and attendance records for owner's halls
+3. Add/edit/delete student accounts with proper validation
+4. Manage staff accounts and assign role-based permissions for owner's halls
+5. Search and filter users by name, email, subscription status
+6. View detailed student booking and payment history (scoped to owner's halls)
 
 **Related Stories:**
 - Story 1.7: User Management Dashboard (Frontend)
@@ -202,9 +207,17 @@ Enable study hall owners to efficiently manage their facilities through a compre
 
 ## Dependencies
 
+**Blocked By:**
+- ⛔ **Epic 0.1 (Authentication & Onboarding)** - CRITICAL BLOCKER
+  - Requires owner authentication (JWT tokens) for all `/owner/**` endpoints
+  - Requires owner registration and login functionality
+  - Requires JWT role-based authorization (OWNER role)
+  - Epic 1 cannot begin until Epic 0.1 is complete
+
+**Other Dependencies:**
 - Epic 2 (Student Booking) for real-time seat map occupancy
-- Authentication & Authorization system
 - PostgreSQL database schema for users, halls, seats, bookings
+- Google Maps API (for location-based features in multi-hall context)
 
 ---
 
@@ -226,3 +239,4 @@ Enable study hall owners to efficiently manage their facilities through a compre
 | 2025-10-11 | 3.0 | Added Feature 1.4 (API Validation & Testing) with Story 1.99; updated story count from 14 to 15 stories | Bob (Scrum Master) |
 | 2025-10-11 | 3.1 | Added backend implementation stories: 1.1-backend, 1.4-backend, 1.7-backend, 1.12-backend; updated story count from 15 to 19 stories | Bob (Scrum Master) |
 | 2025-10-12 | 4.0 | Added Story 1.14a (Router Test Fix - BLOCKER); Added Feature 1.5 (Owner Portal Infrastructure) with 7 stories; renumbered Feature 5.1→1.4, Feature 1.4→1.6; fixed feature numbering conflicts; updated story count from 19 to 27 stories | Sarah (PO) |
+| 2025-10-12 | 5.0 | **CRITICAL UPDATE:** Added Epic 0.1 as BLOCKER dependency; Updated epic description for multi-tenant context (owners manage multiple halls); Updated Features 1.1-1.3 with hall selection and scoping clarifications; No story rewrites required | Sarah (PO) |
