@@ -1,2 +1,234 @@
-// Owner Registration Component Styles
-// Using Tailwind utility classes primarily, minimal custom styles if needed
+/* ==============================================================================
+ * Owner Registration Component Styles
+ * Airbnb-Inspired Design System Implementation
+ * ============================================================================== */
+
+/* Custom Animations */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-4px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+/* Animation Classes */
+
+.animate-fade-in {
+  animation: fade-in 200ms ease-out forwards;
+}
+
+.animate-slide-down {
+  animation: slide-down 300ms ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 200ms ease-out forwards;
+}
+
+.error-shake {
+  animation: shake 400ms ease-in-out;
+}
+
+/* Custom Shadow Utilities */
+
+.shadow-card {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.shadow-modal {
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.2), 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Custom Checkbox Styling (Airbnb-inspired) */
+
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-gray-300);
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  position: relative;
+  transition: all 200ms ease-in-out;
+  flex-shrink: 0;
+
+  &:hover {
+    border-color: var(--color-primary-400);
+    transform: scale(1.05);
+  }
+
+  &:checked {
+    background-color: var(--color-primary-500);
+    border-color: var(--color-primary-500);
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(1);
+      width: 10px;
+      height: 10px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M5 13l4 4L19 7'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+      animation: scale-in 200ms ease-out;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-300);
+    outline-offset: 2px;
+  }
+}
+
+/* Loading Spinner Enhancement */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Hover Effects for Links */
+
+a {
+  position: relative;
+  transition: color 200ms ease-in-out;
+
+  &:hover {
+    text-decoration: none;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%) scaleX(0);
+      width: 100%;
+      height: 2px;
+      background-color: currentColor;
+      animation: expand-from-center 200ms ease-out forwards;
+    }
+  }
+}
+
+@keyframes expand-from-center {
+  to {
+    transform: translateX(-50%) scaleX(1);
+  }
+}
+
+/* Button Gradient and Hover Effects */
+
+button[type="submit"] {
+  position: relative;
+  overflow: hidden;
+
+  &:not(:disabled) {
+    background: linear-gradient(180deg, var(--color-primary-400) 0%, var(--color-primary-500) 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 3px 6px rgba(0, 0, 0, 0.15);
+
+    &:hover {
+      background: linear-gradient(180deg, var(--color-primary-500) 0%, var(--color-primary-600) 100%);
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.4), 0 6px 12px rgba(0, 0, 0, 0.2);
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+/* Input Focus Glow Effect */
+
+input:focus,
+textarea:focus,
+select:focus {
+  background-color: white !important;
+  box-shadow: 0 0 0 3px rgba(255, 63, 108, 0.1);
+}
+
+/* Responsive Adjustments */
+
+@media (max-width: 1023px) {
+  /* Hide hero section on tablets and below */
+  .lg\:flex {
+    display: none !important;
+  }
+
+  /* Full width form on mobile */
+  .lg\:w-1\/2 {
+    width: 100% !important;
+  }
+}
+
+/* Reduced Motion */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Print Styles */
+
+@media print {
+  /* Hide decorative elements when printing */
+  .hidden {
+    display: none !important;
+  }
+
+  /* Ensure form is visible */
+  form {
+    page-break-inside: avoid;
+  }
+}
