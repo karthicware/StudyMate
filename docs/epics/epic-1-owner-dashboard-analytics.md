@@ -83,7 +83,7 @@ Enable study hall owners to efficiently manage their facilities through a compre
 
 ---
 
-### Feature 5.1: Performance Reports
+### Feature 1.4: Performance Reports
 **As an** Owner,
 **I want** to download detailed performance reports (PDF/Excel)
 **so that** I can analyze revenue and utilization trends.
@@ -107,7 +107,32 @@ Enable study hall owners to efficiently manage their facilities through a compre
 
 ---
 
-### Feature 1.4: API Validation & Testing
+### Feature 1.5: Owner Portal Infrastructure
+**As an** Owner,
+**I want** a complete portal interface with navigation, profile management, and settings
+**so that** I can access all dashboard features seamlessly and manage my account preferences.
+
+**Acceptance Criteria:**
+1. Persistent header with navigation menu across all Owner pages
+2. Footer with application info and links
+3. Layout shell with routing structure for all Owner features
+4. Owner profile page with personal information management
+5. Owner settings page for system and notification preferences
+6. Consistent UI/UX following design system standards
+
+**Related Stories:**
+- Story 1.14a: Fix Router Test Configuration Issues (BLOCKER)
+- Story 1.15: Owner Portal Header & Navigation Component
+- Story 1.16: Owner Portal Footer Component
+- Story 1.17: Owner Portal Layout Shell & Routing
+- Story 1.18: Owner Profile Management Page
+- Story 1.19: Owner Profile API Implementation
+- Story 1.20: Owner Settings Page
+- Story 1.21: Owner Settings API Implementation
+
+---
+
+### Feature 1.6: API Validation & Testing
 **As a** QA Engineer,
 **I want** all Epic 1 APIs validated end-to-end using PostgreSQL MCP with dummy data
 **so that** I can verify all endpoints work correctly with real database interactions and capture evidence.
@@ -167,6 +192,11 @@ Enable study hall owners to efficiently manage their facilities through a compre
 | POST | `/owner/staff` | Create staff account with permissions |
 | PUT | `/owner/staff/{staffId}/permissions` | Update staff permissions |
 | GET | `/owner/reports/{hallId}` | Generate and download reports |
+| GET | `/owner/profile` | Retrieve authenticated owner's profile data |
+| PUT | `/owner/profile` | Update authenticated owner's profile information |
+| POST | `/owner/profile/avatar` | Upload owner profile picture (multipart/form-data) |
+| GET | `/owner/settings` | Retrieve authenticated owner's settings and preferences |
+| PUT | `/owner/settings` | Update authenticated owner's settings (partial updates allowed) |
 
 ---
 
@@ -187,6 +217,18 @@ Enable study hall owners to efficiently manage their facilities through a compre
 
 ---
 
+## Story Breakdown (27 Stories)
+
+1. **Dashboard & Analytics** (4 stories): 1.1, 1.1-backend, 1.2, 1.3
+2. **Seat Map Configuration** (4 stories): 1.4, 1.4-backend, 1.5, 1.6
+3. **User Management** (6 stories): 1.7, 1.7-backend, 1.8, 1.9, 1.10, 1.11
+4. **Performance Reports** (4 stories): 1.12, 1.12-backend, 1.13, 1.14
+5. **Test Infrastructure Fix** (1 story): 1.14a (BLOCKER for infrastructure work)
+6. **Owner Portal Infrastructure** (7 stories): 1.15, 1.16, 1.17, 1.18, 1.19, 1.20, 1.21
+7. **API Validation & Testing** (1 story): 1.99
+
+---
+
 ## Change Log
 
 | Date | Version | Description | Author |
@@ -195,3 +237,4 @@ Enable study hall owners to efficiently manage their facilities through a compre
 | 2025-10-10 | 2.0 | Added Feature 1.3 (User Management) with 5 stories; updated story count from 9 to 14 stories | Sarah (PO) |
 | 2025-10-11 | 3.0 | Added Feature 1.4 (API Validation & Testing) with Story 1.99; updated story count from 14 to 15 stories | Bob (Scrum Master) |
 | 2025-10-11 | 3.1 | Added backend implementation stories: 1.1-backend, 1.4-backend, 1.7-backend, 1.12-backend; updated story count from 15 to 19 stories | Bob (Scrum Master) |
+| 2025-10-12 | 4.0 | Added Story 1.14a (Router Test Fix - BLOCKER); Added Feature 1.5 (Owner Portal Infrastructure) with 7 stories; renumbered Feature 5.1→1.4, Feature 1.4→1.6; fixed feature numbering conflicts; updated story count from 19 to 27 stories | Sarah (PO) |

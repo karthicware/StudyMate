@@ -38,6 +38,7 @@ The system utilizes a **3-Tier Architecture** with services decomposed by domain
 | **`study_halls`** | `id` (PK), `owner_id` (FK), `hall_name`, `seat_count` | The root entity for the business owner. | High |
 | **`seats`** | `id` (PK), `hall_id` (FK), `seat_number`, `x_coord`, `y_coord`, `status` | Defines reservable units and their map coordinates. | High |
 | **`bookings`** | `id` (PK), `user_id` (FK), `seat_id` (FK), `start_time`, `end_time`, `payment_id` (FK), `check_in_time` | The core transactional ledger for all reservations and attendance. | Critical |
+| **`owner_settings`** | `id` (PK), `owner_id` (FK to users), `email_notifications`, `sms_notifications`, `push_notifications`, `notification_booking`, `notification_payment`, `notification_system`, `language`, `timezone`, `default_view`, `profile_visibility` | Owner-specific notification and system preferences. | Medium |
 
 ***
 
@@ -51,6 +52,11 @@ The system utilizes a **3-Tier Architecture** with services decomposed by domain
 | **POST** | `/payment/webhook` | Payment | Receives external confirmation and sets booking to `CONFIRMED`. |
 | **GET** | `/owner/dashboard/{hallId}` | Owner | Retrieves all summary metrics for the Admin UI. |
 | **GET** | `/owner/reports/{hallId}` | Owner | Generates and serves the performance report file (PDF/Excel). |
+| **GET** | `/owner/profile` | Owner | Retrieves authenticated owner's profile data. |
+| **PUT** | `/owner/profile` | Owner | Updates authenticated owner's profile information. |
+| **POST** | `/owner/profile/avatar` | Owner | Uploads owner profile picture (multipart/form-data). |
+| **GET** | `/owner/settings` | Owner | Retrieves authenticated owner's settings and preferences. |
+| **PUT** | `/owner/settings` | Owner | Updates authenticated owner's settings (partial updates allowed). |
 
 ***
 
