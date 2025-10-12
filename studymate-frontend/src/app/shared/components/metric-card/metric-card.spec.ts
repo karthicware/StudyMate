@@ -7,7 +7,7 @@ describe('MetricCard', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MetricCard]
+      imports: [MetricCard],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MetricCard);

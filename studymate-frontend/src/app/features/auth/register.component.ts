@@ -16,7 +16,9 @@ import { AuthService } from '../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
-    <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div
+      class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
+    >
       <div class="max-w-md w-full space-y-8">
         <div>
           <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -44,10 +46,10 @@ import { AuthService } from '../../core/services/auth.service';
                 class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="First Name"
               />
-              @if (registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched) {
-                <div class="text-red-600 text-sm mt-1">
-                  First name is required
-                </div>
+              @if (
+                registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched
+              ) {
+                <div class="text-red-600 text-sm mt-1">First name is required</div>
               }
             </div>
 
@@ -63,9 +65,7 @@ import { AuthService } from '../../core/services/auth.service';
                 placeholder="Last Name"
               />
               @if (registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched) {
-                <div class="text-red-600 text-sm mt-1">
-                  Last name is required
-                </div>
+                <div class="text-red-600 text-sm mt-1">Last name is required</div>
               }
             </div>
 
@@ -81,9 +81,7 @@ import { AuthService } from '../../core/services/auth.service';
                 placeholder="Email address"
               />
               @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
-                <div class="text-red-600 text-sm mt-1">
-                  Valid email is required
-                </div>
+                <div class="text-red-600 text-sm mt-1">Valid email is required</div>
               }
             </div>
 
@@ -99,9 +97,7 @@ import { AuthService } from '../../core/services/auth.service';
                 placeholder="Password (min 6 characters)"
               />
               @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
-                <div class="text-red-600 text-sm mt-1">
-                  Password must be at least 6 characters
-                </div>
+                <div class="text-red-600 text-sm mt-1">Password must be at least 6 characters</div>
               }
             </div>
 
@@ -116,10 +112,11 @@ import { AuthService } from '../../core/services/auth.service';
                 class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Confirm Password"
               />
-              @if (registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched) {
-                <div class="text-red-600 text-sm mt-1">
-                  Passwords do not match
-                </div>
+              @if (
+                registerForm.errors?.['passwordMismatch'] &&
+                registerForm.get('confirmPassword')?.touched
+              ) {
+                <div class="text-red-600 text-sm mt-1">Passwords do not match</div>
               }
             </div>
           </div>
@@ -139,10 +136,7 @@ import { AuthService } from '../../core/services/auth.service';
           </div>
 
           <div class="text-center">
-            <a
-              routerLink="/login"
-              class="font-medium text-indigo-600 hover:text-indigo-500"
-            >
+            <a routerLink="/login" class="font-medium text-indigo-600 hover:text-indigo-500">
               Already have an account? Sign in
             </a>
           </div>
@@ -167,15 +161,13 @@ export class RegisterComponent {
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
     },
-    { validators: this.passwordMatchValidator }
+    { validators: this.passwordMatchValidator },
   );
 
   /**
    * Custom validator to check if password and confirmPassword match
    */
-  private passwordMatchValidator(
-    control: AbstractControl
-  ): ValidationErrors | null {
+  private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
 
@@ -183,9 +175,7 @@ export class RegisterComponent {
       return null;
     }
 
-    return password.value === confirmPassword.value
-      ? null
-      : { passwordMismatch: true };
+    return password.value === confirmPassword.value ? null : { passwordMismatch: true };
   }
 
   onSubmit(): void {
@@ -206,10 +196,7 @@ export class RegisterComponent {
       },
       error: (error) => {
         this.isLoading.set(false);
-        this.errorMessage.set(
-          error.error?.message ||
-            'Registration failed. Please try again.'
-        );
+        this.errorMessage.set(error.error?.message || 'Registration failed. Please try again.');
       },
       complete: () => {
         this.isLoading.set(false);

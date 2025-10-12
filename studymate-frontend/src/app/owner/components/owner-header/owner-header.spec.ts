@@ -16,7 +16,7 @@ describe('OwnerHeaderComponent', () => {
     email: 'john.doe@example.com',
     firstName: 'John',
     lastName: 'Doe',
-    role: 'owner'
+    role: 'owner',
   };
 
   beforeEach(async () => {
@@ -24,17 +24,15 @@ describe('OwnerHeaderComponent', () => {
     mockAuthStore = {
       selectUser: signal(mockUser),
       selectIsAuthenticated: signal(true),
-      logout: jasmine.createSpy('logout')
+      logout: jasmine.createSpy('logout'),
     };
 
     await TestBed.configureTestingModule({
       imports: [
         OwnerHeaderComponent,
-        RouterTestingModule.withRoutes([]) // Use RouterTestingModule for testing
+        RouterTestingModule.withRoutes([]), // Use RouterTestingModule for testing
       ],
-      providers: [
-        { provide: AuthStore, useValue: mockAuthStore }
-      ]
+      providers: [{ provide: AuthStore, useValue: mockAuthStore }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(OwnerHeaderComponent);
@@ -69,19 +67,19 @@ describe('OwnerHeaderComponent', () => {
     });
 
     it('should have correct navigation paths', () => {
-      const paths = component.navItems.map(item => item.path);
+      const paths = component.navItems.map((item) => item.path);
       expect(paths).toEqual([
         '/owner/dashboard',
         '/owner/seat-map-config',
         '/owner/user-management',
         '/owner/reports',
         '/owner/profile',
-        '/owner/settings'
+        '/owner/settings',
       ]);
     });
 
     it('should have ARIA labels for all navigation items', () => {
-      component.navItems.forEach(item => {
+      component.navItems.forEach((item) => {
         expect(item.ariaLabel).toBeTruthy();
         expect(item.ariaLabel).toContain('Navigate to');
       });
@@ -120,7 +118,7 @@ describe('OwnerHeaderComponent', () => {
         email: 'jane@example.com',
         firstName: 'Jane',
         lastName: '',
-        role: 'owner'
+        role: 'owner',
       };
       mockAuthStore.selectUser.set(partialUser);
       expect(component.userName()).toBe('Jane ');

@@ -264,7 +264,7 @@ function createTokenWithExpiry(expSeconds: number): string {
       sub: 'test@example.com',
       exp: expSeconds,
       roles: ['ROLE_STUDENT'],
-    })
+    }),
   );
   return `${header}.${payload}.signature`;
 }

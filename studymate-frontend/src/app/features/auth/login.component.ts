@@ -1,11 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 
@@ -14,7 +9,9 @@ import { AuthService } from '../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
-    <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div
+      class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
+    >
       <div class="max-w-md w-full space-y-8">
         <div>
           <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -41,9 +38,7 @@ import { AuthService } from '../../core/services/auth.service';
                 placeholder="Email address"
               />
               @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
-                <div class="text-red-600 text-sm mt-1">
-                  Valid email is required
-                </div>
+                <div class="text-red-600 text-sm mt-1">Valid email is required</div>
               }
             </div>
             <div>
@@ -56,9 +51,7 @@ import { AuthService } from '../../core/services/auth.service';
                 placeholder="Password"
               />
               @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-                <div class="text-red-600 text-sm mt-1">
-                  Password is required
-                </div>
+                <div class="text-red-600 text-sm mt-1">Password is required</div>
               }
             </div>
           </div>
@@ -78,10 +71,7 @@ import { AuthService } from '../../core/services/auth.service';
           </div>
 
           <div class="text-center">
-            <a
-              routerLink="/register"
-              class="font-medium text-indigo-600 hover:text-indigo-500"
-            >
+            <a routerLink="/register" class="font-medium text-indigo-600 hover:text-indigo-500">
               Don't have an account? Register
             </a>
           </div>
@@ -121,7 +111,7 @@ export class LoginComponent {
       error: (error) => {
         this.isLoading.set(false);
         this.errorMessage.set(
-          error.error?.message || 'Login failed. Please check your credentials.'
+          error.error?.message || 'Login failed. Please check your credentials.',
         );
       },
       complete: () => {

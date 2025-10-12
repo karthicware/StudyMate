@@ -5,7 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 import { DashboardMetrics } from '../models/dashboard.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DashboardService {
   private http = inject(HttpClient);
@@ -17,9 +17,9 @@ export class DashboardService {
    * @returns Observable of DashboardMetrics
    */
   getDashboardMetrics(hallId: string): Observable<DashboardMetrics> {
-    return this.http.get<DashboardMetrics>(`${this.apiUrl}/${hallId}`).pipe(
-      catchError(this.handleError)
-    );
+    return this.http
+      .get<DashboardMetrics>(`${this.apiUrl}/${hallId}`)
+      .pipe(catchError(this.handleError));
   }
 
   /**

@@ -7,7 +7,7 @@ import { SeatStatus } from '../../../core/models/dashboard.model';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './seat-map.html',
-  styleUrl: './seat-map.scss'
+  styleUrl: './seat-map.scss',
 })
 export class SeatMap {
   // Signal inputs for seat data
@@ -17,13 +17,13 @@ export class SeatMap {
   mapWidth = computed(() => {
     const seatsList = this.seats();
     if (seatsList.length === 0) return 600;
-    return Math.max(...seatsList.map(s => s.xCoord)) + 100;
+    return Math.max(...seatsList.map((s) => s.xCoord)) + 100;
   });
 
   mapHeight = computed(() => {
     const seatsList = this.seats();
     if (seatsList.length === 0) return 400;
-    return Math.max(...seatsList.map(s => s.yCoord)) + 100;
+    return Math.max(...seatsList.map((s) => s.yCoord)) + 100;
   });
 
   /**

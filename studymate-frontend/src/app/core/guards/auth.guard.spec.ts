@@ -35,9 +35,7 @@ describe('authGuard', () => {
     const mockRoute: any = {};
     const mockState: any = { url: '/dashboard' };
 
-    const result = TestBed.runInInjectionContext(() =>
-      authGuard(mockRoute, mockState)
-    );
+    const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
 
     expect(result).toBe(true);
     expect(router.navigate).not.toHaveBeenCalled();
@@ -50,9 +48,7 @@ describe('authGuard', () => {
     const mockRoute: any = {};
     const mockState: any = { url: '/dashboard' };
 
-    const result = TestBed.runInInjectionContext(() =>
-      authGuard(mockRoute, mockState)
-    );
+    const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
 
     expect(result).toBe(false);
     expect(router.navigate).toHaveBeenCalledWith(['/login'], {

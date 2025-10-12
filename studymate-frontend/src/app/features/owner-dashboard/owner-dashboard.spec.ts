@@ -21,30 +21,28 @@ describe('OwnerDashboard', () => {
         seatNumber: 'A1',
         xCoord: 100,
         yCoord: 100,
-        status: 'available'
-      }
-    ]
+        status: 'available',
+      },
+    ],
   };
 
   beforeEach(async () => {
-    mockDashboardService = jasmine.createSpyObj('DashboardService', [
-      'getDashboardMetrics'
-    ]);
+    mockDashboardService = jasmine.createSpyObj('DashboardService', ['getDashboardMetrics']);
 
     mockActivatedRoute = {
       snapshot: {
         paramMap: {
-          get: jasmine.createSpy('get').and.returnValue('123')
-        }
-      }
+          get: jasmine.createSpy('get').and.returnValue('123'),
+        },
+      },
     };
 
     await TestBed.configureTestingModule({
       imports: [OwnerDashboard],
       providers: [
         { provide: DashboardService, useValue: mockDashboardService },
-        { provide: ActivatedRoute, useValue: mockActivatedRoute }
-      ]
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(OwnerDashboard);
@@ -79,7 +77,7 @@ describe('OwnerDashboard', () => {
   it('should handle error when loading dashboard metrics', () => {
     const errorMessage = 'Failed to load data';
     mockDashboardService.getDashboardMetrics.and.returnValue(
-      throwError(() => new Error(errorMessage))
+      throwError(() => new Error(errorMessage)),
     );
 
     fixture.detectChanges();

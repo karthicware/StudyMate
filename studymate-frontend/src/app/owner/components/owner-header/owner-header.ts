@@ -23,7 +23,7 @@ import { AuthStore } from '../../../store/auth/auth.store';
   standalone: true,
   imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './owner-header.html',
-  styleUrl: './owner-header.scss'
+  styleUrl: './owner-header.scss',
 })
 export class OwnerHeaderComponent {
   private authStore = inject(AuthStore);
@@ -42,9 +42,7 @@ export class OwnerHeaderComponent {
   // Computed properties
   userName = computed(() => {
     const currentUser = this.user();
-    return currentUser
-      ? `${currentUser.firstName} ${currentUser.lastName}`
-      : 'Guest';
+    return currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'Guest';
   });
 
   userInitials = computed(() => {
@@ -66,45 +64,45 @@ export class OwnerHeaderComponent {
       label: 'Dashboard',
       path: '/owner/dashboard',
       icon: 'dashboard',
-      ariaLabel: 'Navigate to Dashboard'
+      ariaLabel: 'Navigate to Dashboard',
     },
     {
       label: 'Seat Map',
       path: '/owner/seat-map-config',
       icon: 'map',
-      ariaLabel: 'Navigate to Seat Map Configuration'
+      ariaLabel: 'Navigate to Seat Map Configuration',
     },
     {
       label: 'Users',
       path: '/owner/user-management',
       icon: 'people',
-      ariaLabel: 'Navigate to User Management'
+      ariaLabel: 'Navigate to User Management',
     },
     {
       label: 'Reports',
       path: '/owner/reports',
       icon: 'analytics',
-      ariaLabel: 'Navigate to Reports'
+      ariaLabel: 'Navigate to Reports',
     },
     {
       label: 'Profile',
       path: '/owner/profile',
       icon: 'person',
-      ariaLabel: 'Navigate to Profile'
+      ariaLabel: 'Navigate to Profile',
     },
     {
       label: 'Settings',
       path: '/owner/settings',
       icon: 'settings',
-      ariaLabel: 'Navigate to Settings'
-    }
+      ariaLabel: 'Navigate to Settings',
+    },
   ];
 
   /**
    * Toggle mobile navigation menu
    */
   toggleMobileMenu(): void {
-    this.mobileMenuOpen.update(open => !open);
+    this.mobileMenuOpen.update((open) => !open);
     // Close avatar menu if open
     if (this.avatarMenuOpen()) {
       this.avatarMenuOpen.set(false);
@@ -115,7 +113,7 @@ export class OwnerHeaderComponent {
    * Toggle avatar dropdown menu
    */
   toggleAvatarMenu(): void {
-    this.avatarMenuOpen.update(open => !open);
+    this.avatarMenuOpen.update((open) => !open);
     // Close mobile menu if open
     if (this.mobileMenuOpen()) {
       this.mobileMenuOpen.set(false);

@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './metric-card.html',
-  styleUrl: './metric-card.scss'
+  styleUrl: './metric-card.scss',
 })
 export class MetricCard {
   // Signal inputs following Angular 20 best practices

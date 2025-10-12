@@ -35,12 +35,7 @@ describe('LoginComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [
-        LoginComponent,
-        ReactiveFormsModule,
-        HttpClientTestingModule,
-        RouterTestingModule
-      ],
+      imports: [LoginComponent, ReactiveFormsModule, HttpClientTestingModule, RouterTestingModule],
       providers: [
         { provide: AuthService, useValue: authServiceSpy },
         { provide: ActivatedRoute, useValue: activatedRoute },

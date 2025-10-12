@@ -12,27 +12,27 @@ describe('SeatMap', () => {
       seatNumber: 'A1',
       xCoord: 100,
       yCoord: 100,
-      status: 'available'
+      status: 'available',
     },
     {
       id: '2',
       seatNumber: 'A2',
       xCoord: 150,
       yCoord: 100,
-      status: 'occupied'
+      status: 'occupied',
     },
     {
       id: '3',
       seatNumber: 'A3',
       xCoord: 200,
       yCoord: 100,
-      status: 'reserved'
-    }
+      status: 'reserved',
+    },
   ];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SeatMap]
+      imports: [SeatMap],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SeatMap);

@@ -11,7 +11,7 @@ import { DashboardService } from '../../core/services/dashboard.service';
   standalone: true,
   imports: [CommonModule, MetricCard, SeatMap],
   templateUrl: './owner-dashboard.html',
-  styleUrl: './owner-dashboard.scss'
+  styleUrl: './owner-dashboard.scss',
 })
 export class OwnerDashboard implements OnInit {
   private route = inject(ActivatedRoute);
@@ -56,7 +56,7 @@ export class OwnerDashboard implements OnInit {
       style: 'currency',
       currency: 'INR',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(amount);
   }
 
@@ -72,7 +72,7 @@ export class OwnerDashboard implements OnInit {
       error: (err) => {
         this.error.set(err.message || 'Failed to load dashboard data');
         this.isLoading.set(false);
-      }
+      },
     });
   }
 }

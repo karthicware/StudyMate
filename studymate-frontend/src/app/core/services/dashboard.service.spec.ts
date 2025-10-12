@@ -17,22 +17,22 @@ describe('DashboardService', () => {
         seatNumber: 'A1',
         xCoord: 100,
         yCoord: 100,
-        status: 'available'
+        status: 'available',
       },
       {
         id: '2',
         seatNumber: 'A2',
         xCoord: 150,
         yCoord: 100,
-        status: 'occupied'
-      }
-    ]
+        status: 'occupied',
+      },
+    ],
   };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [DashboardService]
+      providers: [DashboardService],
     });
     service = TestBed.inject(DashboardService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -56,7 +56,7 @@ describe('DashboardService', () => {
         expect(metrics.occupancyPercentage).toBe(75.5);
         expect(metrics.seatMap.length).toBe(2);
         done();
-      }
+      },
     });
 
     const req = httpMock.expectOne(`/api/owner/dashboard/${hallId}`);
@@ -72,7 +72,7 @@ describe('DashboardService', () => {
       error: (error) => {
         expect(error.message).toBe(errorMessage);
         done();
-      }
+      },
     });
 
     const req = httpMock.expectOne(`/api/owner/dashboard/${hallId}`);
@@ -87,7 +87,7 @@ describe('DashboardService', () => {
       error: (error) => {
         expect(error.message).toBe(errorMessage);
         done();
-      }
+      },
     });
 
     const req = httpMock.expectOne(`/api/owner/dashboard/${hallId}`);
@@ -102,7 +102,7 @@ describe('DashboardService', () => {
       error: (error) => {
         expect(error.message).toBe(errorMessage);
         done();
-      }
+      },
     });
 
     const req = httpMock.expectOne(`/api/owner/dashboard/${hallId}`);

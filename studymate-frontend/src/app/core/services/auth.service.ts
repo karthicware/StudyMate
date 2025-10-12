@@ -3,11 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
-import {
-  LoginRequest,
-  RegisterRequest,
-  AuthResponse,
-} from '../models/auth.models';
+import { LoginRequest, RegisterRequest, AuthResponse } from '../models/auth.models';
 import { AuthStore } from '../../store/auth/auth.store';
 
 @Injectable({ providedIn: 'root' })
@@ -34,15 +30,13 @@ export class AuthService {
    */
   login(credentials: LoginRequest): Observable<AuthResponse> {
     this.authStore.setLoading(true);
-    return this.http
-      .post<AuthResponse>(`${this.API_URL}/login`, credentials)
-      .pipe(
-        tap((response) => {
-          this.storeToken(response.token);
-          this.authStore.setUser(response.user);
-          this.startTokenRefresh(response.token);
-        })
-      );
+    return this.http.post<AuthResponse>(`${this.API_URL}/login`, credentials).pipe(
+      tap((response) => {
+        this.storeToken(response.token);
+        this.authStore.setUser(response.user);
+        this.startTokenRefresh(response.token);
+      }),
+    );
   }
 
   /**
@@ -50,15 +44,13 @@ export class AuthService {
    */
   register(userData: RegisterRequest): Observable<AuthResponse> {
     this.authStore.setLoading(true);
-    return this.http
-      .post<AuthResponse>(`${this.API_URL}/register`, userData)
-      .pipe(
-        tap((response) => {
-          this.storeToken(response.token);
-          this.authStore.setUser(response.user);
-          this.startTokenRefresh(response.token);
-        })
-      );
+    return this.http.post<AuthResponse>(`${this.API_URL}/register`, userData).pipe(
+      tap((response) => {
+        this.storeToken(response.token);
+        this.authStore.setUser(response.user);
+        this.startTokenRefresh(response.token);
+      }),
+    );
   }
 
   /**
@@ -81,7 +73,7 @@ export class AuthService {
         this.storeToken(response.token);
         this.authStore.setUser(response.user);
         this.startTokenRefresh(response.token);
-      })
+      }),
     );
   }
 
@@ -163,9 +155,7 @@ export class AuthService {
 
     // Only set timer if refresh time is in the future
     if (timeout > 0) {
-      console.log(
-        `Token refresh scheduled in ${Math.round(timeout / 1000)} seconds`
-      );
+      console.log(`Token refresh scheduled in ${Math.round(timeout / 1000)} seconds`);
       this.refreshTimer = setTimeout(() => {
         console.log('Refreshing token...');
         this.refreshToken().subscribe({

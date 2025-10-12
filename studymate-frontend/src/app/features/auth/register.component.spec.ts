@@ -32,12 +32,9 @@ describe('RegisterComponent', () => {
         RegisterComponent,
         ReactiveFormsModule,
         HttpClientTestingModule,
-        RouterTestingModule
+        RouterTestingModule,
       ],
-      providers: [
-        { provide: AuthService, useValue: authServiceSpy },
-        AuthStore,
-      ],
+      providers: [{ provide: AuthService, useValue: authServiceSpy }, AuthStore],
     }).compileComponents();
 
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
