@@ -1,0 +1,39 @@
+// Owner Portal Layout Styles
+// Ensures consistent layout structure across all Owner Portal pages
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// Main content area
+main {
+  min-height: calc(100vh - 124px); // Full height minus header (64px) and footer (60px)
+  overflow-y: auto;
+}
+
+// Container adjustments for different breakpoints
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+
+  // Mobile
+  @media (max-width: 767px) {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  // Tablet
+  @media (min-width: 768px) and (max-width: 1023px) {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  // Desktop
+  @media (min-width: 1024px) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}

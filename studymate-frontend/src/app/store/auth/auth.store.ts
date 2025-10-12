@@ -30,6 +30,7 @@ export const AuthStore = signalStore(
   withComputed(({ user }) => ({
     selectUser: computed(() => user()),
     selectIsAuthenticated: computed(() => user() !== null),
+    selectUserRole: computed(() => user()?.role ?? null),
   })),
   withMethods((store) => ({
     setUser(user: User) {

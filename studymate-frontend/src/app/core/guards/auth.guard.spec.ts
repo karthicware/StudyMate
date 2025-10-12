@@ -1,71 +1,174 @@
 import { TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, Router, UrlTree } from '@angular/router';
 import { authGuard } from './auth.guard';
-import { AuthService } from '../services/auth.service';
 import { AuthStore } from '../../store/auth/auth.store';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('authGuard', () => {
-  let router: Router;
-  let authService: AuthService;
   let authStore: InstanceType<typeof AuthStore>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [AuthService, AuthStore],
+      providers: [AuthStore, Router],
     });
 
-    router = TestBed.inject(Router);
-    authService = TestBed.inject(AuthService);
     authStore = TestBed.inject(AuthStore);
-
-    spyOn(router, 'navigate');
   });
 
-  it('should allow access when user is authenticated', () => {
-    // Setup: Set user as authenticated
-    authStore.setUser({
-      id: 1,
-      email: 'test@example.com',
-      firstName: 'Test',
-      lastName: 'User',
+  describe('Authentication Check', () => {
+    it('should allow access when user is authenticated', () => {
+      // Setup: Set user as authenticated
+      authStore.setUser({
+        id: 1,
+        email: 'test@example.com',
+        firstName: 'Test',
+        lastName: 'User',
+        role: 'OWNER',
+      });
+
+      const mockRoute = {} as ActivatedRouteSnapshot;
+      const mockState = { url: '/owner/dashboard' } as RouterStateSnapshot;
+
+      const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
+
+      expect(result).toBe(true);
     });
 
-    const mockRoute: any = {};
-    const mockState: any = { url: '/dashboard' };
+    it('should return UrlTree redirect when user is not authenticated', () => {
+      // Ensure user is not authenticated
+      authStore.logout();
 
-    const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
+      const mockRoute = {} as ActivatedRouteSnapshot;
+      const mockState = { url: '/owner/dashboard' } as RouterStateSnapshot;
 
-    expect(result).toBe(true);
-    expect(router.navigate).not.toHaveBeenCalled();
-  });
+      const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
 
-  it('should redirect to login when user is not authenticated', () => {
-    // Ensure user is not authenticated
-    authStore.logout();
-
-    const mockRoute: any = {};
-    const mockState: any = { url: '/dashboard' };
-
-    const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
-
-    expect(result).toBe(false);
-    expect(router.navigate).toHaveBeenCalledWith(['/login'], {
-      queryParams: { returnUrl: '/dashboard' },
+      expect(result).toBeInstanceOf(UrlTree);
+      expect((result as UrlTree).toString()).toContain('/login');
+      expect((result as UrlTree).queryParams['returnUrl']).toBe('/owner/dashboard');
     });
   });
 
-  it('should store the attempted URL in query params', () => {
-    authStore.logout();
+  describe('Return URL Preservation', () => {
+    it('should store the attempted URL in returnUrl query param', () => {
+      authStore.logout();
 
-    const mockRoute: any = {};
-    const mockState: any = { url: '/protected-route' };
+      const mockRoute = {} as ActivatedRouteSnapshot;
+      const mockState = { url: '/owner/protected-route' } as RouterStateSnapshot;
 
-    TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
+      const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
 
-    expect(router.navigate).toHaveBeenCalledWith(['/login'], {
-      queryParams: { returnUrl: '/protected-route' },
+      expect(result).toBeInstanceOf(UrlTree);
+      expect((result as UrlTree).queryParams['returnUrl']).toBe('/owner/protected-route');
+    });
+
+    it('should preserve complex URLs with query params', () => {
+      authStore.logout();
+
+      const mockRoute = {} as ActivatedRouteSnapshot;
+      const mockState = {
+        url: '/owner/dashboard?hallId=123&view=detailed',
+      } as RouterStateSnapshot;
+
+      const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
+
+      expect(result).toBeInstanceOf(UrlTree);
+      expect((result as UrlTree).queryParams['returnUrl']).toBe(
+        '/owner/dashboard?hallId=123&view=detailed',
+      );
+    });
+
+    it('should preserve URL fragments', () => {
+      authStore.logout();
+
+      const mockRoute = {} as ActivatedRouteSnapshot;
+      const mockState = { url: '/owner/settings#notifications' } as RouterStateSnapshot;
+
+      const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
+
+      expect(result).toBeInstanceOf(UrlTree);
+      expect((result as UrlTree).queryParams['returnUrl']).toBe('/owner/settings#notifications');
+    });
+  });
+
+  describe('Guard Behavior', () => {
+    it('should not redirect when user is already authenticated', () => {
+      authStore.setUser({
+        id: 2,
+        email: 'owner@example.com',
+        firstName: 'Owner',
+        lastName: 'User',
+        role: 'OWNER',
+      });
+
+      const mockRoute = {} as ActivatedRouteSnapshot;
+      const mockState = { url: '/owner/reports' } as RouterStateSnapshot;
+
+      const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
+
+      expect(result).toBe(true);
+    });
+
+    it('should work with root path', () => {
+      authStore.logout();
+
+      const mockRoute = {} as ActivatedRouteSnapshot;
+      const mockState = { url: '/' } as RouterStateSnapshot;
+
+      const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
+
+      expect(result).toBeInstanceOf(UrlTree);
+      expect((result as UrlTree).queryParams['returnUrl']).toBe('/');
+    });
+
+    it('should handle deeply nested routes', () => {
+      authStore.logout();
+
+      const mockRoute = {} as ActivatedRouteSnapshot;
+      const mockState = { url: '/owner/user-management/edit/123' } as RouterStateSnapshot;
+
+      const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
+
+      expect(result).toBeInstanceOf(UrlTree);
+      expect((result as UrlTree).queryParams['returnUrl']).toBe('/owner/user-management/edit/123');
+    });
+  });
+
+  describe('Signal Store Integration', () => {
+    it('should use AuthStore signal for authentication status', () => {
+      // Spy on the selectIsAuthenticated computed signal
+      const selectIsAuthenticatedSpy = spyOn(
+        authStore.selectIsAuthenticated,
+        'call',
+      ).and.returnValue(true);
+
+      const mockRoute = {} as ActivatedRouteSnapshot;
+      const mockState = { url: '/owner/dashboard' } as RouterStateSnapshot;
+
+      TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
+
+      // Verify the signal was accessed
+      expect(selectIsAuthenticatedSpy).toHaveBeenCalled();
+    });
+
+    it('should react to authentication state changes', () => {
+      const mockRoute = {} as ActivatedRouteSnapshot;
+      const mockState = { url: '/owner/dashboard' } as RouterStateSnapshot;
+
+      // User not authenticated
+      authStore.logout();
+      let result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
+      expect(result).toBeInstanceOf(UrlTree);
+
+      // User becomes authenticated
+      authStore.setUser({
+        id: 3,
+        email: 'newuser@example.com',
+        firstName: 'New',
+        lastName: 'User',
+        role: 'OWNER',
+      });
+      result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
+      expect(result).toBe(true);
     });
   });
 });
