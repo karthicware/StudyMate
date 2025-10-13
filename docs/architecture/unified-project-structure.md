@@ -161,7 +161,7 @@ docs/
 │   │   ├── angular-rules.md
 │   │   ├── java-spring-rules.md
 │   │   └── playwright-rules.md
-│   ├── airbnb-inspired-design-system.md  # Official design system (colors, typography, shadows, spacing)
+│   ├── airbnb-inspired-design-system/index.md  # Official design system (colors, typography, shadows, spacing)
 │   └── context7-mcp.md                   # Context7 usage guidelines
 └── prd.md                                # Product Requirements Document
 ```

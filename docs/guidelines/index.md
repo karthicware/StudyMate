@@ -2,7 +2,7 @@
 
 ## Design System
 
-- **[airbnb-inspired-design-system.md](./airbnb-inspired-design-system.md)** - ⭐ Official Airbnb-inspired design system (colors, typography, shadows, spacing, responsive strategy) - **USE THIS FOR ALL COMPONENTS**
+- **[airbnb-inspired-design-system/index.md](./airbnb-inspired-design-system/index.md)** - ⭐ Official Airbnb-inspired design system (colors, typography, shadows, spacing, responsive strategy) - **USE THIS FOR ALL COMPONENTS**
 - [premium-ui-design.md](./premium-ui-design.md)
 - [shadcn.md](./shadcn.md)
 - [design-checklist.md](./design-checklist.md)

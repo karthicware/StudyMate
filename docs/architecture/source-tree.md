@@ -65,7 +65,11 @@ studyhall/
 │   │   │   ├── java-spring-rules.md
 │   │   │   ├── angular-rules.md
 │   │   │   └── playwright-rules.md
-│   │   ├── airbnb-inspired-design-system.md  # Official design system
+│   │   ├── airbnb-inspired-design-system/  # Official design system
+│   │   │   ├── index.md
+│   │   │   ├── 1-core-principles.md
+│   │   │   ├── 2-visual-style-tokens.md
+│   │   │   └── ... (18 files total)
 │   │   ├── index.md
 │   │   ├── context7-mcp.md    # context7 usage guidelines
 │   │   ├── unit-testing-story-guidelines.md

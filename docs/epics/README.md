@@ -132,8 +132,8 @@ All stories must adhere to the following standards:
 ### Frontend Development
 - **Framework:** Angular 20 (TypeScript) with Tailwind CSS
 - **Standards:** [Angular Coding Rules](../guidelines/coding-standard-guidelines/angular-rules.md)
-- **UI/UX:** [UI/UX Design Best Practices](../guidelines/airbnb-inspired-design-system.md)
-- **Design Reference:** [Front-End Specification](../guidelines/airbnb-inspired-design-system.md)
+- **UI/UX:** [UI/UX Design Best Practices](../guidelines/airbnb-inspired-design-system/index.md)
+- **Design Reference:** [Front-End Specification](../guidelines/airbnb-inspired-design-system/index.md)
 
 ### Backend Development
 - **Framework:** Spring Boot 3.5.6 (Java 17)
@@ -252,6 +252,6 @@ graph TD
 
 - [Product Requirements Document (PRD)](../prd.md)
 - [System Architecture Blueprint](../architecture.md)
-- [Front-End Specification](../guidelines/airbnb-inspired-design-system.md)
+- [Front-End Specification](../guidelines/airbnb-inspired-design-system/index.md)
 - [Guidelines Index](../guidelines/index.md)
 - [Story Template](../../.bmad-core/templates/story-tmpl.yaml)

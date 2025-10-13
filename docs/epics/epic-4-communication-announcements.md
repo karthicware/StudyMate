@@ -96,7 +96,7 @@ Enable study hall owners to communicate effectively with all students through an
 - **State Management:** NgRx with Signals for real-time announcement updates
 - **Rich Text Editor:** For announcement composition (e.g., CKEditor, Quill)
 - **Coding Standards:** [docs/guidelines/coding-standard-guidelines/angular-rules.md](../guidelines/coding-standard-guidelines/angular-rules.md)
-- **UI/UX Standards:** [docs/guidelines/airbnb-inspired-design-system.md](../guidelines/airbnb-inspired-design-system.md)
+- **UI/UX Standards:** [docs/guidelines/airbnb-inspired-design-system/index.md](../guidelines/airbnb-inspired-design-system/index.md)
 
 ### Backend Stack
 - **Framework:** Spring Boot 3.5.6 (Java 17)

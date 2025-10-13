@@ -769,6 +769,6 @@ export class SeatButtonComponent {
 ## References
 
 - [Angular Coding Standards](../guidelines/coding-standard-guidelines/angular-rules.md)
-- [UI/UX Design Best Practices](../guidelines/airbnb-inspired-design-system.md)
+- [UI/UX Design Best Practices](../guidelines/airbnb-inspired-design-system/index.md)
 - [Component Catalog](./components.md)
 - [Context7 MCP for Angular 20](../guidelines/context7-mcp.md)
