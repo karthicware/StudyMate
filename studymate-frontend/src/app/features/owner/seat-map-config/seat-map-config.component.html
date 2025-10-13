@@ -37,7 +37,7 @@
             </button>
             <button
               (click)="saveSeatConfiguration()"
-              class="btn-light-grey text-gray-700"
+              class="btn-primary"
               [disabled]="isLoading() || !hasUnsavedChanges()">
               @if (isLoading()) {
                 <span>Saving...</span>
@@ -90,7 +90,7 @@
     <div class="space-y-6">
 
       <!-- Seat Details Panel -->
-      <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="seat-details-panel">
         <h3 class="text-lg font-semibold text-gray-900 mb-4">Seat Details</h3>
 
         @if (selectedSeat(); as seat) {
@@ -111,8 +111,7 @@
             <div class="flex gap-2">
               <button
                 (click)="updateSeatNumber()"
-                class="flex-1 btn-light-grey btn-sm"
-                style="color: #ff3e6c;">
+                class="flex-1 btn-primary btn-sm">
                 Update
               </button>
               <button
@@ -133,7 +132,7 @@
       </div>
 
       <!-- Shift Configuration Panel -->
-      <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="shift-timings-panel">
         <div class="flex justify-between items-center mb-4">
           <h3 class="text-lg font-semibold text-gray-900">Shift Timings</h3>
           <button
@@ -146,23 +145,22 @@
 
         <div class="space-y-2">
           @for (shift of shifts(); track $index) {
-            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+            <div class="shift-item">
               <div class="flex-1">
                 <p class="font-medium text-gray-900 text-sm">{{ shift.name }}</p>
                 <p class="text-xs text-gray-600">{{ shift.startTime }} - {{ shift.endTime }}</p>
               </div>
-              <div class="flex gap-3">
+              <div class="flex gap-2 items-center">
                 <a
                   (click)="openShiftModal($index)"
-                  class="text-xs font-medium cursor-pointer hover:underline"
-                  style="color: #ff3e6c;">
+                  class="text-xs font-medium text-gray-700 cursor-pointer underline">
                   Edit
                 </a>
-                <a
+                <button
                   (click)="deleteShift($index)"
-                  class="text-xs font-medium text-red-600 cursor-pointer hover:underline">
+                  class="px-2 py-1 text-xs font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-50">
                   Delete
-                </a>
+                </button>
               </div>
             </div>
           }
