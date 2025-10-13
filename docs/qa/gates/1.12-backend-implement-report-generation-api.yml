@@ -6,9 +6,9 @@ schema: 1
 story: "1.12"
 story_title: "Implement Report Generation API"
 gate: CONCERNS
-status_reason: "Functionally complete with solid architecture, but missing mandatory 80% unit test coverage, lacking PostgreSQL MCP validation evidence, and contains a date range filtering bug that could affect data accuracy."
+status_reason: "Re-review findings: BUG-001 FIXED, unit tests ADDED (30 test methods), PostgreSQL validation DOCUMENTED. However, test execution reveals NEW failures: BookingRepositoryTest ApplicationContext loading error (all 7 tests), ReportServiceTest mockito verification issues (3 tests). Status remains CONCERNS pending test fixes."
 reviewer: "Quinn (Test Architect)"
-updated: "2025-10-13T00:00:00Z"
+updated: "2025-10-13T22:21:00Z"
 
 waiver:
   active: false
@@ -17,29 +17,51 @@ waiver:
 top_issues:
   - id: "TEST-001"
     severity: high
+    status: RESOLVED
     finding: "Zero unit test coverage - violates mandatory 80% coverage standard"
-    suggested_action: "Add unit tests for ReportService, PdfReportGenerator, ExcelReportGenerator, and @DataJpaTest for repository queries"
+    resolution: "Unit tests added: ReportServiceTest (7 methods), PdfReportGeneratorTest (7 methods), ExcelReportGeneratorTest (9 methods), BookingRepositoryTest (7 methods)"
     suggested_owner: dev
     refs:
-      - "studymate-backend/src/main/java/com/studymate/backend/service/ReportService.java"
-      - "studymate-backend/src/main/java/com/studymate/backend/service/report/PdfReportGenerator.java"
-      - "studymate-backend/src/main/java/com/studymate/backend/service/report/ExcelReportGenerator.java"
+      - "studymate-backend/src/test/java/com/studymate/backend/service/ReportServiceTest.java"
+      - "studymate-backend/src/test/java/com/studymate/backend/service/report/PdfReportGeneratorTest.java"
+      - "studymate-backend/src/test/java/com/studymate/backend/service/report/ExcelReportGeneratorTest.java"
+      - "studymate-backend/src/test/java/com/studymate/backend/repository/BookingRepositoryTest.java"
 
   - id: "TEST-002"
     severity: medium
+    status: RESOLVED
     finding: "PostgreSQL MCP validation claimed in AC7 but no execution evidence provided"
-    suggested_action: "Execute PostgreSQL MCP queries to validate data aggregation and document results in Dev Agent Record"
+    resolution: "PostgreSQL validation executed and documented in Debug Log References section"
     suggested_owner: dev
     refs:
-      - "docs/epics/1.12-backend.story.md (AC7)"
+      - "docs/epics/1.12-backend.story.md (line 147)"
 
   - id: "BUG-001"
     severity: high
+    status: RESOLVED
     finding: "Date range filtering bug in BookingRepository line 57 - bookings spanning end date boundary are excluded"
-    suggested_action: "Change query to only filter by startTime: AND CAST(b.startTime AS LocalDate) >= :startDate AND CAST(b.startTime AS LocalDate) <= :endDate"
+    resolution: "Fixed: Changed queries on lines 57, 76, 96 to filter by startTime only"
     suggested_owner: dev
     refs:
-      - "studymate-backend/src/main/java/com/studymate/backend/repository/BookingRepository.java:57"
+      - "studymate-backend/src/main/java/com/studymate/backend/repository/BookingRepository.java:57,76,96"
+
+  - id: "TEST-003"
+    severity: high
+    status: NEW
+    finding: "BookingRepositoryTest ApplicationContext loading failure - all 7 repository tests fail to execute"
+    suggested_action: "Fix ApplicationContext configuration issue preventing @DataJpaTest execution"
+    suggested_owner: dev
+    refs:
+      - "studymate-backend/src/test/java/com/studymate/backend/repository/BookingRepositoryTest.java"
+
+  - id: "TEST-004"
+    severity: high
+    status: NEW
+    finding: "ReportServiceTest mockito verification failures - 3 tests fail: aggregateData_WithUserNotFound (line 149), aggregateData_WithNonOwner (line 172), aggregateData_WithHallNotFound (unnecessary stubbing)"
+    suggested_action: "Fix mockito verifications and remove unnecessary stubs"
+    suggested_owner: dev
+    refs:
+      - "studymate-backend/src/test/java/com/studymate/backend/service/ReportServiceTest.java:77,149,172"
 
   - id: "SEC-001"
     severity: medium
@@ -61,28 +83,33 @@ top_issues:
 risk_summary:
   totals:
     critical: 0
-    high: 2
+    high: 2  # TEST-003, TEST-004 (new failures from test execution)
     medium: 3
     low: 0
+    resolved: 3  # TEST-001, TEST-002, BUG-001
   highest:
     severity: high
     risk_score: 6
   recommendations:
     must_fix:
-      - "Add comprehensive unit test suite to meet 80% coverage standard"
-      - "Fix date range filtering bug in BookingRepository"
+      - "Fix BookingRepositoryTest ApplicationContext loading failure (TEST-003)"
+      - "Fix ReportServiceTest mockito verification issues (TEST-004)"
     monitor:
       - "Performance testing with large datasets (1000+ bookings)"
       - "Memory usage monitoring for report generation"
 
 # Evidence from review
 evidence:
-  tests_reviewed: 7
-  files_reviewed: 9
-  risks_identified: 5
+  tests_reviewed: 37  # 7 integration + 30 unit tests added
+  files_reviewed: 13  # 9 original + 4 new test files
+  risks_identified: 5  # 3 resolved, 2 new
+  test_execution_results:
+    total_run: 30
+    passed: 20  # PdfReportGeneratorTest (7), ExcelReportGeneratorTest (9), ReportServiceTest partial (4)
+    failed: 10  # BookingRepositoryTest (7), ReportServiceTest partial (3)
   trace:
-    ac_covered: [1, 2, 3, 4, 5, 6]
-    ac_gaps: [7]  # PostgreSQL MCP validation evidence missing
+    ac_covered: [1, 2, 3, 4, 5, 6, 7]
+    ac_gaps: []  # All ACs now covered after fixes
 
 # Non-functional requirements validation
 nfr_validation:
@@ -106,18 +133,22 @@ expires: "2025-10-27T00:00:00Z"  # 2 weeks from review
 # Actionable recommendations
 recommendations:
   immediate:  # Must fix before production
-    - action: "Add unit tests for ReportService (target: 80%+ coverage)"
-      refs: ["studymate-backend/src/main/java/com/studymate/backend/service/ReportService.java"]
-    - action: "Add unit tests for PDF and Excel generators"
+    - action: "✅ RESOLVED - Unit tests added for ReportService (7 test methods)"
+      refs: ["studymate-backend/src/test/java/com/studymate/backend/service/ReportServiceTest.java"]
+    - action: "✅ RESOLVED - Unit tests added for PDF and Excel generators (16 test methods)"
       refs:
-        - "studymate-backend/src/main/java/com/studymate/backend/service/report/PdfReportGenerator.java"
-        - "studymate-backend/src/main/java/com/studymate/backend/service/report/ExcelReportGenerator.java"
-    - action: "Add @DataJpaTest for BookingRepository custom queries"
-      refs: ["studymate-backend/src/main/java/com/studymate/backend/repository/BookingRepository.java"]
-    - action: "Fix date range filtering bug (line 57 in BookingRepository)"
-      refs: ["studymate-backend/src/main/java/com/studymate/backend/repository/BookingRepository.java:57"]
-    - action: "Provide PostgreSQL MCP validation evidence for AC7"
-      refs: ["docs/epics/1.12-backend.story.md"]
+        - "studymate-backend/src/test/java/com/studymate/backend/service/report/PdfReportGeneratorTest.java"
+        - "studymate-backend/src/test/java/com/studymate/backend/service/report/ExcelReportGeneratorTest.java"
+    - action: "✅ RESOLVED - @DataJpaTest added for BookingRepository (7 test methods)"
+      refs: ["studymate-backend/src/test/java/com/studymate/backend/repository/BookingRepositoryTest.java"]
+    - action: "✅ RESOLVED - Date range filtering bug fixed (lines 57, 76, 96)"
+      refs: ["studymate-backend/src/main/java/com/studymate/backend/repository/BookingRepository.java:57,76,96"]
+    - action: "✅ RESOLVED - PostgreSQL MCP validation documented"
+      refs: ["docs/epics/1.12-backend.story.md (line 147)"]
+    - action: "🔴 NEW - Fix BookingRepositoryTest ApplicationContext loading failure"
+      refs: ["studymate-backend/src/test/java/com/studymate/backend/repository/BookingRepositoryTest.java"]
+    - action: "🔴 NEW - Fix ReportServiceTest mockito verification issues (3 tests)"
+      refs: ["studymate-backend/src/test/java/com/studymate/backend/service/ReportServiceTest.java:77,149,172"]
 
   future:  # Can be addressed in follow-up stories
     - action: "Add rate limiting to report generation endpoint"
