@@ -1,8 +1,15 @@
 # Airbnb-Inspired Design System Guidelines
 
+> **🎯 PRIMARY GUIDANCE - Shadow.md**: All shadow and depth implementations across this design system follow the comprehensive principles in [Shadow.md](./Shadow.md).
+> - **Color Layering for Depth**: 4-shade system for visual hierarchy
+> - **Two-Layer Shadows & Gradients**: small/medium/large shadow system with gradient enhancements
+> - **Element-Specific Applications**: Detailed guidance for tabs, cards, dropdowns, buttons, tables, and navigation
+> - **Shadow.md takes absolute precedence** for any shadow, depth, or layering decisions
+
 ## Table of Contents
 
 - [Airbnb-Inspired Design System Guidelines](#table-of-contents)
+  - **[Shadow.md - PRIMARY GUIDANCE](./Shadow.md)** ⭐
   - [Overview](./overview.md)
   - [Table of Contents](./table-of-contents.md)
   - [1. Core Principles](./1-core-principles.md)

@@ -1,5 +1,9 @@
 # 8. Tailwind Configuration
 
+> **📋 IMPLEMENTATION NOTE**: This configuration implements the shadow system defined in [Shadow.md](./Shadow.md).
+> - All shadow values follow the two-layer shadow principle
+> - Shadow.md is the primary reference for shadow implementation details
+
 Add these tokens to your `tailwind.config.js` to implement the design system.
 
 ```javascript

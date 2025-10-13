@@ -1,5 +1,11 @@
 # 11. Search Bar & Image Card Specifications
 
+> **🎨 SHADOW & DEPTH REFERENCE**: All implementations follow [Shadow.md](./Shadow.md).
+> - Search bar uses two-layer shadow system with hover elevation
+> - Guest dropdown uses medium/large shadows
+> - Image cards use subtle shadows and color layering
+> - Shadow.md takes precedence for all shadow implementations
+
 This section provides detailed implementation guidelines for the search bar component, guest selection dropdown, and image card styles (listing cards and category cards).
 
 ## 11.1 Search Bar Component (`<app-search-bar>`)

@@ -1,5 +1,10 @@
 # 2. Visual Style & Tokens
 
+> **⚠️ PRIMARY GUIDANCE**: All shadow and depth implementations in this document follow the principles defined in [Shadow.md](./Shadow.md), which serves as the authoritative reference for:
+> - **Color Layering for Depth** (4-shade system for visual hierarchy)
+> - **Two-Layer Shadows & Gradients** (small/medium/large shadow system)
+> - Shadow.md takes precedence over any conflicting guidance in this document.
+
 ## 2.1 UI Color Palette Structure & Usage
 
 A complete UI color palette consists of four main categories, following the **60-30-10 Rule**.

@@ -1,5 +1,10 @@
 # 9. Header and Footer Component Specifications
 
+> **🎨 SHADOW & DEPTH REFERENCE**: All shadow and elevation implementations follow [Shadow.md](./Shadow.md).
+> - Use the two-layer shadow system (small/medium/large)
+> - Apply color layering for depth (4-shade system)
+> - Shadow.md guidance takes precedence
+
 This section provides detailed implementation guidelines for the global header and footer components, ensuring they align with the Airbnb-inspired design system principles.
 
 ## 9.1 Target Technology Stack

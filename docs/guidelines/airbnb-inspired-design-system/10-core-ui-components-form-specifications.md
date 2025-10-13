@@ -1,5 +1,11 @@
 # 10. Core UI Components & Form Specifications
 
+> **🎨 SHADOW & DEPTH REFERENCE**: All component implementations follow [Shadow.md](./Shadow.md).
+> - Apply two-layer shadows (small/medium/large) to buttons, cards, and modals
+> - Use color layering (4-shade system) for interactive states
+> - Implement gradient enhancements for premium buttons
+> - Shadow.md takes precedence for all depth and elevation decisions
+
 This section provides detailed implementation guidelines for buttons, form fields, cards, modals, links, icons, and interactive components based on Airbnb's UI patterns.
 
 ## 10.1 Global Component Aesthetic

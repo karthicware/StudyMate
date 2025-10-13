@@ -1,5 +1,10 @@
 # 4. Component Elevation and Depth
 
+> **🎯 PRIMARY REFERENCE**: This document implements the comprehensive shadow and depth system defined in [Shadow.md](./Shadow.md).
+> - Shadow.md contains the complete step-by-step implementation guide
+> - All principles below are derived from and must align with Shadow.md
+> - **Shadow.md takes absolute precedence** for any conflicts or clarifications
+
 We use **subtle layering** and **controlled shadows** to establish visual hierarchy and depth, reinforcing the "Trust through Fidelity" principle.
 
 ## 4.1 Color Layering for Depth (Shade Strategy)
@@ -50,6 +55,48 @@ The visual separation between elements should often be achieved through **color 
 
 </div>
 ```
+
+---
+
+## 4.1.1 Element-Specific Shade Applications
+
+Based on Shadow.md, here are specific applications for common UI elements:
+
+### Tabs
+- **Background**: Shade 2 (`bg-white`)
+- **Selected tab**: Shade 3 (`bg-gray-50`)
+- **Text/icon in selected tab**: Increase lightness to maintain contrast
+- **No borders**: Color contrast provides separation
+
+### Cards
+- **Wrapper**: Shade 2 (`bg-white`)
+- **Important elements inside**: Shade 3 (`bg-gray-50`)
+- **Selected card**: Shade 3 + shadow (`bg-gray-50 shadow-card`)
+
+### Dropdowns/Buttons
+- **Default**: Shade 2 (`bg-white`)
+- **Highlighted/important**: Shade 3 (`bg-gray-50`)
+- **Premium buttons**: Can add gradient + inner shadow
+
+### Radio/Checkbox Options
+- **Container**: Shade 2 (`bg-white`)
+- **Options**: Shade 2 with spacing
+- **Selected option**: Shade 3 (`bg-gray-50`)
+
+### Tables
+- **Background**: Shade 1 (`bg-gray-100`) - Pushed deeper to de-emphasize
+- **Can be darker** than other elements to reduce visual weight
+
+### Navigation
+- **Base**: Shade 2 (`bg-white`)
+- **Items**: Shade 3 (`bg-gray-50`)
+- **Multiple layers** create depth effect
+
+### Text & Icon Compensation Rule
+**CRITICAL**: When applying a lighter background shade to an element:
+- **Increase text color lightness** by the same amount
+- **Increase icon color lightness** by the same amount
+- This maintains proper contrast and prevents muted appearance
 
 ---
 
