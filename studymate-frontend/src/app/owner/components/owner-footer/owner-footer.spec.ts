@@ -45,36 +45,88 @@ describe('OwnerFooterComponent', () => {
     });
   });
 
-  describe('Footer Links Configuration', () => {
-    it('should have 3 footer links', () => {
-      expect(component.footerLinks.length).toBe(3);
+  describe('Footer Columns Configuration (Story 1.16.1)', () => {
+    it('should have 4 footer columns', () => {
+      expect(component.footerColumns.length).toBe(4);
     });
 
-    it('should have Terms of Service link', () => {
-      const termsLink = component.footerLinks.find((link) => link.label === 'Terms of Service');
+    it('should have Owner Resources column with 4 links', () => {
+      const ownerResourcesColumn = component.footerColumns.find(
+        (col) => col.heading === 'Owner Resources'
+      );
+      expect(ownerResourcesColumn).toBeTruthy();
+      expect(ownerResourcesColumn?.links.length).toBe(4);
+      expect(ownerResourcesColumn?.links[0].label).toBe('Dashboard');
+      expect(ownerResourcesColumn?.links[1].label).toBe('Reports');
+      expect(ownerResourcesColumn?.links[2].label).toBe('Settings');
+      expect(ownerResourcesColumn?.links[3].label).toBe('Profile');
+    });
+
+    it('should have Support column with 3 links', () => {
+      const supportColumn = component.footerColumns.find((col) => col.heading === 'Support');
+      expect(supportColumn).toBeTruthy();
+      expect(supportColumn?.links.length).toBe(3);
+      expect(supportColumn?.links[0].label).toBe('Help Center');
+      expect(supportColumn?.links[1].label).toBe('Contact Support');
+      expect(supportColumn?.links[2].label).toBe('FAQ');
+    });
+
+    it('should have About column with Terms, Privacy, and Version', () => {
+      const aboutColumn = component.footerColumns.find((col) => col.heading === 'About');
+      expect(aboutColumn).toBeTruthy();
+      expect(aboutColumn?.links.length).toBe(3);
+      expect(aboutColumn?.links[0].label).toBe('Terms of Service');
+      expect(aboutColumn?.links[1].label).toBe('Privacy Policy');
+      expect(aboutColumn?.links[2].label).toContain('Version');
+    });
+
+    it('should have Legal column with 3 compliance links', () => {
+      const legalColumn = component.footerColumns.find((col) => col.heading === 'Legal');
+      expect(legalColumn).toBeTruthy();
+      expect(legalColumn?.links.length).toBe(3);
+      expect(legalColumn?.links[0].label).toBe('Accessibility');
+      expect(legalColumn?.links[1].label).toBe('Cookie Policy');
+      expect(legalColumn?.links[2].label).toBe('Sitemap');
+    });
+
+    it('should have Terms of Service as external link', () => {
+      const aboutColumn = component.footerColumns.find((col) => col.heading === 'About');
+      const termsLink = aboutColumn?.links.find((link) => link.label === 'Terms of Service');
       expect(termsLink).toBeTruthy();
       expect(termsLink?.path).toBe('/terms');
       expect(termsLink?.external).toBe(true);
     });
 
-    it('should have Privacy Policy link', () => {
-      const privacyLink = component.footerLinks.find((link) => link.label === 'Privacy Policy');
+    it('should have Privacy Policy as external link', () => {
+      const aboutColumn = component.footerColumns.find((col) => col.heading === 'About');
+      const privacyLink = aboutColumn?.links.find((link) => link.label === 'Privacy Policy');
       expect(privacyLink).toBeTruthy();
       expect(privacyLink?.path).toBe('/privacy');
       expect(privacyLink?.external).toBe(true);
     });
 
-    it('should have Contact Support link', () => {
-      const contactLink = component.footerLinks.find((link) => link.label === 'Contact Support');
+    it('should have Cookie Policy as external link', () => {
+      const legalColumn = component.footerColumns.find((col) => col.heading === 'Legal');
+      const cookieLink = legalColumn?.links.find((link) => link.label === 'Cookie Policy');
+      expect(cookieLink).toBeTruthy();
+      expect(cookieLink?.path).toBe('/cookies');
+      expect(cookieLink?.external).toBe(true);
+    });
+
+    it('should have Contact Support as internal link', () => {
+      const supportColumn = component.footerColumns.find((col) => col.heading === 'Support');
+      const contactLink = supportColumn?.links.find((link) => link.label === 'Contact Support');
       expect(contactLink).toBeTruthy();
       expect(contactLink?.path).toBe('/owner/contact');
       expect(contactLink?.external).toBe(false);
     });
 
     it('should have ARIA labels for all links', () => {
-      component.footerLinks.forEach((link) => {
-        expect(link.ariaLabel).toBeTruthy();
-        expect(typeof link.ariaLabel).toBe('string');
+      component.footerColumns.forEach((column) => {
+        column.links.forEach((link) => {
+          expect(link.ariaLabel).toBeTruthy();
+          expect(typeof link.ariaLabel).toBe('string');
+        });
       });
     });
   });
@@ -105,10 +157,17 @@ describe('OwnerFooterComponent', () => {
       expect(compiled.textContent).toContain(component.appVersion);
     });
 
-    it('should render all footer links', () => {
+    it('should render all footer column headings', () => {
+      const compiled = fixture.nativeElement as HTMLElement;
+      const headings = compiled.querySelectorAll('footer h3');
+      expect(headings.length).toBe(4);
+    });
+
+    it('should render all footer links (14 total links)', () => {
       const compiled = fixture.nativeElement as HTMLElement;
       const links = compiled.querySelectorAll('nav a');
-      expect(links.length).toBe(3);
+      // 4 (Owner Resources) + 3 (Support) + 3 (About) + 3 (Legal) = 13 links
+      expect(links.length).toBe(13);
     });
 
     it('should render branding tagline', () => {
@@ -122,15 +181,15 @@ describe('OwnerFooterComponent', () => {
     it('should add target="_blank" to external links', () => {
       const compiled = fixture.nativeElement as HTMLElement;
       const externalLinks = compiled.querySelectorAll('a[target="_blank"]');
-      // Should have 2 external links (Terms, Privacy)
-      expect(externalLinks.length).toBe(2);
+      // Should have 3 external links (Terms, Privacy, Cookie Policy)
+      expect(externalLinks.length).toBe(3);
     });
 
     it('should add rel="noopener noreferrer" to external links', () => {
       const compiled = fixture.nativeElement as HTMLElement;
       const externalLinks = compiled.querySelectorAll('a[rel="noopener noreferrer"]');
-      // Should have 2 external links (Terms, Privacy)
-      expect(externalLinks.length).toBe(2);
+      // Should have 3 external links (Terms, Privacy, Cookie Policy)
+      expect(externalLinks.length).toBe(3);
     });
 
     it('should not add target="_blank" to internal links', () => {
@@ -211,28 +270,68 @@ describe('OwnerFooterComponent', () => {
     });
   });
 
-  describe('Styling Classes', () => {
-    it('should have proper background and border classes', () => {
+  describe('Styling Classes (Story 1.16.1 - Design System Section 9)', () => {
+    it('should have white background (bg-white)', () => {
       const compiled = fixture.nativeElement as HTMLElement;
       const footer = compiled.querySelector('footer');
-      expect(footer?.classList.contains('bg-gray-100')).toBe(true);
+      expect(footer?.classList.contains('bg-white')).toBe(true);
+    });
+
+    it('should have subtle border (border-t border-gray-200)', () => {
+      const compiled = fixture.nativeElement as HTMLElement;
+      const footer = compiled.querySelector('footer');
       expect(footer?.classList.contains('border-t')).toBe(true);
-      expect(footer?.classList.contains('border-gray-300')).toBe(true);
+      expect(footer?.classList.contains('border-gray-200')).toBe(true);
     });
 
-    it('should have proper padding classes', () => {
+    it('should have Section 9 padding (pt-12 pb-8)', () => {
       const compiled = fixture.nativeElement as HTMLElement;
       const footer = compiled.querySelector('footer');
-      expect(footer?.classList.contains('py-4')).toBe(true);
+      expect(footer?.classList.contains('pt-12')).toBe(true);
+      expect(footer?.classList.contains('pb-8')).toBe(true);
     });
 
-    it('should have hover transition classes on links', () => {
+    it('should have multi-column grid layout', () => {
+      const compiled = fixture.nativeElement as HTMLElement;
+      const nav = compiled.querySelector('footer nav');
+      expect(nav?.classList.contains('grid')).toBe(true);
+      expect(nav?.classList.contains('grid-cols-1')).toBe(true);
+      expect(nav?.classList.contains('md:grid-cols-2')).toBe(true);
+      expect(nav?.classList.contains('lg:grid-cols-4')).toBe(true);
+      expect(nav?.classList.contains('gap-8')).toBe(true);
+    });
+
+    it('should have correct heading typography (text-sm font-bold text-gray-900)', () => {
+      const compiled = fixture.nativeElement as HTMLElement;
+      const heading = compiled.querySelector('footer h3');
+      expect(heading?.classList.contains('text-sm')).toBe(true);
+      expect(heading?.classList.contains('font-bold')).toBe(true);
+      expect(heading?.classList.contains('text-gray-900')).toBe(true);
+      expect(heading?.classList.contains('mb-4')).toBe(true);
+    });
+
+    it('should have correct link typography (text-sm text-gray-600 hover:underline)', () => {
+      const compiled = fixture.nativeElement as HTMLElement;
+      const link = compiled.querySelector('nav a');
+      expect(link?.classList.contains('text-sm')).toBe(true);
+      expect(link?.classList.contains('text-gray-600')).toBe(true);
+      expect(link?.classList.contains('hover:underline')).toBe(true);
+    });
+
+    it('should have smooth transitions on links (transition-all duration-200)', () => {
       const compiled = fixture.nativeElement as HTMLElement;
       const links = compiled.querySelectorAll('nav a');
       links.forEach((link) => {
-        expect(link.classList.contains('transition-colors')).toBe(true);
-        expect(link.classList.contains('hover:text-primary-600')).toBe(true);
+        expect(link.classList.contains('transition-all')).toBe(true);
+        expect(link.classList.contains('duration-200')).toBe(true);
+        expect(link.classList.contains('cursor-pointer')).toBe(true);
       });
+    });
+
+    it('should have proper spacing in link lists (space-y-3)', () => {
+      const compiled = fixture.nativeElement as HTMLElement;
+      const linkList = compiled.querySelector('footer ul');
+      expect(linkList?.classList.contains('space-y-3')).toBe(true);
     });
   });
 

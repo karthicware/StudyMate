@@ -1,5 +1,6 @@
 import {
   ApplicationConfig,
+  APP_INITIALIZER,
   provideBrowserGlobalErrorListeners,
   provideZoneChangeDetection,
 } from '@angular/core';
@@ -10,6 +11,19 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { AuthService } from './core/services/auth.service';
+
+/**
+ * Initialize authentication state before application starts
+ * This ensures the AuthService constructor runs and checks for existing tokens
+ */
+function initializeAuth(authService: AuthService) {
+  return () => {
+    // AuthService constructor already calls checkAuthStatus()
+    // This just ensures the service is instantiated before routing begins
+    return Promise.resolve();
+  };
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,5 +39,11 @@ export const appConfig: ApplicationConfig = {
       trace: false,
       traceLimit: 75,
     }),
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeAuth,
+      deps: [AuthService],
+      multi: true,
+    },
   ],
 };

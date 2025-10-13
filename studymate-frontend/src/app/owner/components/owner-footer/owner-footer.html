@@ -1,43 +1,58 @@
-<footer class="bg-gray-100 border-t border-gray-300 py-4" role="contentinfo">
-  <div class="container mx-auto px-6">
-    <div
-      class="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left"
+<footer class="bg-white border-t border-gray-200 pt-12 pb-8" role="contentinfo">
+  <div class="max-w-7xl mx-auto px-4">
+    <!-- Navigation Links Grid -->
+    <nav
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8"
+      aria-label="Footer navigation"
     >
-      <!-- Left: Copyright & Version -->
-      <div class="text-sm text-gray-600">
-        <span aria-label="Copyright information"> &copy; {{ currentYear }} StudyMate </span>
-        <span class="mx-2">|</span>
-        <span aria-label="Application version"> Version {{ appVersion }} </span>
-      </div>
+      @for (column of footerColumns; track column.heading) {
+        <div>
+          <h3 class="text-sm font-bold text-gray-900 mb-4">{{ column.heading }}</h3>
+          <ul class="space-y-3">
+            @for (link of column.links; track link.path) {
+              <li>
+                @if (link.external) {
+                  <a
+                    [href]="link.path"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    [attr.aria-label]="link.ariaLabel || link.label"
+                    class="text-sm text-gray-600 hover:underline transition-all duration-200 cursor-pointer"
+                  >
+                    {{ link.label }}
+                  </a>
+                } @else {
+                  <a
+                    [routerLink]="link.path"
+                    [attr.aria-label]="link.ariaLabel || link.label"
+                    class="text-sm text-gray-600 hover:underline transition-all duration-200 cursor-pointer"
+                  >
+                    {{ link.label }}
+                  </a>
+                }
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </nav>
 
-      <!-- Center: Links -->
-      <nav class="flex items-center gap-6" aria-label="Footer navigation">
-        @for (link of footerLinks; track link.path) {
-          @if (link.external) {
-            <a
-              [href]="link.path"
-              target="_blank"
-              rel="noopener noreferrer"
-              [attr.aria-label]="link.ariaLabel"
-              class="text-sm text-gray-700 hover:text-primary-600 transition-colors underline-offset-4 hover:underline"
-            >
-              {{ link.label }}
-            </a>
-          } @else {
-            <a
-              [routerLink]="link.path"
-              [attr.aria-label]="link.ariaLabel"
-              class="text-sm text-gray-700 hover:text-primary-600 transition-colors underline-offset-4 hover:underline"
-            >
-              {{ link.label }}
-            </a>
-          }
-        }
-      </nav>
+    <!-- Legal & Branding Bar -->
+    <div class="border-t border-gray-200 pt-6">
+      <div
+        class="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left"
+      >
+        <!-- Left: Copyright & Version -->
+        <div class="text-sm text-gray-600">
+          <span aria-label="Copyright information">&copy; {{ currentYear }} StudyMate</span>
+          <span class="mx-2">|</span>
+          <span aria-label="Application version">Version {{ appVersion }}</span>
+        </div>
 
-      <!-- Right: Branding -->
-      <div class="text-sm text-gray-600">
-        Built with <span class="text-red-500" aria-hidden="true">&hearts;</span> for educators
+        <!-- Right: Branding -->
+        <div class="text-sm text-gray-600">
+          Built with <span class="text-red-500" aria-hidden="true">&hearts;</span> for educators
+        </div>
       </div>
     </div>
   </div>
