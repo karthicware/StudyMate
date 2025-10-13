@@ -54,7 +54,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
            "WHERE b.seat.hall.id = :hallId " +
            "AND b.status = 'CONFIRMED' " +
            "AND CAST(b.startTime AS LocalDate) >= :startDate " +
-           "AND CAST(b.endTime AS LocalDate) <= :endDate")
+           "AND CAST(b.startTime AS LocalDate) <= :endDate")
     BigDecimal sumRevenueByHallAndDateRange(
             @Param("hallId") Long hallId,
             @Param("startDate") LocalDate startDate,
@@ -73,7 +73,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
            "WHERE b.seat.hall.id = :hallId " +
            "AND b.status = 'CONFIRMED' " +
            "AND CAST(b.startTime AS LocalDate) >= :startDate " +
-           "AND CAST(b.endTime AS LocalDate) <= :endDate " +
+           "AND CAST(b.startTime AS LocalDate) <= :endDate " +
            "GROUP BY HOUR(b.startTime) " +
            "ORDER BY count DESC")
     List<Object[]> findBusiestHoursByHall(
@@ -93,10 +93,22 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
            "WHERE b.seat.hall.id = :hallId " +
            "AND b.status = 'CONFIRMED' " +
            "AND CAST(b.startTime AS LocalDate) >= :startDate " +
-           "AND CAST(b.endTime AS LocalDate) <= :endDate " +
+           "AND CAST(b.startTime AS LocalDate) <= :endDate " +
            "ORDER BY b.startTime")
     List<Booking> findByHallAndDateRange(
             @Param("hallId") Long hallId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
+
+    /**
+     * Find recent bookings for a user, ordered by start time descending.
+     *
+     * @param userId the ID of the user
+     * @return list of recent bookings (limited by query)
+     */
+    @Query("SELECT b FROM Booking b " +
+           "WHERE b.user.id = :userId " +
+           "ORDER BY b.startTime DESC " +
+           "LIMIT 10")
+    List<Booking> findRecentBookingsByUserId(@Param("userId") Long userId);
 }

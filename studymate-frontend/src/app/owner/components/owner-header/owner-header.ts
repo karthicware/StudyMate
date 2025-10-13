@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, HostListener, ElementRef } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthStore } from '../../../store/auth/auth.store';
@@ -28,6 +28,7 @@ import { AuthStore } from '../../../store/auth/auth.store';
 export class OwnerHeaderComponent {
   private authStore = inject(AuthStore);
   private router = inject(Router);
+  private elementRef = inject(ElementRef);
 
   // User state from NgRx Signals
   user = this.authStore.selectUser;
@@ -83,18 +84,6 @@ export class OwnerHeaderComponent {
       path: '/owner/reports',
       icon: 'analytics',
       ariaLabel: 'Navigate to Reports',
-    },
-    {
-      label: 'Profile',
-      path: '/owner/profile',
-      icon: 'person',
-      ariaLabel: 'Navigate to Profile',
-    },
-    {
-      label: 'Settings',
-      path: '/owner/settings',
-      icon: 'settings',
-      ariaLabel: 'Navigate to Settings',
     },
   ];
 
@@ -175,5 +164,18 @@ export class OwnerHeaderComponent {
     // Close all menus
     this.closeAvatarMenu();
     this.closeMobileMenu();
+  }
+
+  /**
+   * Handle clicks outside the component to close menus
+   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const clickedInside = this.elementRef.nativeElement.contains(event.target);
+
+    // Close avatar menu if click is outside the component
+    if (!clickedInside && this.avatarMenuOpen()) {
+      this.closeAvatarMenu();
+    }
   }
 }

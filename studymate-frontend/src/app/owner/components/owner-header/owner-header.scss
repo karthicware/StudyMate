@@ -31,10 +31,15 @@ header {
   }
 }
 
-// Custom focus styles for better accessibility
-// Using gray focus ring instead of white to match the new white background
-button:focus-visible,
-a:focus-visible {
-  outline: 2px solid #d1d5db; // gray-300
+// Remove focus outline for navigation links
+// Active state is shown via background color from routerLinkActive
+nav a:focus,
+nav a:focus-visible {
+  outline: none;
+}
+
+// Keep subtle focus styles for buttons (accessibility)
+button:focus-visible {
+  outline: 1px solid #e5e7eb; // gray-200 - very subtle
   outline-offset: 2px;
 }

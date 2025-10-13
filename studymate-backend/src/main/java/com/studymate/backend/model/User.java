@@ -89,6 +89,13 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hall_id")
+    private StudyHall studyHall;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

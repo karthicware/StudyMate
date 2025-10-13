@@ -8,10 +8,32 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, RouterModule],
   template: `
     <div class="min-h-screen flex flex-col">
-      <!-- Header -->
-      <header class="bg-white shadow-sm py-4 px-6">
-        <div class="max-w-7xl mx-auto">
-          <a href="/" class="text-2xl font-bold text-blue-600 hover:text-blue-700">StudyMate</a>
+      <!-- Header with Airbnb-inspired Design System -->
+      <!-- Shade 2 (neutral base) with Two-Layer Shadow (Small level) -->
+      <header class="bg-white border-b border-gray-200 py-4 px-6
+                     shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_1px_2px_rgba(0,0,0,0.1)]">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+          <!-- Logo with Primary Color -->
+          <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity duration-200">
+            <!-- Brand Icon with Primary Color -->
+            <svg class="h-8 w-8" viewBox="0 0 24 24" fill="#ff3f6c" aria-hidden="true">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            </svg>
+            <span class="text-2xl font-bold text-gray-900 font-heading">StudyMate</span>
+          </a>
+
+          <!-- Navigation Links -->
+          <nav class="hidden sm:flex items-center gap-6">
+            <a href="/" class="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-200">
+              Home
+            </a>
+            <a href="/about" class="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-200">
+              About
+            </a>
+            <a href="/contact" class="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-200">
+              Contact
+            </a>
+          </nav>
         </div>
       </header>
 
@@ -20,16 +42,29 @@ import { RouterModule } from '@angular/router';
         <router-outlet />
       </main>
 
-      <!-- Footer -->
-      <footer class="bg-white py-4 px-6 border-t border-gray-200">
-        <div class="max-w-7xl mx-auto text-center">
-          <p class="text-sm text-gray-600">© 2025 StudyMate. All rights reserved.</p>
-          <div class="mt-2 space-x-4 text-sm">
-            <a href="/privacy" class="text-blue-600 hover:text-blue-800">Privacy Policy</a>
-            <span class="text-gray-400">|</span>
-            <a href="/terms" class="text-blue-600 hover:text-blue-800">Terms of Service</a>
-            <span class="text-gray-400">|</span>
-            <a href="/contact" class="text-blue-600 hover:text-blue-800">Contact Us</a>
+      <!-- Footer with Airbnb-inspired Design System -->
+      <!-- Shade 2 (neutral base) with subtle top border -->
+      <footer class="bg-white py-6 px-6 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto">
+          <!-- Footer Content -->
+          <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+            <!-- Copyright -->
+            <p class="text-sm text-gray-600 font-body">
+              © 2025 StudyMate. All rights reserved.
+            </p>
+
+            <!-- Footer Links -->
+            <div class="flex items-center gap-6 text-sm">
+              <a href="/privacy" class="text-gray-700 hover:text-gray-900 hover:underline transition-all duration-200 font-medium">
+                Privacy Policy
+              </a>
+              <a href="/terms" class="text-gray-700 hover:text-gray-900 hover:underline transition-all duration-200 font-medium">
+                Terms of Service
+              </a>
+              <a href="/contact" class="text-gray-700 hover:text-gray-900 hover:underline transition-all duration-200 font-medium">
+                Contact Us
+              </a>
+            </div>
           </div>
         </div>
       </footer>
