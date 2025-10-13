@@ -77,7 +77,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/register", "/auth/login", "/auth/owner/register", "/health").permitAll()
 
                 // Protected auth endpoints - JWT authentication required
-                .requestMatchers("/auth/me").authenticated()
+                .requestMatchers("/auth/me", "/auth/refresh").authenticated()
 
                 // Protected API endpoints - JWT authentication required
                 .requestMatchers("/api/**").authenticated()

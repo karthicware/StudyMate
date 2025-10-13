@@ -63,7 +63,7 @@ export const routes: Routes = [
     path: 'owner',
     component: OwnerLayoutComponent, // Layout shell with header, footer, and router-outlet
     canActivate: [authGuard, roleGuard], // Auth + Role-based access control
-    data: { role: 'OWNER' }, // Required role for access
+    data: { role: 'ROLE_OWNER' }, // Required role for access
     children: [
       // Dashboard - Main overview page
       {

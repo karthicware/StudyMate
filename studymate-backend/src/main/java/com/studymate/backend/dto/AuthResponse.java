@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * DTO for authentication responses.
- * Contains JWT token and basic user information.
+ * Contains JWT token and user information.
  */
 @Data
 @NoArgsConstructor
@@ -19,48 +19,12 @@ public class AuthResponse {
     private String token;
 
     /**
-     * User's email address.
+     * User information.
      */
-    private String email;
-
-    /**
-     * User's role (without ROLE_ prefix, e.g., "STUDENT" or "OWNER").
-     */
-    private String role;
-
-    /**
-     * User's ID.
-     */
-    private Long id;
-
-    /**
-     * User's first name.
-     */
-    private String firstName;
-
-    /**
-     * User's last name (may be null).
-     */
-    private String lastName;
+    private UserDTO user;
 
     /**
      * Response message (e.g., "Registration successful").
      */
     private String message;
-
-    /**
-     * Convenience getter for userId (same as id).
-     * @return user ID
-     */
-    public Long getUserId() {
-        return this.id;
-    }
-
-    /**
-     * Convenience setter for userId (same as id).
-     * @param userId user ID
-     */
-    public void setUserId(Long userId) {
-        this.id = userId;
-    }
 }

@@ -61,9 +61,15 @@ public class AuthServiceImpl implements AuthService {
         User savedUser = userRepository.save(user);
         log.info("User registered successfully: {}", savedUser.getEmail());
 
-        // Generate JWT token
+        // Generate JWT token with user information
         UserDetails userDetails = buildUserDetails(savedUser);
-        String token = jwtTokenService.generateToken(userDetails);
+        String token = jwtTokenService.generateToken(
+                userDetails,
+                savedUser.getId(),
+                savedUser.getFirstName(),
+                savedUser.getLastName(),
+                savedUser.getRole().name()
+        );
 
         // Return auth response
         return buildAuthResponse(savedUser, token);
@@ -111,9 +117,15 @@ public class AuthServiceImpl implements AuthService {
         OwnerProfile savedProfile = ownerProfileRepository.save(ownerProfile);
         log.info("Owner profile created successfully: ID={}, userId={}", savedProfile.getId(), savedProfile.getUserId());
 
-        // Generate JWT token
+        // Generate JWT token with user information
         UserDetails userDetails = buildUserDetails(savedUser);
-        String token = jwtTokenService.generateToken(userDetails);
+        String token = jwtTokenService.generateToken(
+                userDetails,
+                savedUser.getId(),
+                savedUser.getFirstName(),
+                savedUser.getLastName(),
+                savedUser.getRole().name()
+        );
 
         // Build auth response with message
         AuthResponse response = buildAuthResponse(savedUser, token);
@@ -154,9 +166,15 @@ public class AuthServiceImpl implements AuthService {
 
         log.info("Login successful for user: {}", user.getEmail());
 
-        // Generate JWT token
+        // Generate JWT token with user information
         UserDetails userDetails = buildUserDetails(user);
-        String token = jwtTokenService.generateToken(userDetails);
+        String token = jwtTokenService.generateToken(
+                userDetails,
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getRole().name()
+        );
 
         // Return auth response
         return buildAuthResponse(user, token);
@@ -199,9 +217,15 @@ public class AuthServiceImpl implements AuthService {
 
         log.info("Token refresh successful for user: {}", email);
 
-        // Generate new JWT token
+        // Generate new JWT token with user information
         UserDetails userDetails = buildUserDetails(user);
-        String newToken = jwtTokenService.generateToken(userDetails);
+        String newToken = jwtTokenService.generateToken(
+                userDetails,
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getRole().name()
+        );
 
         // Return auth response with new token
         return buildAuthResponse(user, newToken);
@@ -215,15 +239,8 @@ public class AuthServiceImpl implements AuthService {
      * @return authentication response
      */
     private AuthResponse buildAuthResponse(User user, String token) {
-        return new AuthResponse(
-                token,
-                user.getEmail(),
-                user.getRole().getRoleName(), // Returns role without ROLE_ prefix
-                user.getId(),
-                user.getFirstName(),
-                user.getLastName(),
-                null // No message by default, can be set by caller
-        );
+        UserDTO userDTO = mapUserToDTO(user);
+        return new AuthResponse(token, userDTO, null); // No message by default, can be set by caller
     }
 
     /**

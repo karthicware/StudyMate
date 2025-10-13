@@ -65,6 +65,34 @@ public class JwtTokenService {
     }
 
     /**
+     * Generates a JWT token with additional user information.
+     * Includes user ID, first name, last name, role, and email.
+     *
+     * @param userDetails the user details
+     * @param userId the user's ID
+     * @param firstName the user's first name
+     * @param lastName the user's last name
+     * @param role the user's role
+     * @return the generated JWT token
+     */
+    public String generateToken(UserDetails userDetails, Long userId, String firstName, String lastName, String role) {
+        Map<String, Object> claims = new HashMap<>();
+
+        // Extract roles from authorities
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
+        claims.put(ROLES_CLAIM, roles);
+        claims.put("userId", userId);
+        claims.put("firstName", firstName);
+        claims.put("lastName", lastName);
+        claims.put("role", role);
+
+        return createToken(claims, userDetails.getUsername());
+    }
+
+    /**
      * Creates a JWT token with specified claims and subject.
      *
      * @param claims additional claims to include

@@ -136,15 +136,34 @@ export class AuthService {
 
   /**
    * Check authentication status on service initialization
-   * Starts token refresh timer if valid token exists
+   * Decodes user data from JWT and starts token refresh timer if valid token exists
    */
   private checkAuthStatus(): void {
     const token = this.getToken();
     if (token) {
       const expiry = this.getTokenExpiry(token);
       if (expiry && expiry > Date.now()) {
-        // Token is valid and not expired, start refresh timer
-        this.startTokenRefresh(token);
+        // Token is valid and not expired, decode user from token
+        try {
+          const decoded: any = jwtDecode(token);
+          // Extract user info from JWT payload
+          const user = {
+            id: decoded.userId || decoded.sub,
+            email: decoded.sub,
+            firstName: decoded.firstName,
+            lastName: decoded.lastName,
+            role: decoded.role,
+            enabled: true,
+            locked: false,
+            createdAt: null
+          };
+          this.authStore.setUser(user);
+          this.startTokenRefresh(token);
+        } catch (error) {
+          console.error('Failed to decode token:', error);
+          this.removeToken();
+          this.authStore.logout();
+        }
       } else {
         // Token is expired, remove it
         this.removeToken();

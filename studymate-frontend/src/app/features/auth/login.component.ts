@@ -103,9 +103,20 @@ export class LoginComponent {
     this.errorMessage.set('');
 
     this.authService.login(this.loginForm.value).subscribe({
-      next: () => {
-        // Get return URL from query params or default to dashboard
-        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+      next: (response) => {
+        // Get return URL from query params or determine by role
+        let returnUrl = this.route.snapshot.queryParams['returnUrl'];
+
+        if (!returnUrl) {
+          // Redirect based on user role
+          const userRole = response.user.role;
+          if (userRole === 'ROLE_OWNER') {
+            returnUrl = '/owner/dashboard';
+          } else {
+            returnUrl = '/dashboard';
+          }
+        }
+
         this.router.navigate([returnUrl]);
       },
       error: (error) => {

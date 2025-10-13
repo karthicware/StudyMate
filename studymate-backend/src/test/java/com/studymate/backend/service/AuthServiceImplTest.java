@@ -106,11 +106,12 @@ class AuthServiceImplTest {
         // Assert
         assertThat(response).isNotNull();
         assertThat(response.getToken()).isEqualTo("mock-jwt-token");
-        assertThat(response.getEmail()).isEqualTo("john.doe@example.com");
-        assertThat(response.getRole()).isEqualTo("OWNER");
-        assertThat(response.getFirstName()).isEqualTo("John");
-        assertThat(response.getLastName()).isEqualTo("Doe");
-        assertThat(response.getUserId()).isEqualTo(1L);
+        assertThat(response.getUser()).isNotNull();
+        assertThat(response.getUser().getEmail()).isEqualTo("john.doe@example.com");
+        assertThat(response.getUser().getRole()).isEqualTo("ROLE_OWNER");
+        assertThat(response.getUser().getFirstName()).isEqualTo("John");
+        assertThat(response.getUser().getLastName()).isEqualTo("Doe");
+        assertThat(response.getUser().getId()).isEqualTo(1L);
         assertThat(response.getMessage()).contains("Registration successful");
 
         // Verify interactions
