@@ -319,6 +319,79 @@ showError() {
 
 ## Owner Components
 
+### Portal Infrastructure Components
+
+#### Owner Portal Header Component
+
+**Purpose**: Main navigation header for Owner Portal with design system compliance
+
+**Location**: `src/app/owner/components/owner-header/owner-header.component.ts`
+
+**Props**:
+- `hallName`: string - Current selected study hall name
+- `userName`: string - Authenticated owner name
+- `userInitials`: string - Owner initials for avatar
+
+**Features**:
+- White background with subtle border (Section 9 compliance)
+- Responsive navigation (desktop menu + mobile drawer)
+- User avatar dropdown menu
+- Logo with dashboard navigation
+- Hall name display (responsive visibility)
+
+**Design System Compliance**:
+- ✅ Colors: `bg-white border-b border-gray-200` (Neutral palette)
+- ✅ Typography: Inter font family with proper weight scale
+- ✅ Shadows: `shadow-card` (Two-layer shadow system)
+- ✅ Spacing: 8-point grid system (`p-4`, `gap-4`)
+- ✅ Border Radius: `rounded-lg` for interactive elements
+- ✅ Mobile: Hamburger menu with slide-out drawer
+- ✅ Accessibility: ARIA labels, keyboard navigation
+
+**Usage**:
+```typescript
+<app-owner-header />
+```
+
+**Related Stories**: 1.15 (Initial), 1.15.1 (Design System Alignment)
+
+---
+
+#### Owner Portal Footer Component
+
+**Purpose**: Application footer with multi-column navigation and branding
+
+**Location**: `src/app/owner/components/owner-footer/owner-footer.component.ts`
+
+**Props**:
+- `currentYear`: number - Dynamic copyright year
+- `appVersion`: string - Application version
+- `footerLinks`: FooterLink[] - Navigation links
+
+**Features**:
+- Multi-column grid layout (responsive: 1 → 2 → 4 columns)
+- White background with top border (Section 9 compliance)
+- Copyright and version information
+- Navigation links (Terms, Privacy, Contact)
+- Branding tagline
+
+**Design System Compliance**:
+- ✅ Colors: `bg-white border-t border-gray-200` (Neutral palette)
+- ✅ Layout: Grid system (`grid-cols-2 md:grid-cols-4`)
+- ✅ Typography: `text-sm` for footer content
+- ✅ Spacing: Consistent gaps (`gap-8`, `gap-4`)
+- ✅ Hover: Subtle underline on links
+- ✅ Responsive: Grid collapses naturally (Breathing Layout)
+
+**Usage**:
+```typescript
+<app-owner-footer />
+```
+
+**Related Stories**: 1.16 (Initial), 1.16.1 (Design System Alignment)
+
+---
+
 ### Dashboard Components
 
 #### 12. Dashboard Summary Card Component

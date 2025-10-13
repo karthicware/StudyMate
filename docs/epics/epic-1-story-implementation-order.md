@@ -1,9 +1,10 @@
 # Epic-1: Story Implementation Order
 
 **Epic:** Owner Dashboard & Analytics
-**Total Stories:** 29
-**Total Estimated Story Points:** ~105+ SP
+**Total Stories:** 31
+**Total Estimated Story Points:** ~110+ SP
 **Estimated Duration:** 3-4 Sprints (assuming 2-week sprints, team velocity ~25-30 SP)
+**Note:** Stories 1.15.1 & 1.16.1 added for design system alignment (2025-10-13)
 
 ---
 
@@ -15,7 +16,9 @@
 | 1.2.1 | Fix OwnerRegisterComponent Tests | 2 SP | Test Infrastructure | Draft |
 | 1.14b | Create Router Test Utilities | 3 SP | Test Infrastructure | Draft |
 | 1.15 | Owner Portal Header & Navigation | 3 SP | Infrastructure (FE) | Ready |
+| 1.15.1 | Owner Header - Design System Alignment (Section 9) | 3 SP | Infrastructure (FE) | Draft |
 | 1.16 | Owner Portal Footer | 2 SP | Infrastructure (FE) | Ready |
+| 1.16.1 | Owner Footer - Design System Alignment (Section 9) | 2 SP | Infrastructure (FE) | Draft |
 | 1.17 | Owner Portal Layout Shell & Routing | 5 SP | Infrastructure (FE) | 🔴 **BLOCKER** |
 | 1.1 | Dashboard Overview Page | 5 SP | Feature (FE) | ⚠️ Needs Layout Integration |
 | 1.1-backend | Dashboard API Implementation | 5 SP | Feature (BE) | Ready |
@@ -61,7 +64,7 @@
 
 ## 📅 Recommended Sprint Plan
 
-### **SPRINT N - PHASE 0: Infrastructure Foundation** (18 SP)
+### **SPRINT N - PHASE 0: Infrastructure Foundation** (23 SP)
 
 #### Week 1: Test Stabilization & Layout Foundation
 **Priority:** Critical Blockers
@@ -73,7 +76,9 @@
 | 3 | **1.14b** | Create Router Test Utilities | 3 | ✅ With 1.2.1 | Enables Stories 1.15-1.21 |
 | 4 | **1.15** | Owner Portal Header & Navigation | 3 | ✅ With 1.16 | After 1.14a complete |
 | 5 | **1.16** | Owner Portal Footer | 2 | ✅ With 1.15 | After 1.14a complete |
-| 6 | **1.17** | Owner Portal Layout Shell & Routing | 5 | ❌ No (BLOCKER) | After 1.15 & 1.16 |
+| 6 | **1.15.1** | Owner Header - Design System Alignment (Section 9) | 3 | ✅ With 1.16.1 | After 1.15 complete |
+| 7 | **1.16.1** | Owner Footer - Design System Alignment (Section 9) | 2 | ✅ With 1.15.1 | After 1.16 complete |
+| 8 | **1.17** | Owner Portal Layout Shell & Routing | 5 | ❌ No (BLOCKER) | After 1.15.1 & 1.16.1 |
 
 **Sprint N Deliverables:**
 - ✅ All router tests passing (Story 1.14a)
@@ -308,11 +313,11 @@ Final Validation:
 
 | Sprint | Story Points | Stories Completed | Key Deliverables |
 |--------|-------------|-------------------|------------------|
-| **Sprint N** | 18 SP | 1.14a, 1.2.1, 1.14b, 1.15, 1.16, 1.17 | Test fixes, utilities, layout infrastructure |
+| **Sprint N** | 23 SP | 1.14a, 1.2.1, 1.14b, 1.15, 1.16, 1.15.1, 1.16.1, 1.17 | Test fixes, utilities, layout infrastructure, design system alignment |
 | **Sprint N+1** | 26 SP | 1.1-1.6 + backends | Dashboard & Seat Mgmt |
 | **Sprint N+2** | 28 SP | 1.7-1.11, 1.18-1.19 | User Mgmt & Profile |
 | **Sprint N+3** | 31 SP | 1.12-1.14, 1.20-1.21, 1.99 | Reports, Settings, Validation |
-| **Total** | **103 SP** | **29 stories** | **Complete Epic-1** |
+| **Total** | **108 SP** | **31 stories** | **Complete Epic-1** |
 
 ---
 

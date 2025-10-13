@@ -4,9 +4,11 @@
 
 **Epic ID:** EPIC-1
 **Epic Name:** Owner Dashboard & Analytics
-**Status:** Draft
+**Status:** In Progress (Design System Alignment Required)
 **Priority:** High
 **Target Release:** MVP
+**Total Stories:** 31 (29 original + 2 design system alignment)
+**Story Points:** ~110 SP
 
 ### Epic Description
 
@@ -118,17 +120,19 @@ Enable study hall owners to efficiently manage their facilities (multiple study 
 **so that** I can access all dashboard features seamlessly and manage my account preferences.
 
 **Acceptance Criteria:**
-1. Persistent header with navigation menu across all Owner pages
-2. Footer with application info and links
+1. Persistent header with navigation menu across all Owner pages (Section 9 design compliance)
+2. Footer with application info and navigation columns (Section 9 design compliance)
 3. Layout shell with routing structure for all Owner features
 4. Owner profile page with personal information management
 5. Owner settings page for system and notification preferences
-6. Consistent UI/UX following design system standards
+6. Consistent UI/UX following design system standards (Section 9 specifications)
 
 **Related Stories:**
 - Story 1.14a: Fix Router Test Configuration Issues (BLOCKER)
-- Story 1.15: Owner Portal Header & Navigation Component
-- Story 1.16: Owner Portal Footer Component
+- Story 1.15: Owner Portal Header & Navigation Component (Initial Implementation - Complete)
+- Story 1.15.1: Owner Header - Design System Alignment (Section 9)
+- Story 1.16: Owner Portal Footer Component (Initial Implementation - Complete)
+- Story 1.16.1: Owner Footer - Design System Alignment (Section 9)
 - Story 1.17: Owner Portal Layout Shell & Routing
 - Story 1.18: Owner Profile Management Page
 - Story 1.19: Owner Profile API Implementation
@@ -240,3 +244,4 @@ Enable study hall owners to efficiently manage their facilities (multiple study 
 | 2025-10-11 | 3.1 | Added backend implementation stories: 1.1-backend, 1.4-backend, 1.7-backend, 1.12-backend; updated story count from 15 to 19 stories | Bob (Scrum Master) |
 | 2025-10-12 | 4.0 | Added Story 1.14a (Router Test Fix - BLOCKER); Added Feature 1.5 (Owner Portal Infrastructure) with 7 stories; renumbered Feature 5.1→1.4, Feature 1.4→1.6; fixed feature numbering conflicts; updated story count from 19 to 27 stories | Sarah (PO) |
 | 2025-10-12 | 5.0 | **CRITICAL UPDATE:** Added Epic 0.1 as BLOCKER dependency; Updated epic description for multi-tenant context (owners manage multiple halls); Updated Features 1.1-1.3 with hall selection and scoping clarifications; No story rewrites required | Sarah (PO) |
+| 2025-10-13 | 6.0 | Added Stories 1.15.1 & 1.16.1 for design system alignment (Section 9); Updated Feature 1.5 acceptance criteria; Updated story count from 29 to 31 stories; Updated SP from ~105 to ~110 SP | Bob (Scrum Master) |
