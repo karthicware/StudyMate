@@ -8,7 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 
@@ -54,6 +55,7 @@ public class OwnerProfile {
     @Column(name = "verification_status", length = 50)
     private VerificationStatus verificationStatus = VerificationStatus.PENDING;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "verification_documents", columnDefinition = "jsonb")
     private String verificationDocuments;
 
