@@ -1,0 +1,104 @@
+<div class="seat-map-container">
+  <!-- Header with Occupancy Metrics -->
+  <div class="metrics-header">
+    <div class="metric-card">
+      <div class="metric-label">Total Seats</div>
+      <div class="metric-value">{{ totalSeats() }}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Occupancy</div>
+      <div class="metric-value">{{ occupancyPercent() }}%</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Available</div>
+      <div class="metric-value available-color">{{ availableSeats() }}</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Booked</div>
+      <div class="metric-value booked-color">{{ bookedSeats() }}</div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading seat map...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (errorMessage() && !isLoading()) {
+    <div class="error-state">
+      <p class="error-message">{{ errorMessage() }}</p>
+      <button class="retry-button" (click)="loadSeatsWithPolling()">Retry</button>
+    </div>
+  }
+
+  <!-- Seat Map Display -->
+  @if (!isLoading() && !errorMessage()) {
+    <div class="seat-map-wrapper">
+      <!-- Status Legend -->
+      <div class="status-legend">
+        <div class="legend-item">
+          <div class="legend-color available-bg"></div>
+          <span>Available</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color booked-bg"></div>
+          <span>Booked</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color locked-bg"></div>
+          <span>Locked</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color maintenance-bg"></div>
+          <span>Maintenance</span>
+        </div>
+      </div>
+
+      <!-- SVG Seat Map -->
+      @if (totalSeats() > 0) {
+        <svg
+          [attr.viewBox]="viewBox"
+          class="seat-map-svg"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <!-- Seats -->
+          @for (seat of seats(); track seat.id) {
+            <g
+              [attr.transform]="'translate(' + seat.xCoord + ',' + seat.yCoord + ')'"
+              class="seat-group"
+            >
+              <!-- Seat Rectangle -->
+              <rect
+                width="40"
+                height="40"
+                rx="4"
+                [attr.fill]="getSeatColor(seat.status)"
+                class="seat-rect"
+              >
+                <title>{{ seat.seatNumber }} - {{ getStatusLabel(seat.status || 'available') }}</title>
+              </rect>
+              <!-- Seat Number -->
+              <text
+                x="20"
+                y="25"
+                text-anchor="middle"
+                class="seat-number"
+              >
+                {{ seat.seatNumber }}
+              </text>
+            </g>
+          }
+        </svg>
+      } @else {
+        <div class="empty-state">
+          <p>No seats configured for this hall.</p>
+          <p class="empty-hint">Use the Seat Configuration page to add seats.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

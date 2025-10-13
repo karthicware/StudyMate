@@ -1,0 +1,1324 @@
+openapi: 3.0.3
+info:
+  title: StudyMate REST API
+  description: |
+    StudyMate is a comprehensive study hall booking and management platform.
+    This API provides endpoints for authentication, owner dashboard management,
+    seat configuration, shift scheduling, and report generation.
+
+    ## Authentication
+    Most endpoints require JWT authentication. Include the token in the Authorization header:
+    ```
+    Authorization: Bearer {your-jwt-token}
+    ```
+
+    ## API Versioning
+    Current API version: **v1**
+    Base URL: `/api/v1`
+
+    ## Rate Limiting
+    - **Authentication endpoints**: 5 requests per minute per IP
+    - **Dashboard endpoints**: 60 requests per minute per user
+    - **Report generation**: 10 requests per hour per user
+
+  version: 1.0.0
+  contact:
+    name: StudyMate Development Team
+    email: dev@studymate.com
+  license:
+    name: Proprietary
+    url: https://studymate.com/license
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+  - url: https://api-dev.studymate.com
+    description: Development server
+  - url: https://api-staging.studymate.com
+    description: Staging server
+  - url: https://api.studymate.com
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and account management
+  - name: Owner Dashboard
+    description: Dashboard metrics and analytics for hall owners
+  - name: Seat Configuration
+    description: Seat layout and configuration management
+  - name: Shift Configuration
+    description: Operating hours and shift scheduling
+  - name: Reports
+    description: Performance reports and analytics export
+  - name: Health
+    description: System health and status checks
+
+paths:
+  # ==================== Authentication Endpoints ====================
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user account
+      description: |
+        Create a new user account with email, password, and role.
+        Password must meet security requirements:
+        - Minimum 8 characters
+        - At least one uppercase letter
+        - At least one lowercase letter
+        - At least one digit
+        - At least one special character (@$!%*?&)
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+            examples:
+              owner:
+                summary: Register as owner
+                value:
+                  email: "owner@example.com"
+                  password: "SecureP@ss123"
+                  firstName: "John"
+                  lastName: "Doe"
+                  phone: "+1234567890"
+                  role: "OWNER"
+              student:
+                summary: Register as student
+                value:
+                  email: "student@example.com"
+                  password: "StudentP@ss123"
+                  firstName: "Jane"
+                  lastName: "Smith"
+                  phone: "+1987654321"
+                  role: "STUDENT"
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+              examples:
+                success:
+                  value:
+                    success: true
+                    message: "User registered successfully"
+                    user:
+                      id: 1
+                      email: "owner@example.com"
+                      firstName: "John"
+                      lastName: "Doe"
+                      role: "OWNER"
+                      createdAt: "2025-10-13T10:30:00Z"
+                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    expiresIn: 86400000
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Authenticate user and get JWT token
+      description: Login with email and password to receive a JWT token for authenticated requests
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              owner:
+                summary: Owner login
+                value:
+                  email: "owner@example.com"
+                  password: "SecureP@ss123"
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+              examples:
+                success:
+                  value:
+                    success: true
+                    message: "Login successful"
+                    user:
+                      id: 1
+                      email: "owner@example.com"
+                      firstName: "John"
+                      lastName: "Doe"
+                      role: "OWNER"
+                      createdAt: "2025-10-13T10:30:00Z"
+                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    expiresIn: 86400000
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/me:
+    get:
+      tags:
+        - Authentication
+      summary: Get current authenticated user profile
+      description: Retrieve the profile information of the currently authenticated user
+      operationId: getCurrentUser
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+              examples:
+                owner:
+                  value:
+                    id: 1
+                    email: "owner@example.com"
+                    firstName: "John"
+                    lastName: "Doe"
+                    phone: "+1234567890"
+                    role: "OWNER"
+                    createdAt: "2025-10-13T10:30:00Z"
+                    updatedAt: "2025-10-13T10:30:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh JWT token
+      description: Generate a new JWT token for the authenticated user
+      operationId: refreshToken
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # ==================== Owner Dashboard Endpoints ====================
+  /api/v1/owner/dashboard/{hallId}:
+    get:
+      tags:
+        - Owner Dashboard
+      summary: Get dashboard metrics for a study hall
+      description: |
+        Retrieve comprehensive dashboard metrics including:
+        - Total bookings and revenue
+        - Seat occupancy rates
+        - Real-time seat map with status
+        - Daily and weekly statistics
+      operationId: getDashboard
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: hallId
+          in: path
+          required: true
+          description: ID of the study hall
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: Dashboard metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardResponse'
+              examples:
+                success:
+                  value:
+                    hallId: 1
+                    hallName: "Downtown Study Hall"
+                    totalSeats: 50
+                    availableSeats: 32
+                    occupiedSeats: 15
+                    maintenanceSeats: 3
+                    occupancyRate: 30.0
+                    todayBookings: 12
+                    todayRevenue: 240.00
+                    weekRevenue: 1680.00
+                    monthRevenue: 7200.00
+                    seatMap:
+                      - seatId: 1
+                        seatNumber: "A1"
+                        xCoordinate: 100
+                        yCoordinate: 50
+                        status: "AVAILABLE"
+                      - seatId: 2
+                        seatNumber: "A2"
+                        xCoordinate: 200
+                        yCoordinate: 50
+                        status: "OCCUPIED"
+                    lastUpdated: "2025-10-13T14:30:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # ==================== Seat Configuration Endpoints ====================
+  /api/v1/owner/seats/config/{hallId}:
+    get:
+      tags:
+        - Seat Configuration
+      summary: Get seat configuration for a study hall
+      description: Retrieve the complete seat layout including positions and status for a specific hall
+      operationId: getSeatConfiguration
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: hallId
+          in: path
+          required: true
+          description: ID of the study hall
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: Seat configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SeatDTO'
+              examples:
+                success:
+                  value:
+                    - seatId: 1
+                      hallId: 1
+                      seatNumber: "A1"
+                      xCoordinate: 100
+                      yCoordinate: 50
+                      status: "AVAILABLE"
+                      createdAt: "2025-10-01T10:00:00Z"
+                    - seatId: 2
+                      hallId: 1
+                      seatNumber: "A2"
+                      xCoordinate: 200
+                      yCoordinate: 50
+                      status: "OCCUPIED"
+                      createdAt: "2025-10-01T10:00:00Z"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - Seat Configuration
+      summary: Save seat configuration for a study hall
+      description: |
+        Create or update seats in a study hall. Supports batch operations.
+        - Creates new seats if they don't exist
+        - Updates existing seats with matching seatNumber
+        - Validates coordinates and seat numbers
+      operationId: saveSeatConfiguration
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: hallId
+          in: path
+          required: true
+          description: ID of the study hall
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SeatConfigRequest'
+            examples:
+              create:
+                summary: Create new seats
+                value:
+                  seats:
+                    - seatNumber: "A1"
+                      xCoordinate: 100
+                      yCoordinate: 50
+                    - seatNumber: "A2"
+                      xCoordinate: 200
+                      yCoordinate: 50
+                    - seatNumber: "B1"
+                      xCoordinate: 100
+                      yCoordinate: 150
+              update:
+                summary: Update existing seats
+                value:
+                  seats:
+                    - seatId: 1
+                      seatNumber: "A1"
+                      xCoordinate: 120
+                      yCoordinate: 60
+                      status: "MAINTENANCE"
+      responses:
+        '200':
+          description: Seat configuration saved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeatConfigResponse'
+              examples:
+                success:
+                  value:
+                    success: true
+                    message: "Seat configuration saved successfully"
+                    seats:
+                      - seatId: 1
+                        seatNumber: "A1"
+                        xCoordinate: 100
+                        yCoordinate: 50
+                        status: "AVAILABLE"
+                      - seatId: 2
+                        seatNumber: "A2"
+                        xCoordinate: 200
+                        yCoordinate: 50
+                        status: "AVAILABLE"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/v1/owner/seats/{hallId}/{seatId}:
+    delete:
+      tags:
+        - Seat Configuration
+      summary: Delete a specific seat
+      description: |
+        Remove a seat from the study hall configuration.
+        Warning: This operation cannot be undone. Existing bookings for this seat will be affected.
+      operationId: deleteSeat
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: hallId
+          in: path
+          required: true
+          description: ID of the study hall
+          schema:
+            type: integer
+            format: int64
+            example: 1
+        - name: seatId
+          in: path
+          required: true
+          description: ID of the seat to delete
+          schema:
+            type: integer
+            format: int64
+            example: 10
+      responses:
+        '200':
+          description: Seat deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeatConfigResponse'
+              examples:
+                success:
+                  value:
+                    success: true
+                    message: "Seat deleted successfully"
+                    seats: []
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # ==================== Shift Configuration Endpoints ====================
+  /api/v1/owner/shifts/config/{hallId}:
+    get:
+      tags:
+        - Shift Configuration
+      summary: Get shift configuration for a study hall
+      description: Retrieve operating hours and shift schedules for a specific study hall
+      operationId: getShiftConfiguration
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: hallId
+          in: path
+          required: true
+          description: ID of the study hall
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: Shift configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShiftConfigResponse'
+              examples:
+                success:
+                  value:
+                    success: true
+                    hallId: 1
+                    hallName: "Downtown Study Hall"
+                    shifts:
+                      - shiftName: "Morning Shift"
+                        startTime: "08:00"
+                        endTime: "14:00"
+                      - shiftName: "Evening Shift"
+                        startTime: "14:00"
+                        endTime: "22:00"
+                    operatingHours:
+                      monday:
+                        open: "08:00"
+                        close: "22:00"
+                        closed: false
+                      tuesday:
+                        open: "08:00"
+                        close: "22:00"
+                        closed: false
+                      wednesday:
+                        open: "08:00"
+                        close: "22:00"
+                        closed: false
+                      thursday:
+                        open: "08:00"
+                        close: "22:00"
+                        closed: false
+                      friday:
+                        open: "08:00"
+                        close: "22:00"
+                        closed: false
+                      saturday:
+                        open: "10:00"
+                        close: "20:00"
+                        closed: false
+                      sunday:
+                        open: "10:00"
+                        close: "20:00"
+                        closed: false
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - Shift Configuration
+      summary: Save shift configuration for a study hall
+      description: |
+        Configure operating hours and shifts for a study hall.
+        Supports flexible scheduling with day-specific hours and shift definitions.
+      operationId: saveShiftConfiguration
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: hallId
+          in: path
+          required: true
+          description: ID of the study hall
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShiftConfigRequest'
+            examples:
+              weekday:
+                summary: Weekday schedule
+                value:
+                  shifts:
+                    - shiftName: "Morning"
+                      startTime: "08:00"
+                      endTime: "14:00"
+                    - shiftName: "Evening"
+                      startTime: "14:00"
+                      endTime: "22:00"
+                  operatingHours:
+                    monday:
+                      open: "08:00"
+                      close: "22:00"
+                      closed: false
+                    tuesday:
+                      open: "08:00"
+                      close: "22:00"
+                      closed: false
+                    sunday:
+                      closed: true
+      responses:
+        '200':
+          description: Shift configuration saved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShiftConfigResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # ==================== Reports Endpoints ====================
+  /api/v1/owner/reports/{hallId}:
+    get:
+      tags:
+        - Reports
+      summary: Generate and download performance report
+      description: |
+        Generate a comprehensive performance report for a study hall in PDF or Excel format.
+        Report includes:
+        - Booking statistics
+        - Revenue analysis
+        - Occupancy trends
+        - Peak hours analysis
+        - Seat utilization metrics
+      operationId: generateReport
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: hallId
+          in: path
+          required: true
+          description: ID of the study hall
+          schema:
+            type: integer
+            format: int64
+            example: 1
+        - name: format
+          in: query
+          required: false
+          description: Report format (pdf or excel)
+          schema:
+            type: string
+            enum: [pdf, excel]
+            default: pdf
+            example: pdf
+        - name: startDate
+          in: query
+          required: true
+          description: Report start date (ISO 8601 format)
+          schema:
+            type: string
+            format: date
+            example: "2025-10-01"
+        - name: endDate
+          in: query
+          required: true
+          description: Report end date (ISO 8601 format)
+          schema:
+            type: string
+            format: date
+            example: "2025-10-13"
+      responses:
+        '200':
+          description: Report generated successfully
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+                description: PDF report file
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+                description: Excel report file
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+                example: attachment; filename="hall-1-report-2025-10-01-to-2025-10-13.pdf"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # ==================== Health Check Endpoints ====================
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Basic health check
+      description: Simple health check endpoint for load balancers and monitoring
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "UP"
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2025-10-13T14:30:00Z"
+
+  /actuator/health:
+    get:
+      tags:
+        - Health
+      summary: Detailed health check
+      description: Comprehensive health check including database connectivity and disk space
+      operationId: actuatorHealth
+      responses:
+        '200':
+          description: Detailed health information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "UP"
+                  components:
+                    type: object
+                    properties:
+                      db:
+                        type: object
+                        properties:
+                          status:
+                            type: string
+                            example: "UP"
+                          details:
+                            type: object
+                      diskSpace:
+                        type: object
+                        properties:
+                          status:
+                            type: string
+                            example: "UP"
+
+# ==================== Components ====================
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT token authentication. Include the token in the Authorization header:
+        `Authorization: Bearer {token}`
+
+  schemas:
+    # ==================== Request Schemas ====================
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+        - firstName
+        - lastName
+        - role
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address (must be unique)
+          example: "owner@example.com"
+        password:
+          type: string
+          format: password
+          minLength: 8
+          description: User password (min 8 chars, must include uppercase, lowercase, digit, special char)
+          example: "SecureP@ss123"
+        firstName:
+          type: string
+          minLength: 1
+          description: User first name
+          example: "John"
+        lastName:
+          type: string
+          minLength: 1
+          description: User last name
+          example: "Doe"
+        phone:
+          type: string
+          pattern: '^\+?[1-9]\d{1,14}$'
+          description: Phone number (E.164 format)
+          example: "+1234567890"
+        role:
+          type: string
+          enum: [OWNER, STUDENT, STAFF]
+          description: User role
+          example: "OWNER"
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email address
+          example: "owner@example.com"
+        password:
+          type: string
+          format: password
+          description: User password
+          example: "SecureP@ss123"
+
+    SeatConfigRequest:
+      type: object
+      required:
+        - seats
+      properties:
+        seats:
+          type: array
+          minItems: 1
+          description: Array of seats to create or update
+          items:
+            type: object
+            required:
+              - seatNumber
+              - xCoordinate
+              - yCoordinate
+            properties:
+              seatId:
+                type: integer
+                format: int64
+                description: Seat ID (for updates only)
+                example: 1
+              seatNumber:
+                type: string
+                description: Unique seat identifier within the hall
+                example: "A1"
+              xCoordinate:
+                type: integer
+                minimum: 0
+                description: X-axis coordinate for seat position
+                example: 100
+              yCoordinate:
+                type: integer
+                minimum: 0
+                description: Y-axis coordinate for seat position
+                example: 50
+              status:
+                type: string
+                enum: [AVAILABLE, OCCUPIED, MAINTENANCE]
+                description: Seat status
+                example: "AVAILABLE"
+
+    ShiftConfigRequest:
+      type: object
+      required:
+        - shifts
+        - operatingHours
+      properties:
+        shifts:
+          type: array
+          description: Array of shift definitions
+          items:
+            $ref: '#/components/schemas/ShiftDTO'
+        operatingHours:
+          type: object
+          description: Operating hours per day of week
+          additionalProperties:
+            $ref: '#/components/schemas/DayHoursDTO'
+
+    # ==================== Response Schemas ====================
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Operation success status
+          example: true
+        message:
+          type: string
+          description: Response message
+          example: "Login successful"
+        user:
+          $ref: '#/components/schemas/UserDTO'
+        token:
+          type: string
+          description: JWT authentication token
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        expiresIn:
+          type: integer
+          format: int64
+          description: Token expiration time in milliseconds
+          example: 86400000
+
+    UserDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: User ID
+          example: 1
+        email:
+          type: string
+          format: email
+          description: User email address
+          example: "owner@example.com"
+        firstName:
+          type: string
+          description: User first name
+          example: "John"
+        lastName:
+          type: string
+          description: User last name
+          example: "Doe"
+        phone:
+          type: string
+          description: User phone number
+          example: "+1234567890"
+        role:
+          type: string
+          enum: [OWNER, STUDENT, STAFF]
+          description: User role
+          example: "OWNER"
+        createdAt:
+          type: string
+          format: date-time
+          description: Account creation timestamp
+          example: "2025-10-13T10:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2025-10-13T10:30:00Z"
+
+    DashboardResponse:
+      type: object
+      properties:
+        hallId:
+          type: integer
+          format: int64
+          description: Study hall ID
+          example: 1
+        hallName:
+          type: string
+          description: Study hall name
+          example: "Downtown Study Hall"
+        totalSeats:
+          type: integer
+          description: Total number of seats
+          example: 50
+        availableSeats:
+          type: integer
+          description: Number of available seats
+          example: 32
+        occupiedSeats:
+          type: integer
+          description: Number of occupied seats
+          example: 15
+        maintenanceSeats:
+          type: integer
+          description: Number of seats under maintenance
+          example: 3
+        occupancyRate:
+          type: number
+          format: double
+          description: Current occupancy rate (percentage)
+          example: 30.0
+        todayBookings:
+          type: integer
+          description: Number of bookings today
+          example: 12
+        todayRevenue:
+          type: number
+          format: double
+          description: Revenue generated today
+          example: 240.00
+        weekRevenue:
+          type: number
+          format: double
+          description: Revenue for current week
+          example: 1680.00
+        monthRevenue:
+          type: number
+          format: double
+          description: Revenue for current month
+          example: 7200.00
+        seatMap:
+          type: array
+          description: Array of seat positions and statuses
+          items:
+            $ref: '#/components/schemas/SeatStatusDTO'
+        lastUpdated:
+          type: string
+          format: date-time
+          description: Last data update timestamp
+          example: "2025-10-13T14:30:00Z"
+
+    SeatDTO:
+      type: object
+      properties:
+        seatId:
+          type: integer
+          format: int64
+          description: Seat ID
+          example: 1
+        hallId:
+          type: integer
+          format: int64
+          description: Study hall ID
+          example: 1
+        seatNumber:
+          type: string
+          description: Seat number
+          example: "A1"
+        xCoordinate:
+          type: integer
+          description: X-axis position
+          example: 100
+        yCoordinate:
+          type: integer
+          description: Y-axis position
+          example: 50
+        status:
+          type: string
+          enum: [AVAILABLE, OCCUPIED, MAINTENANCE]
+          description: Seat status
+          example: "AVAILABLE"
+        createdAt:
+          type: string
+          format: date-time
+          description: Seat creation timestamp
+          example: "2025-10-01T10:00:00Z"
+
+    SeatStatusDTO:
+      type: object
+      properties:
+        seatId:
+          type: integer
+          format: int64
+          description: Seat ID
+          example: 1
+        seatNumber:
+          type: string
+          description: Seat number
+          example: "A1"
+        xCoordinate:
+          type: integer
+          description: X-axis position
+          example: 100
+        yCoordinate:
+          type: integer
+          description: Y-axis position
+          example: 50
+        status:
+          type: string
+          enum: [AVAILABLE, OCCUPIED, MAINTENANCE]
+          description: Current seat status
+          example: "AVAILABLE"
+
+    SeatConfigResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Operation success status
+          example: true
+        message:
+          type: string
+          description: Response message
+          example: "Seat configuration saved successfully"
+        seats:
+          type: array
+          description: Array of seats that were created/updated
+          items:
+            $ref: '#/components/schemas/SeatDTO'
+
+    ShiftDTO:
+      type: object
+      required:
+        - shiftName
+        - startTime
+        - endTime
+      properties:
+        shiftName:
+          type: string
+          description: Shift name
+          example: "Morning Shift"
+        startTime:
+          type: string
+          format: time
+          description: Shift start time (HH:mm format)
+          example: "08:00"
+        endTime:
+          type: string
+          format: time
+          description: Shift end time (HH:mm format)
+          example: "14:00"
+
+    DayHoursDTO:
+      type: object
+      properties:
+        open:
+          type: string
+          format: time
+          description: Opening time (HH:mm format)
+          example: "08:00"
+        close:
+          type: string
+          format: time
+          description: Closing time (HH:mm format)
+          example: "22:00"
+        closed:
+          type: boolean
+          description: Whether the hall is closed on this day
+          example: false
+
+    ShiftConfigResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Operation success status
+          example: true
+        hallId:
+          type: integer
+          format: int64
+          description: Study hall ID
+          example: 1
+        hallName:
+          type: string
+          description: Study hall name
+          example: "Downtown Study Hall"
+        shifts:
+          type: array
+          description: Array of shift definitions
+          items:
+            $ref: '#/components/schemas/ShiftDTO'
+        operatingHours:
+          type: object
+          description: Operating hours per day of week
+          additionalProperties:
+            $ref: '#/components/schemas/DayHoursDTO'
+
+    # ==================== Error Schemas ====================
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp
+          example: "2025-10-13T14:30:00Z"
+        status:
+          type: integer
+          description: HTTP status code
+          example: 400
+        error:
+          type: string
+          description: Error type
+          example: "Bad Request"
+        message:
+          type: string
+          description: Error message
+          example: "Invalid request parameters"
+        path:
+          type: string
+          description: Request path that caused the error
+          example: "/auth/login"
+
+    ValidationErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp
+          example: "2025-10-13T14:30:00Z"
+        status:
+          type: integer
+          description: HTTP status code
+          example: 400
+        error:
+          type: string
+          description: Error type
+          example: "Validation Failed"
+        errors:
+          type: object
+          description: Field-specific validation errors
+          additionalProperties:
+            type: string
+          example:
+            email: "Email must be valid"
+            password: "Password must be at least 8 characters"
+
+  # ==================== Common Responses ====================
+  responses:
+    BadRequest:
+      description: Bad Request - Invalid input parameters
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/ErrorResponse'
+              - $ref: '#/components/schemas/ValidationErrorResponse'
+          examples:
+            validation:
+              summary: Validation error
+              value:
+                timestamp: "2025-10-13T14:30:00Z"
+                status: 400
+                error: "Validation Failed"
+                errors:
+                  email: "Email must be valid"
+                  password: "Password must be at least 8 characters"
+            invalid:
+              summary: Invalid request
+              value:
+                timestamp: "2025-10-13T14:30:00Z"
+                status: 400
+                error: "Bad Request"
+                message: "Start date cannot be after end date"
+
+    Unauthorized:
+      description: Unauthorized - Authentication required or token invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            missing:
+              summary: Missing token
+              value:
+                timestamp: "2025-10-13T14:30:00Z"
+                status: 401
+                error: "Unauthorized"
+                message: "Authentication required"
+            invalid:
+              summary: Invalid token
+              value:
+                timestamp: "2025-10-13T14:30:00Z"
+                status: 401
+                error: "Unauthorized"
+                message: "Invalid or expired token"
+
+    Forbidden:
+      description: Forbidden - Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            permission:
+              summary: Permission denied
+              value:
+                timestamp: "2025-10-13T14:30:00Z"
+                status: 403
+                error: "Forbidden"
+                message: "You don't have permission to access this resource"
+
+    NotFound:
+      description: Not Found - Resource does not exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            hall:
+              summary: Hall not found
+              value:
+                timestamp: "2025-10-13T14:30:00Z"
+                status: 404
+                error: "Not Found"
+                message: "Study hall not found"
+
+    Conflict:
+      description: Conflict - Resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            duplicate:
+              summary: Duplicate email
+              value:
+                timestamp: "2025-10-13T14:30:00Z"
+                status: 409
+                error: "Conflict"
+                message: "Email already registered"
+
+    InternalServerError:
+      description: Internal Server Error - Unexpected server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            generic:
+              summary: Server error
+              value:
+                timestamp: "2025-10-13T14:30:00Z"
+                status: 500
+                error: "Internal Server Error"
+                message: "An unexpected error occurred"

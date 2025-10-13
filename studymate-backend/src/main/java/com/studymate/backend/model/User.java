@@ -42,6 +42,14 @@ public class User {
     @Column(name = "last_name", length = 100)
     private String lastName;
 
+    @Size(max = 20)
+    @Column(length = 20)
+    private String phone;
+
+    @Size(max = 500)
+    @Column(name = "profile_picture_url", length = 500)
+    private String profilePictureUrl;
+
     @NotNull(message = "Role is required")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)

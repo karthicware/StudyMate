@@ -1,0 +1,29 @@
+/**
+ * Profile Component Styles
+ *
+ * AC7: Responsive design across mobile, tablet, and desktop
+ * Uses Tailwind CSS utility classes in template, minimal custom styles here
+ */
+
+// Smooth transitions for form state changes
+input:not(:disabled) {
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+// Custom focus states for better accessibility
+input:focus,
+button:focus {
+  outline: none;
+}
+
+// Ensure avatar images maintain aspect ratio
+img {
+  object-fit: cover;
+}
+
+// Animation for loading spinner (Tailwind's animate-spin handles most of this)
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

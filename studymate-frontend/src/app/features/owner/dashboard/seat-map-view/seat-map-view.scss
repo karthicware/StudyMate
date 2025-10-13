@@ -1,0 +1,161 @@
+.seat-map-container {
+  @apply w-full h-full p-6 bg-white rounded-lg shadow-lg;
+}
+
+// Metrics Header
+.metrics-header {
+  @apply flex flex-wrap gap-4 mb-6;
+}
+
+.metric-card {
+  @apply flex-1 min-w-[150px] p-4 bg-gray-50 rounded-lg border border-gray-200;
+}
+
+.metric-label {
+  @apply text-sm font-medium text-gray-600 mb-1;
+}
+
+.metric-value {
+  @apply text-2xl font-bold text-gray-900;
+
+  &.available-color {
+    @apply text-green-600;
+  }
+
+  &.booked-color {
+    @apply text-red-600;
+  }
+}
+
+// Loading State
+.loading-state {
+  @apply flex flex-col items-center justify-center py-12;
+
+  p {
+    @apply mt-4 text-gray-600;
+  }
+}
+
+.spinner {
+  @apply w-12 h-12 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin;
+}
+
+// Error State
+.error-state {
+  @apply flex flex-col items-center justify-center py-12;
+}
+
+.error-message {
+  @apply text-red-600 mb-4;
+}
+
+.retry-button {
+  @apply px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors;
+}
+
+// Seat Map Wrapper
+.seat-map-wrapper {
+  @apply flex flex-col gap-4;
+}
+
+// Status Legend
+.status-legend {
+  @apply flex flex-wrap gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200;
+}
+
+.legend-item {
+  @apply flex items-center gap-2;
+
+  span {
+    @apply text-sm text-gray-700;
+  }
+}
+
+.legend-color {
+  @apply w-6 h-6 rounded border border-gray-300;
+
+  &.available-bg {
+    background-color: #10B981;
+  }
+
+  &.booked-bg {
+    background-color: #EF4444;
+  }
+
+  &.locked-bg {
+    background-color: #F59E0B;
+  }
+
+  &.maintenance-bg {
+    background-color: #6B7280;
+  }
+}
+
+// SVG Seat Map
+.seat-map-svg {
+  @apply w-full max-w-4xl mx-auto border border-gray-300 rounded-lg bg-gray-50;
+  height: auto;
+  max-height: 600px;
+}
+
+.seat-group {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.seat-rect {
+  stroke: #374151;
+  stroke-width: 2;
+  transition: all 0.3s ease;
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+}
+
+.seat-number {
+  @apply text-xs font-bold;
+  fill: white;
+  pointer-events: none;
+  user-select: none;
+}
+
+// Empty State
+.empty-state {
+  @apply flex flex-col items-center justify-center py-12 text-center;
+
+  p {
+    @apply text-gray-600 mb-2;
+  }
+
+  .empty-hint {
+    @apply text-sm text-gray-500;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .seat-map-container {
+    @apply p-4;
+  }
+
+  .metrics-header {
+    @apply flex-col;
+  }
+
+  .metric-card {
+    @apply min-w-full;
+  }
+
+  .seat-map-svg {
+    max-height: 400px;
+  }
+
+  .status-legend {
+    @apply flex-col;
+  }
+}

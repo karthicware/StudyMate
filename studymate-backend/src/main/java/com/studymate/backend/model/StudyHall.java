@@ -1,5 +1,7 @@
 package com.studymate.backend.model;
 
+import com.studymate.backend.dto.DayHoursDTO;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,8 +11,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Entity
 @Table(name = "study_halls")
@@ -41,6 +45,10 @@ public class StudyHall {
 
     @Column(columnDefinition = "TEXT")
     private String address;
+
+    @Type(JsonBinaryType.class)
+    @Column(name = "opening_hours", columnDefinition = "jsonb")
+    private Map<String, DayHoursDTO> openingHours;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

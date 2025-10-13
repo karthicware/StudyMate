@@ -40,4 +40,29 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
            "WHERE s.hall.id = :hallId " +
            "ORDER BY s.seatNumber")
     List<SeatStatusDTO> findSeatMapByHallId(@Param("hallId") Long hallId);
+
+    /**
+     * Find all seats for a specific hall.
+     *
+     * @param hallId the ID of the study hall
+     * @return list of seats in the hall
+     */
+    List<Seat> findByHallId(Long hallId);
+
+    /**
+     * Delete a seat by ID and hall ID.
+     * This ensures that only seats belonging to the specified hall are deleted.
+     *
+     * @param id the seat ID
+     * @param hallId the hall ID
+     */
+    void deleteByIdAndHallId(Long id, Long hallId);
+
+    /**
+     * Delete all seats for a specific hall.
+     * Used when replacing entire seat configuration.
+     *
+     * @param hallId the hall ID
+     */
+    void deleteByHallId(Long hallId);
 }

@@ -44,6 +44,9 @@ public class Seat {
     @Column(length = 50)
     private String status = "AVAILABLE";
 
+    @Column(name = "custom_price", precision = 10, scale = 2)
+    private java.math.BigDecimal customPrice;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

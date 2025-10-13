@@ -2,14 +2,14 @@ import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MetricCard } from '../../shared/components/metric-card/metric-card';
-import { SeatMap } from '../../shared/components/seat-map/seat-map';
+import { SeatMapView } from '../owner/dashboard/seat-map-view/seat-map-view';
 import { DashboardMetrics } from '../../core/models/dashboard.model';
 import { DashboardService } from '../../core/services/dashboard.service';
 
 @Component({
   selector: 'app-owner-dashboard',
   standalone: true,
-  imports: [CommonModule, MetricCard, SeatMap],
+  imports: [CommonModule, MetricCard, SeatMapView],
   templateUrl: './owner-dashboard.html',
   styleUrl: './owner-dashboard.scss',
 })
