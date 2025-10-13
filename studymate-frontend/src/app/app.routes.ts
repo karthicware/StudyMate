@@ -58,15 +58,6 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
 
-  // Demo Route - Temporary unguarded route for component preview
-  {
-    path: 'demo/seat-map-config',
-    loadComponent: () =>
-      import('./features/owner/seat-map-config/seat-map-config.component').then(
-        (m) => m.SeatMapConfigComponent,
-      ),
-  },
-
   // Owner Portal Routes - Protected by Auth & Role Guards
   {
     path: 'owner',

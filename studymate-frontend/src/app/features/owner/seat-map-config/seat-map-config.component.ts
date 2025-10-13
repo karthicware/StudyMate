@@ -97,14 +97,23 @@ export class SeatMapConfigComponent implements OnInit {
    */
   onSeatDragEnded(event: CdkDragEnd, seat: Seat): void {
     const dropPoint = event.dropPoint;
+    const seatSize = 50; // Seat dimensions
+
+    // Constrain coordinates within canvas bounds
+    let newX = Math.round(dropPoint.x / this.gridSize) * this.gridSize;
+    let newY = Math.round(dropPoint.y / this.gridSize) * this.gridSize;
+
+    // Ensure seat stays within canvas (accounting for seat size)
+    newX = Math.max(0, Math.min(newX, this.canvasWidth - seatSize));
+    newY = Math.max(0, Math.min(newY, this.canvasHeight - seatSize));
 
     // Update seat coordinates
     const updatedSeats = this.seats().map((s) => {
       if (s.seatNumber === seat.seatNumber) {
         return {
           ...s,
-          xCoord: Math.round(dropPoint.x / this.gridSize) * this.gridSize,
-          yCoord: Math.round(dropPoint.y / this.gridSize) * this.gridSize,
+          xCoord: newX,
+          yCoord: newY,
         };
       }
       return s;
