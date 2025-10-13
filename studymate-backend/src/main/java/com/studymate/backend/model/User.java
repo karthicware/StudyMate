@@ -61,17 +61,57 @@ public class User {
     @Column(nullable = false)
     private Boolean locked = false;
 
+    @Column(name = "email_verified")
+    private Boolean emailVerified = false;
+
+    @Column(name = "verification_token", length = 255)
+    private String verificationToken;
+
+    @Column(name = "verification_expiry")
+    private LocalDateTime verificationExpiry;
+
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "account_status", length = 50)
+    private AccountStatus accountStatus = AccountStatus.ACTIVE;
+
+    @Column(name = "failed_login_attempts")
+    private Integer failedLoginAttempts = 0;
+
+    @Column(name = "lockout_until")
+    private LocalDateTime lockoutUntil;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
         if (enabled == null) {
             enabled = true;
         }
         if (locked == null) {
             locked = false;
         }
+        if (emailVerified == null) {
+            emailVerified = false;
+        }
+        if (accountStatus == null) {
+            accountStatus = AccountStatus.ACTIVE;
+        }
+        if (failedLoginAttempts == null) {
+            failedLoginAttempts = 0;
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 }

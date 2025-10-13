@@ -2,11 +2,16 @@ package com.studymate.backend.service;
 
 import com.studymate.backend.dto.AuthResponse;
 import com.studymate.backend.dto.LoginRequest;
+import com.studymate.backend.dto.OwnerRegistrationRequest;
 import com.studymate.backend.dto.RegisterRequest;
 import com.studymate.backend.dto.UserDTO;
 import com.studymate.backend.exception.DuplicateResourceException;
 import com.studymate.backend.exception.ResourceNotFoundException;
+import com.studymate.backend.model.AccountStatus;
+import com.studymate.backend.model.OwnerProfile;
 import com.studymate.backend.model.User;
+import com.studymate.backend.model.UserRole;
+import com.studymate.backend.repository.OwnerProfileRepository;
 import com.studymate.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
+    private final OwnerProfileRepository ownerProfileRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenService jwtTokenService;
     private final UserService userService;
@@ -61,6 +67,60 @@ public class AuthServiceImpl implements AuthService {
 
         // Return auth response
         return buildAuthResponse(savedUser, token);
+    }
+
+    @Override
+    public AuthResponse registerOwner(OwnerRegistrationRequest request) {
+        log.info("Registering new owner with email: {}", request.getEmail());
+
+        // Convert email to lowercase for consistency
+        String emailLower = request.getEmail().toLowerCase();
+
+        // Check if email already exists
+        if (userRepository.existsByEmail(emailLower)) {
+            log.warn("Owner registration failed: Email already exists: {}", emailLower);
+            throw new DuplicateResourceException(
+                    "An account with this email already exists. Please use a different email or try logging in.");
+        }
+
+        // Create new user with OWNER role
+        User user = new User();
+        user.setEmail(emailLower);
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setPhone(request.getPhone());
+        user.setRole(UserRole.ROLE_OWNER);
+        user.setEnabled(true);
+        user.setLocked(false);
+        user.setEmailVerified(false);
+        user.setAccountStatus(AccountStatus.ACTIVE);
+        user.setFailedLoginAttempts(0);
+
+        // Save user first to get generated ID
+        User savedUser = userRepository.save(user);
+        log.info("User created successfully: ID={}, email={}", savedUser.getId(), savedUser.getEmail());
+
+        // Create owner profile linked to user
+        OwnerProfile ownerProfile = OwnerProfile.builder()
+                .userId(savedUser.getId())
+                .businessName(request.getBusinessName())
+                .verificationStatus(OwnerProfile.VerificationStatus.PENDING)
+                .build();
+
+        OwnerProfile savedProfile = ownerProfileRepository.save(ownerProfile);
+        log.info("Owner profile created successfully: ID={}, userId={}", savedProfile.getId(), savedProfile.getUserId());
+
+        // Generate JWT token
+        UserDetails userDetails = buildUserDetails(savedUser);
+        String token = jwtTokenService.generateToken(userDetails);
+
+        // Build auth response with message
+        AuthResponse response = buildAuthResponse(savedUser, token);
+        response.setMessage("Registration successful. Please verify your email to activate your account.");
+
+        log.info("Owner registration completed successfully for: {}", savedUser.getEmail());
+        return response;
     }
 
     @Override
@@ -161,7 +221,8 @@ public class AuthServiceImpl implements AuthService {
                 user.getRole().getRoleName(), // Returns role without ROLE_ prefix
                 user.getId(),
                 user.getFirstName(),
-                user.getLastName()
+                user.getLastName(),
+                null // No message by default, can be set by caller
         );
     }
 

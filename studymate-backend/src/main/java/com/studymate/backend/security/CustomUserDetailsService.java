@@ -71,19 +71,21 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     /**
      * Builds Spring Security UserDetails from User entity.
+     * Returns CustomUserDetails that includes user ID for easy extraction.
      *
      * @param user the user entity
-     * @return UserDetails implementation
+     * @return CustomUserDetails implementation with user ID
      */
     private UserDetails buildUserDetails(User user) {
-        return org.springframework.security.core.userdetails.User.builder()
+        return CustomUserDetails.builder()
+                .userId(user.getId())
                 .username(user.getEmail())
                 .password(user.getPasswordHash())
                 .authorities(getAuthorities(user))
-                .accountExpired(false)
-                .accountLocked(user.getLocked())
-                .credentialsExpired(false)
-                .disabled(!user.getEnabled())
+                .accountNonExpired(true)
+                .accountNonLocked(!user.getLocked())
+                .credentialsNonExpired(true)
+                .enabled(user.getEnabled())
                 .build();
     }
 

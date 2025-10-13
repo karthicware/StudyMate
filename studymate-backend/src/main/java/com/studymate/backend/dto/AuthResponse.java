@@ -42,4 +42,25 @@ public class AuthResponse {
      * User's last name (may be null).
      */
     private String lastName;
+
+    /**
+     * Response message (e.g., "Registration successful").
+     */
+    private String message;
+
+    /**
+     * Convenience getter for userId (same as id).
+     * @return user ID
+     */
+    public Long getUserId() {
+        return this.id;
+    }
+
+    /**
+     * Convenience setter for userId (same as id).
+     * @param userId user ID
+     */
+    public void setUserId(Long userId) {
+        this.id = userId;
+    }
 }

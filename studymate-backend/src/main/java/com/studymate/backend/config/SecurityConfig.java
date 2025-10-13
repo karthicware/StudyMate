@@ -40,13 +40,13 @@ public class SecurityConfig {
 
     /**
      * Password encoder bean for hashing passwords.
-     * Uses BCrypt with strength 10 (default).
+     * Uses BCrypt with strength 12 for enhanced security.
      *
      * @return PasswordEncoder instance
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(12); // 12 rounds for strong security
     }
 
     /**
@@ -74,7 +74,7 @@ public class SecurityConfig {
             // Configure authorization rules
             .authorizeHttpRequests(auth -> auth
                 // Public endpoints - no authentication required
-                .requestMatchers("/auth/register", "/auth/login", "/health").permitAll()
+                .requestMatchers("/auth/register", "/auth/login", "/auth/owner/register", "/health").permitAll()
 
                 // Protected auth endpoints - JWT authentication required
                 .requestMatchers("/auth/me").authenticated()

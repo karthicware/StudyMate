@@ -2,6 +2,7 @@ package com.studymate.backend.service;
 
 import com.studymate.backend.dto.AuthResponse;
 import com.studymate.backend.dto.LoginRequest;
+import com.studymate.backend.dto.OwnerRegistrationRequest;
 import com.studymate.backend.dto.RegisterRequest;
 import com.studymate.backend.dto.UserDTO;
 
@@ -20,6 +21,16 @@ public interface AuthService {
      * @throws com.studymate.backend.exception.DuplicateResourceException if email already exists
      */
     AuthResponse register(RegisterRequest request);
+
+    /**
+     * Registers a new owner account with business profile.
+     * Validates email uniqueness, hashes password, creates user and owner profile.
+     *
+     * @param request owner registration request containing user and business details
+     * @return authentication response with JWT token and user info
+     * @throws com.studymate.backend.exception.DuplicateResourceException if email already exists
+     */
+    AuthResponse registerOwner(OwnerRegistrationRequest request);
 
     /**
      * Authenticates a user and generates JWT token.

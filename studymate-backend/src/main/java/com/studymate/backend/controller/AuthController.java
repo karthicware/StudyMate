@@ -3,6 +3,7 @@ package com.studymate.backend.controller;
 import com.studymate.backend.dto.ApiResponse;
 import com.studymate.backend.dto.AuthResponse;
 import com.studymate.backend.dto.LoginRequest;
+import com.studymate.backend.dto.OwnerRegistrationRequest;
 import com.studymate.backend.dto.RegisterRequest;
 import com.studymate.backend.dto.UserDTO;
 import com.studymate.backend.service.AuthService;
@@ -42,6 +43,21 @@ public class AuthController {
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         log.info("POST /auth/register - Registering user: {}", request.getEmail());
         AuthResponse response = authService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /**
+     * Register a new owner account with business profile.
+     *
+     * POST /auth/owner/register
+     *
+     * @param request owner registration details including business information
+     * @return authentication response with JWT token and success message
+     */
+    @PostMapping("/owner/register")
+    public ResponseEntity<AuthResponse> registerOwner(@Valid @RequestBody OwnerRegistrationRequest request) {
+        log.info("POST /auth/owner/register - Registering owner: {}", request.getEmail());
+        AuthResponse response = authService.registerOwner(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
