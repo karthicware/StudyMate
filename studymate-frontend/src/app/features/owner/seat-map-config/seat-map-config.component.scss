@@ -100,52 +100,76 @@
   }
 }
 
-// Button styles - white background with light grey border and shadows
+// Button styles - Airbnb-Inspired Design System
 .btn-light-grey {
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
+  // Gradient Enhancement: Premium shiny effect
+  background: linear-gradient(to bottom, #ffffff, #f5f5f5);
+  border: none; // No border per design system
   padding: 0.5rem 1rem;
   border-radius: 0.375rem;
   font-weight: 500;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  // Two-layer shadow - Small level (Subtle depth for buttons)
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),  // Top highlight - shiny effect
+    0 1px 2px rgba(0, 0, 0, 0.1);             // Bottom shadow - subtle elevation
 
   &:hover:not(:disabled) {
-    background-color: #f9fafb;
-    border-color: #d1d5db;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    // Slightly lighter gradient on hover
+    background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+    // Increase shadow on hover - Medium level
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 2px 4px rgba(0, 0, 0, 0.15);
   }
 
   &:active:not(:disabled) {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    // Reduce shadow on press for tactile feedback
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      0 1px 2px rgba(0, 0, 0, 0.1);
     transform: translateY(1px);
   }
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    background-color: #f9fafb;
+    background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
   }
 }
 
 // Primary button - filled with primary color
 .btn-primary {
-  background-color: #ff3e6c;
+  // Gradient Enhancement: Premium shiny effect with primary color
+  // Top: Lighter (#ff5279), Bottom: Base (#ff3e6c)
+  background: linear-gradient(to bottom, #ff5279, #ff3e6c);
   color: #ffffff;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 0.375rem;
   font-weight: 500;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  // Two-layer shadow - Small level
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),  // Top highlight - creates shine
+    0 1px 2px rgba(0, 0, 0, 0.1);             // Bottom shadow - elevation
 
   &:hover:not(:disabled) {
-    background-color: #e6375f;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    // Slightly lighter gradient on hover
+    background: linear-gradient(to bottom, #ff6685, #ff3e6c);
+    // Increase shadow on hover - Medium level
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      0 2px 4px rgba(0, 0, 0, 0.15);
   }
 
   &:active:not(:disabled) {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    // Reduce shadow on press
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      0 1px 2px rgba(0, 0, 0, 0.1);
     transform: translateY(1px);
   }
 
@@ -228,6 +252,29 @@ input.primary-focus:focus {
     // Shade 4 (lightest) - Hover state
     background-color: #ffffff;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Seat Info Item - Color Layering for Depth
+.seat-info-item {
+  // Shade 3 (light) - Interactive/information elements
+  background-color: #f9fafb; // gray-50
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+
+  // No border - color contrast creates separation per design system
+  border: none;
+
+  p {
+    margin: 0.25rem 0;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }
 
