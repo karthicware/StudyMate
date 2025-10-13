@@ -1,6 +1,6 @@
 .seat-map-config-container {
   min-height: 100vh;
-  background-color: #f9fafb;
+  background-color: #ffffff; // White background
 }
 
 .seat-canvas {
@@ -217,8 +217,8 @@ input.primary-focus:focus {
 
 // Seat Map Panel - Airbnb-Inspired Design System
 .seat-map-panel {
-  // Gradient Enhancement: Premium shiny effect
-  background: linear-gradient(to bottom, #ffffff, #f5f5f5);
+  // Solid white background
+  background: #ffffff;
   border-radius: 0.5rem;
   padding: 1.5rem;
 
