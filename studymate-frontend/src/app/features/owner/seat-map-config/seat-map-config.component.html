@@ -30,13 +30,14 @@
           <div class="flex gap-2">
             <button
               (click)="openAddSeatModal()"
-              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              class="btn-light-grey"
+              style="color: #ff3e6c;"
               [disabled]="isLoading()">
               + Add Seat
             </button>
             <button
               (click)="saveSeatConfiguration()"
-              class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+              class="btn-light-grey text-gray-700"
               [disabled]="isLoading() || !hasUnsavedChanges()">
               @if (isLoading()) {
                 <span>Saving...</span>
@@ -99,7 +100,8 @@
               <input
                 type="text"
                 [(ngModel)]="editingSeatNumber"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                style="focus:ring-color: #ff3e6c;"
                 placeholder="e.g., A1" />
             </div>
             <div class="text-sm text-gray-600">
@@ -109,18 +111,19 @@
             <div class="flex gap-2">
               <button
                 (click)="updateSeatNumber()"
-                class="flex-1 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm">
+                class="flex-1 btn-light-grey btn-sm"
+                style="color: #ff3e6c;">
                 Update
               </button>
               <button
                 (click)="deleteSeat(seat)"
-                class="flex-1 px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm">
+                class="flex-1 btn-light-grey btn-sm text-red-600">
                 Delete
               </button>
             </div>
             <button
               (click)="cancelSeatEdit()"
-              class="w-full px-3 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 text-sm">
+              class="w-full btn-light-grey btn-sm text-gray-600">
               Cancel
             </button>
           </div>
@@ -135,7 +138,8 @@
           <h3 class="text-lg font-semibold text-gray-900">Shift Timings</h3>
           <button
             (click)="openShiftModal()"
-            class="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm">
+            class="btn-light-grey btn-sm"
+            style="color: #ff3e6c;">
             + Add
           </button>
         </div>
@@ -147,17 +151,18 @@
                 <p class="font-medium text-gray-900 text-sm">{{ shift.name }}</p>
                 <p class="text-xs text-gray-600">{{ shift.startTime }} - {{ shift.endTime }}</p>
               </div>
-              <div class="flex gap-1">
-                <button
+              <div class="flex gap-3">
+                <a
                   (click)="openShiftModal($index)"
-                  class="px-2 py-1 text-blue-600 hover:bg-blue-50 rounded text-xs">
+                  class="text-xs font-medium cursor-pointer hover:underline"
+                  style="color: #ff3e6c;">
                   Edit
-                </button>
-                <button
+                </a>
+                <a
                   (click)="deleteShift($index)"
-                  class="px-2 py-1 text-red-600 hover:bg-red-50 rounded text-xs">
+                  class="text-xs font-medium text-red-600 cursor-pointer hover:underline">
                   Delete
-                </button>
+                </a>
               </div>
             </div>
           }
@@ -165,7 +170,7 @@
 
         <button
           (click)="saveShiftConfiguration()"
-          class="w-full mt-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm"
+          class="w-full mt-4 btn-light-grey btn-sm text-gray-700"
           [disabled]="isLoading()">
           Save Shifts
         </button>
@@ -185,7 +190,7 @@
         <input
           type="text"
           [(ngModel)]="newSeatNumber"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 primary-focus"
           placeholder="e.g., A1"
           (keyup.enter)="addSeat()" />
       </div>
@@ -193,12 +198,13 @@
       <div class="flex gap-2">
         <button
           (click)="addSeat()"
-          class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+          class="flex-1 btn-light-grey"
+          style="color: #ff3e6c;">
           Add Seat
         </button>
         <button
           (click)="showSeatModal.set(false)"
-          class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
+          class="flex-1 btn-light-grey text-gray-600">
           Cancel
         </button>
       </div>
@@ -220,7 +226,7 @@
           <input
             type="text"
             [(ngModel)]="shiftName"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 primary-focus"
             placeholder="e.g., Morning" />
         </div>
 
@@ -229,7 +235,7 @@
           <input
             type="time"
             [(ngModel)]="shiftStartTime"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 primary-focus" />
         </div>
 
         <div>
@@ -237,19 +243,20 @@
           <input
             type="time"
             [(ngModel)]="shiftEndTime"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 primary-focus" />
         </div>
       </div>
 
       <div class="flex gap-2">
         <button
           (click)="saveShift()"
-          class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+          class="flex-1 btn-light-grey"
+          style="color: #ff3e6c;">
           Save Shift
         </button>
         <button
           (click)="showShiftModal.set(false)"
-          class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
+          class="flex-1 btn-light-grey text-gray-600">
           Cancel
         </button>
       </div>

@@ -6,7 +6,8 @@
 .seat-canvas {
   position: relative;
   overflow: hidden;
-  margin: 0 auto;
+  max-width: 100%;
+  box-sizing: border-box;
 
   .grid-background {
     background-image:
@@ -29,7 +30,7 @@
   }
 
   &.selected .seat-visual {
-    box-shadow: 0 0 0 3px #3b82f6;
+    box-shadow: 0 0 0 3px #ff3e6c;
     transform: scale(1.1);
   }
 
@@ -99,10 +100,70 @@
   }
 }
 
+// Button styles - white background with light grey border and shadows
+.btn-light-grey {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  &:hover:not(:disabled) {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active:not(:disabled) {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f9fafb;
+  }
+}
+
+.btn-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.btn-xs {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.primary-focus:focus {
+  --tw-ring-color: #ff3e6c;
+  ring-color: #ff3e6c;
+  border-color: #ff3e6c;
+}
+
+input.primary-focus:focus {
+  outline: none;
+  border-color: #ff3e6c;
+  box-shadow: 0 0 0 2px rgba(255, 62, 108, 0.2);
+}
+
 // Responsive adjustments
 @media (max-width: 1024px) {
   .seat-canvas {
     width: 100% !important;
-    max-width: 600px;
+    max-width: 100%;
+  }
+
+  .seat-map-config-container {
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .seat-canvas {
+    width: 700px;
   }
 }

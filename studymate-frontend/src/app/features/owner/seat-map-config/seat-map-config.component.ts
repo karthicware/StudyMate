@@ -40,8 +40,8 @@ export class SeatMapConfigComponent implements OnInit {
   editingShiftIndex = signal<number | null>(null);
 
   // Canvas dimensions for seat map
-  readonly canvasWidth = 800;
-  readonly canvasHeight = 600;
+  readonly canvasWidth = 700;
+  readonly canvasHeight = 500;
   readonly gridSize = 50; // Grid spacing in pixels
 
   // Mock hall ID (in production, get from route params or auth service)
@@ -96,12 +96,16 @@ export class SeatMapConfigComponent implements OnInit {
    * Handle drag end event for seat positioning
    */
   onSeatDragEnded(event: CdkDragEnd, seat: Seat): void {
-    const dropPoint = event.dropPoint;
+    const distance = event.distance;
     const seatSize = 50; // Seat dimensions
 
-    // Constrain coordinates within canvas bounds
-    let newX = Math.round(dropPoint.x / this.gridSize) * this.gridSize;
-    let newY = Math.round(dropPoint.y / this.gridSize) * this.gridSize;
+    // Calculate new position based on drag distance from original position
+    let newX = seat.xCoord + distance.x;
+    let newY = seat.yCoord + distance.y;
+
+    // Snap to grid
+    newX = Math.round(newX / this.gridSize) * this.gridSize;
+    newY = Math.round(newY / this.gridSize) * this.gridSize;
 
     // Ensure seat stays within canvas (accounting for seat size)
     newX = Math.max(0, Math.min(newX, this.canvasWidth - seatSize));
