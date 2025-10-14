@@ -47,7 +47,7 @@ public class StudyHall {
     private String address;
 
     @Type(JsonBinaryType.class)
-    @Column(name = "opening_hours", columnDefinition = "jsonb")
+    @Column(name = "opening_hours")
     private Map<String, DayHoursDTO> openingHours;
 
     @Column(name = "created_at", nullable = false, updatable = false)

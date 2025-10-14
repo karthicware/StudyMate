@@ -74,7 +74,8 @@ class ReportServiceTest {
         startDate = LocalDate.of(2025, 1, 1);
         endDate = LocalDate.of(2025, 1, 31);
 
-        when(userDetails.getUsername()).thenReturn("owner@test.com");
+        // Use lenient() for setUp() stubs that may not be used in all tests
+        lenient().when(userDetails.getUsername()).thenReturn("owner@test.com");
     }
 
     @Test
@@ -146,7 +147,8 @@ class ReportServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("User not found");
 
-        verify(studyHallRepository, times(2)).findById(1L);
+        // Only called once in verifyOwnership before exception is thrown
+        verify(studyHallRepository).findById(1L);
         verify(userRepository).findByEmail("unknown@test.com");
     }
 
@@ -169,7 +171,8 @@ class ReportServiceTest {
                 .isInstanceOf(ForbiddenException.class)
                 .hasMessageContaining("You don't have access to this hall");
 
-        verify(studyHallRepository, times(2)).findById(1L);
+        // Only called once in verifyOwnership before exception is thrown
+        verify(studyHallRepository).findById(1L);
         verify(userRepository).findByEmail("owner@test.com");
         verifyNoInteractions(bookingRepository);
     }

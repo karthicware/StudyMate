@@ -59,7 +59,7 @@ CREATE TABLE bookings (
 -- Indexes for performance
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_role ON users(role);
-CREATE INDEX idx_users_enabled ON users(enabled) WHERE enabled = true;
+CREATE INDEX idx_users_enabled ON users(enabled);
 CREATE INDEX idx_seats_hall_id ON seats(hall_id);
 CREATE INDEX idx_bookings_user_id ON bookings(user_id);
 CREATE INDEX idx_bookings_seat_id ON bookings(seat_id);

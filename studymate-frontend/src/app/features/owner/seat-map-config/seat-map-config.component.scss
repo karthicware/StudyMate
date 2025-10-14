@@ -30,8 +30,18 @@
   }
 
   &.selected .seat-visual {
-    box-shadow: 0 0 0 3px #ff3e6c;
-    transform: scale(1.1);
+    transform: scale(1.15);
+
+    .seat-chair-icon {
+      color: #da0d64; // Highlight chair in primary color when selected
+      filter: drop-shadow(0 0 8px rgba(218, 13, 100, 0.4));
+    }
+
+    .seat-number-badge {
+      border-color: #da0d64;
+      background-color: #da0d64;
+      color: #ffffff;
+    }
   }
 
   &.cdk-drag-animating {
@@ -42,27 +52,44 @@
 .seat-visual {
   width: 100%;
   height: 100%;
-  background-color: #10b981;
-  border: 2px solid #059669;
-  border-radius: 8px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
   transition: all 0.2s ease;
 
-  .seat-number {
-    color: white;
+  .seat-chair-icon {
+    width: 40px;
+    height: 40px;
+    color: #10b981; // Green chair color
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    transition: all 0.2s ease;
+  }
+
+  .seat-number-badge {
+    position: absolute;
+    bottom: -2px;
+    background-color: #ffffff;
+    color: #374151;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    border: 1.5px solid #10b981;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     user-select: none;
+    line-height: 1;
   }
 }
 
 .cdk-drag-preview {
   .seat-visual {
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    opacity: 0.8;
+    opacity: 0.9;
+
+    .seat-chair-icon {
+      filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+    }
   }
 }
 
@@ -156,8 +183,8 @@
 // Primary button - filled with primary color
 .btn-primary {
   // Gradient Enhancement: Premium shiny effect with primary color
-  // Top: Lighter (#ff5279), Bottom: Base (#ff3e6c)
-  background: linear-gradient(to bottom, #ff5279, #ff3e6c);
+  // Top: Lighter (#e8357f), Bottom: Base (#da0d64)
+  background: linear-gradient(to bottom, #e8357f, #da0d64);
   color: #ffffff;
   border: none;
   padding: 0.5rem 1rem;
@@ -172,7 +199,7 @@
 
   &:hover:not(:disabled) {
     // Slightly lighter gradient on hover
-    background: linear-gradient(to bottom, #ff6685, #ff3e6c);
+    background: linear-gradient(to bottom, #ec4a8d, #da0d64);
     // Increase shadow on hover - Medium level
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.3),
@@ -204,15 +231,15 @@
 }
 
 .primary-focus:focus {
-  --tw-ring-color: #ff3e6c;
-  ring-color: #ff3e6c;
-  border-color: #ff3e6c;
+  --tw-ring-color: #da0d64;
+  ring-color: #da0d64;
+  border-color: #da0d64;
 }
 
 input.primary-focus:focus {
   outline: none;
-  border-color: #ff3e6c;
-  box-shadow: 0 0 0 2px rgba(255, 62, 108, 0.2);
+  border-color: #da0d64;
+  box-shadow: 0 0 0 2px rgba(218, 13, 100, 0.2);
 }
 
 // Seat Map Panel - Airbnb-Inspired Design System
@@ -222,13 +249,11 @@ input.primary-focus:focus {
   border-radius: 0.5rem;
   padding: 1.5rem;
 
-  // Two-layer shadow system - Medium level (Dashboard cards)
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),  // Top highlight - shiny effect
-    0 3px 6px rgba(0, 0, 0, 0.15);             // Bottom shadow - elevation
+  // No shadow
+  box-shadow: none;
 
-  // No border - shadow creates depth per design system
-  border: none;
+  // Cornered border
+  border: 1px solid #e5e7eb;
 }
 
 // Seat Map Info Bar - Color Layering
@@ -296,6 +321,45 @@ input.primary-focus:focus {
     // Shade 4 (lightest) - Hover state
     background-color: #ffffff;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Enhanced shift item with cleaner layout
+.shift-item-enhanced {
+  padding: 1rem 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+// Text link styling - Airbnb style
+.text-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151; // gray-700
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #1f2937; // gray-800
+  }
+
+  &:active {
+    color: #111827; // gray-900
   }
 }
 

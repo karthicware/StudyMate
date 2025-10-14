@@ -225,7 +225,7 @@ test('Student can discover and book a seat', async ({ page }) => {
 |--------------|-------------|-------|
 | **Controllers** | Test REST endpoints, request/response handling | MockMvc, @WebMvcTest |
 | **Services** | Test business logic in isolation | JUnit 5, Mockito |
-| **Repositories** | Test database queries | @DataJpaTest, H2 or Testcontainers |
+| **Repositories** | Test database queries using development database | @DataJpaTest with PostgreSQL |
 | **DTOs** | Test validation annotations | Bean Validation API |
 | **Mappers** | Test entity-to-DTO conversions | JUnit 5 |
 | **Utilities** | Test utility functions | JUnit 5 |
@@ -297,21 +297,22 @@ class BookingRepositoryTest {
 | Integration Type | What to Test | Approach |
 |------------------|--------------|----------|
 | **Service Integration** | Service-to-service calls | @SpringBootTest with @MockBean for external services |
-| **Database Integration** | Real database operations | Testcontainers PostgreSQL or embedded PostgreSQL |
+| **Database Integration** | Real database operations | Development PostgreSQL database |
 | **External APIs** | Third-party integrations | WireMock for stubbing external APIs |
 | **WebSocket** | Real-time communication | @SpringBootTest with WebSocket client |
+
+**Test Database Architecture:**
+- All tests (@DataJpaTest, @SpringBootTest) use the **same PostgreSQL database** as development
+- Database: `studymate` (localhost:5432)
+- User: `studymate_user`
+- Ensures **complete database parity** between development and testing
+- No H2 or in-memory databases - real PostgreSQL for all tests
+- Flyway migrations executed for schema validation
 
 **Example Integration Test:**
 ```java
 @SpringBootTest
-@Testcontainers
 class BookingServiceIntegrationTest {
-
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15")
-            .withDatabaseName("studymate_test")
-            .withUsername("test")
-            .withPassword("test");
 
     @Autowired
     private BookingService bookingService;
@@ -507,7 +508,6 @@ performance-tests:
 - **JUnit 5**: Test framework
 - **Mockito**: Mocking framework
 - **MockMvc**: Spring MVC testing
-- **Testcontainers**: Database integration testing
 - **WireMock**: External API mocking
 - **JMeter/Gatling**: Performance testing
 
