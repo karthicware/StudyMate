@@ -141,4 +141,4 @@ pids
 .cursor/
 .playwright-mcp/
 .vscode/
-.github-chatmodes/
+.github/chatmodes/
