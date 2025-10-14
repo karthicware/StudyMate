@@ -134,3 +134,11 @@ pids
 
 # Serena
 .serena/
+
+# BMAD
+.bmad-core/
+.claude/
+.cursor/
+.playwright-mcp/
+.vscode/
+.github-chatmodes/

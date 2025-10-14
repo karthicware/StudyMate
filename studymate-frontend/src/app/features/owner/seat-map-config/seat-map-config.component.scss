@@ -272,9 +272,8 @@ input.primary-focus:focus {
 
 // Seat Details Panel - Airbnb-Inspired Design System
 .seat-details-panel {
-  // Gradient Enhancement: Top lighter, bottom slightly darker
-  // Creates "light hitting from top" effect
-  background: linear-gradient(to bottom, #ffffff, #f5f5f5);
+  // Solid white background
+  background: #ffffff;
   border-radius: 0.5rem;
   padding: 1.5rem;
 
@@ -289,9 +288,8 @@ input.primary-focus:focus {
 
 // Shift Timings Panel - Airbnb-Inspired Design System
 .shift-timings-panel {
-  // Gradient Enhancement: Premium shiny effect
-  // Top: Base + 0.1 lightness, Bottom: Base - 0.05 lightness
-  background: linear-gradient(to bottom, #ffffff, #f5f5f5);
+  // Solid white background
+  background: #ffffff;
   border-radius: 0.5rem;
   padding: 1.5rem;
 
