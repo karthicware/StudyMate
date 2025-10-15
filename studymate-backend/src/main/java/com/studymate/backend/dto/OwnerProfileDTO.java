@@ -18,5 +18,6 @@ public class OwnerProfileDTO {
     private String phone;
     private String profilePictureUrl;
     private String hallName;
+    private String gender; // Gender enum as string (nullable)
     private LocalDateTime createdAt;
 }

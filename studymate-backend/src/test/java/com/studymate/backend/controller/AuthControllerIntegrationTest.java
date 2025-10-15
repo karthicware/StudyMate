@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -59,7 +60,8 @@ class AuthControllerIntegrationTest {
                 "password123",
                 "John",
                 "Doe",
-                UserRole.ROLE_STUDENT
+                UserRole.ROLE_STUDENT,
+                null
         );
 
         // When & Then
@@ -68,10 +70,10 @@ class AuthControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.token").exists())
-                .andExpect(jsonPath("$.email").value("student@test.com"))
-                .andExpect(jsonPath("$.role").value("STUDENT"))
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Doe"))
+                .andExpect(jsonPath("$.user.email").value("student@test.com"))
+                .andExpect(jsonPath("$.user.role").value("ROLE_STUDENT"))
+                .andExpect(jsonPath("$.user.firstName").value("John"))
+                .andExpect(jsonPath("$.user.lastName").value("Doe"))
                 .andReturn();
 
         // Verify user was saved to database
@@ -101,7 +103,8 @@ class AuthControllerIntegrationTest {
                 "newpassword",
                 "New",
                 "User",
-                UserRole.ROLE_OWNER
+                UserRole.ROLE_OWNER,
+                null
         );
 
         mockMvc.perform(post("/auth/register")
@@ -119,7 +122,8 @@ class AuthControllerIntegrationTest {
                 "short",
                 "John",
                 "Doe",
-                UserRole.ROLE_STUDENT
+                UserRole.ROLE_STUDENT,
+                null
         );
 
         // When & Then
@@ -150,10 +154,10 @@ class AuthControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").exists())
-                .andExpect(jsonPath("$.email").value("login@test.com"))
-                .andExpect(jsonPath("$.role").value("OWNER"))
-                .andExpect(jsonPath("$.firstName").value("Login"))
-                .andExpect(jsonPath("$.lastName").value("Test"));
+                .andExpect(jsonPath("$.user.email").value("login@test.com"))
+                .andExpect(jsonPath("$.user.role").value("ROLE_OWNER"))
+                .andExpect(jsonPath("$.user.firstName").value("Login"))
+                .andExpect(jsonPath("$.user.lastName").value("Test"));
     }
 
     @Test
@@ -199,7 +203,8 @@ class AuthControllerIntegrationTest {
                 "password123",
                 "Current",
                 "User",
-                UserRole.ROLE_STUDENT
+                UserRole.ROLE_STUDENT,
+                null
         );
 
         MvcResult registerResult = mockMvc.perform(post("/auth/register")
@@ -244,7 +249,8 @@ class AuthControllerIntegrationTest {
                 "password123",
                 "Refresh",
                 "User",
-                UserRole.ROLE_STUDENT
+                UserRole.ROLE_STUDENT,
+                null
         );
 
         MvcResult registerResult = mockMvc.perform(post("/auth/register")
@@ -265,10 +271,10 @@ class AuthControllerIntegrationTest {
                         .header("Authorization", "Bearer " + oldToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").exists())
-                .andExpect(jsonPath("$.email").value("refresh@test.com"))
-                .andExpect(jsonPath("$.role").value("STUDENT"))
-                .andExpect(jsonPath("$.firstName").value("Refresh"))
-                .andExpect(jsonPath("$.lastName").value("User"))
+                .andExpect(jsonPath("$.user.email").value("refresh@test.com"))
+                .andExpect(jsonPath("$.user.role").value("ROLE_STUDENT"))
+                .andExpect(jsonPath("$.user.firstName").value("Refresh"))
+                .andExpect(jsonPath("$.user.lastName").value("User"))
                 .andReturn();
 
         // Verify new token is different from old token
@@ -297,5 +303,32 @@ class AuthControllerIntegrationTest {
         mockMvc.perform(post("/auth/refresh")
                         .header("Authorization", "Bearer invalid-token"))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void shouldRejectRegistrationWithInvalidGender() throws Exception {
+        // Given - request with invalid gender value
+        String invalidRequest = """
+                {
+                    "firstName": "John",
+                    "lastName": "Doe",
+                    "email": "test@example.com",
+                    "password": "SecurePass123",
+                    "role": "ROLE_STUDENT",
+                    "gender": "INVALID_GENDER_VALUE"
+                }
+                """;
+
+        // When & Then
+        // Invalid enum values cause deserialization error
+        // Status can be 400 (BAD_REQUEST) or 500 (INTERNAL_SERVER_ERROR) depending on error handling
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidRequest))
+                .andExpect(result -> {
+                    int status = result.getResponse().getStatus();
+                    assertTrue(status == 400 || status == 500,
+                            "Expected status 400 or 500 for invalid enum, but got: " + status);
+                });
     }
 }

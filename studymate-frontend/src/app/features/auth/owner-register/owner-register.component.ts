@@ -11,7 +11,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
-import { OwnerRegistrationRequest } from '../../../core/models/auth.models';
+import { OwnerRegistrationRequest, Gender } from '../../../core/models/auth.models';
 
 @Component({
   selector: 'app-owner-register',
@@ -36,6 +36,14 @@ export class OwnerRegisterComponent implements OnDestroy {
   registerForm: FormGroup;
   private passwordSubscription?: Subscription;
 
+  // Gender options for dropdown
+  genderOptions = [
+    { value: '', label: 'Prefer not to say' },
+    { value: 'MALE', label: 'Male' },
+    { value: 'FEMALE', label: 'Female' },
+    { value: 'OTHER', label: 'Other' }
+  ];
+
   constructor() {
     this.registerForm = this.fb.group(
       {
@@ -45,6 +53,7 @@ export class OwnerRegisterComponent implements OnDestroy {
         password: ['', [Validators.required, this.passwordStrengthValidator]],
         confirmPassword: ['', [Validators.required]],
         phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+        gender: [''], // Optional gender field
         businessName: ['', [Validators.required, Validators.minLength(3)]],
         termsAccepted: [false, [Validators.requiredTrue]],
       },
@@ -84,6 +93,11 @@ export class OwnerRegisterComponent implements OnDestroy {
         phone: this.registerForm.value.phone,
         businessName: this.registerForm.value.businessName,
       };
+
+      // Include gender only if selected (not empty string)
+      if (this.registerForm.value.gender) {
+        request.gender = this.registerForm.value.gender as Gender;
+      }
 
       this.authService.registerOwner(request).subscribe({
         next: (response) => {

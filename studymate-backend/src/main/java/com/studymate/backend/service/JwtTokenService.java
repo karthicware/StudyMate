@@ -66,16 +66,17 @@ public class JwtTokenService {
 
     /**
      * Generates a JWT token with additional user information.
-     * Includes user ID, first name, last name, role, and email.
+     * Includes user ID, first name, last name, role, gender, and email.
      *
      * @param userDetails the user details
      * @param userId the user's ID
      * @param firstName the user's first name
      * @param lastName the user's last name
      * @param role the user's role
+     * @param gender the user's gender (may be null)
      * @return the generated JWT token
      */
-    public String generateToken(UserDetails userDetails, Long userId, String firstName, String lastName, String role) {
+    public String generateToken(UserDetails userDetails, Long userId, String firstName, String lastName, String role, String gender) {
         Map<String, Object> claims = new HashMap<>();
 
         // Extract roles from authorities
@@ -89,7 +90,28 @@ public class JwtTokenService {
         claims.put("lastName", lastName);
         claims.put("role", role);
 
+        // Add gender claim if available
+        if (gender != null) {
+            claims.put("gender", gender);
+        }
+
         return createToken(claims, userDetails.getUsername());
+    }
+
+    /**
+     * Generates a JWT token with additional user information.
+     * Includes user ID, first name, last name, role, and email.
+     * Backward compatible version without gender.
+     *
+     * @param userDetails the user details
+     * @param userId the user's ID
+     * @param firstName the user's first name
+     * @param lastName the user's last name
+     * @param role the user's role
+     * @return the generated JWT token
+     */
+    public String generateToken(UserDetails userDetails, Long userId, String firstName, String lastName, String role) {
+        return generateToken(userDetails, userId, firstName, lastName, role, null);
     }
 
     /**

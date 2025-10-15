@@ -250,7 +250,7 @@ test.describe('Owner Settings Page', () => {
 
     // Saving indicator should appear briefly
     // (may be too fast to catch, so check for either saving or saved)
-    const page Locator = page.locator('text=Saving, text=Saved');
+    const savingOrSaved = page.locator('text=Saving, text=Saved');
     await expect(savingOrSaved).toBeVisible({ timeout: 2000 });
   });
 

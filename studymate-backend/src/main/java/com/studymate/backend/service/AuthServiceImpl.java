@@ -54,6 +54,7 @@ public class AuthServiceImpl implements AuthService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setRole(request.getRole());
+        user.setGender(request.getGender());
         user.setEnabled(true);
         user.setLocked(false);
 
@@ -68,7 +69,8 @@ public class AuthServiceImpl implements AuthService {
                 savedUser.getId(),
                 savedUser.getFirstName(),
                 savedUser.getLastName(),
-                savedUser.getRole().name()
+                savedUser.getRole().name(),
+                savedUser.getGender() != null ? savedUser.getGender().name() : null
         );
 
         // Return auth response
@@ -97,6 +99,7 @@ public class AuthServiceImpl implements AuthService {
         user.setLastName(request.getLastName());
         user.setPhone(request.getPhone());
         user.setRole(UserRole.ROLE_OWNER);
+        user.setGender(request.getGender());
         user.setEnabled(true);
         user.setLocked(false);
         user.setEmailVerified(false);
@@ -124,7 +127,8 @@ public class AuthServiceImpl implements AuthService {
                 savedUser.getId(),
                 savedUser.getFirstName(),
                 savedUser.getLastName(),
-                savedUser.getRole().name()
+                savedUser.getRole().name(),
+                savedUser.getGender() != null ? savedUser.getGender().name() : null
         );
 
         // Build auth response with message
@@ -173,7 +177,8 @@ public class AuthServiceImpl implements AuthService {
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getRole().name()
+                user.getRole().name(),
+                user.getGender() != null ? user.getGender().name() : null
         );
 
         // Return auth response
@@ -224,7 +229,8 @@ public class AuthServiceImpl implements AuthService {
                 user.getId(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getRole().name()
+                user.getRole().name(),
+                user.getGender() != null ? user.getGender().name() : null
         );
 
         // Return auth response with new token
@@ -270,6 +276,7 @@ public class AuthServiceImpl implements AuthService {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getRole().name(),
+                user.getGender() != null ? user.getGender().name() : null,
                 user.getEnabled(),
                 user.getLocked(),
                 user.getCreatedAt()

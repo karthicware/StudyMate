@@ -1,5 +1,6 @@
 package com.studymate.backend.dto;
 
+import com.studymate.backend.model.Gender;
 import com.studymate.backend.model.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -52,4 +53,10 @@ public class RegisterRequest {
      */
     @NotNull(message = "Role is required")
     private UserRole role;
+
+    /**
+     * Optional gender field for ladies-only seat booking validation.
+     * If not provided, will be stored as NULL in database.
+     */
+    private Gender gender;
 }

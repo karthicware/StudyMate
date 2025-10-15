@@ -55,6 +55,10 @@ public class User {
     @Column(nullable = false, length = 50)
     private UserRole role;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private Gender gender;
+
     @Column(nullable = false)
     private Boolean enabled = true;
 

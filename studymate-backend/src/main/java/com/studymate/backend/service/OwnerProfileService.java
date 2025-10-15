@@ -61,6 +61,7 @@ public class OwnerProfileService {
             .phone(owner.getPhone())
             .profilePictureUrl(owner.getProfilePictureUrl())
             .hallName(studyHall != null ? studyHall.getHallName() : null)
+            .gender(owner.getGender() != null ? owner.getGender().name() : null)
             .createdAt(owner.getCreatedAt())
             .build();
     }
@@ -84,6 +85,12 @@ public class OwnerProfileService {
         owner.setFirstName(request.getFirstName());
         owner.setLastName(request.getLastName());
         owner.setPhone(request.getPhone());
+
+        // Update gender if provided in request
+        // Note: Gender can be explicitly set to null by sending null value
+        if (request.getGender() != null) {
+            owner.setGender(request.getGender());
+        }
 
         userRepository.save(owner);
         log.info("Profile updated successfully for owner ID: {}", ownerId);

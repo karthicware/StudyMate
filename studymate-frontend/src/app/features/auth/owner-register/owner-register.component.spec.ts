@@ -35,6 +35,20 @@ describe('OwnerRegisterComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should initialize form with gender field', () => {
+    expect(component.registerForm.get('gender')).toBeDefined();
+    expect(component.registerForm.get('gender')?.value).toBe('');
+  });
+
+  it('should have four gender options', () => {
+    expect(component.genderOptions.length).toBe(4);
+    expect(component.genderOptions[0].value).toBe('');
+    expect(component.genderOptions[0].label).toBe('Prefer not to say');
+    expect(component.genderOptions[1].value).toBe('MALE');
+    expect(component.genderOptions[2].value).toBe('FEMALE');
+    expect(component.genderOptions[3].value).toBe('OTHER');
+  });
+
   describe('Form Validation', () => {
     it('should have invalid form when empty', () => {
       expect(component.registerForm.valid).toBeFalsy();
@@ -125,7 +139,7 @@ describe('OwnerRegisterComponent', () => {
   });
 
   describe('Form Submission', () => {
-    it('should call AuthService.registerOwner with valid form data', fakeAsync(() => {
+    it('should call AuthService.registerOwner with valid form data including gender', fakeAsync(() => {
       const mockResponse: AuthResponse = {
         token: 'mock-token',
         user: {
@@ -146,6 +160,7 @@ describe('OwnerRegisterComponent', () => {
         password: 'Strong@123',
         confirmPassword: 'Strong@123',
         phone: '9876543210',
+        gender: 'MALE',
         businessName: 'Test Business',
         termsAccepted: true,
       });
@@ -158,6 +173,7 @@ describe('OwnerRegisterComponent', () => {
         email: 'test@example.com',
         password: 'Strong@123',
         phone: '9876543210',
+        gender: 'MALE',
         businessName: 'Test Business',
       });
 
@@ -165,6 +181,42 @@ describe('OwnerRegisterComponent', () => {
       expect(router.navigate).toHaveBeenCalledWith(['/auth/verify-email'], {
         queryParams: { email: 'test@example.com' },
       });
+    }));
+
+    it('should submit registration without gender when empty', fakeAsync(() => {
+      const mockResponse: AuthResponse = {
+        token: 'mock-token',
+        user: {
+          id: 1,
+          email: 'test@example.com',
+          firstName: 'John',
+          lastName: 'Doe',
+          role: 'OWNER',
+        },
+        message: 'Registration successful',
+      };
+      authService.registerOwner.and.returnValue(of(mockResponse));
+
+      component.registerForm.patchValue({
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'test@example.com',
+        password: 'Strong@123',
+        confirmPassword: 'Strong@123',
+        phone: '9876543210',
+        gender: '', // Empty string - prefer not to say
+        businessName: 'Test Business',
+        termsAccepted: true,
+      });
+
+      component.onSubmit();
+
+      const callArgs = authService.registerOwner.calls.mostRecent().args[0];
+      expect(callArgs.gender).toBeUndefined();
+      expect(callArgs.firstName).toBe('John');
+      expect(callArgs.businessName).toBe('Test Business');
+
+      tick(2100);
     }));
 
     it('should not submit invalid form', () => {

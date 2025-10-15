@@ -286,4 +286,58 @@ class JwtTokenServiceTest {
         assertTrue(expiration.getTime() - now.getTime() <= TEST_EXPIRATION_MS,
                 "Token expiration should be within configured expiration time");
     }
+
+    @Test
+    void testGenerateTokenWithGender_ShouldIncludeGenderClaim() {
+        // Given
+        Long userId = 123L;
+        String firstName = "John";
+        String lastName = "Doe";
+        String role = "ROLE_OWNER";
+        String gender = "MALE";
+
+        // When
+        String token = jwtTokenService.generateToken(testUserDetails, userId, firstName, lastName, role, gender);
+
+        // Then
+        assertNotNull(token, "Token should not be null");
+        String extractedGender = jwtTokenService.extractClaim(token, claims -> claims.get("gender", String.class));
+        Long extractedUserId = jwtTokenService.extractClaim(token, claims -> claims.get("userId", Long.class));
+        String extractedFirstName = jwtTokenService.extractClaim(token, claims -> claims.get("firstName", String.class));
+        String extractedLastName = jwtTokenService.extractClaim(token, claims -> claims.get("lastName", String.class));
+        String extractedRole = jwtTokenService.extractClaim(token, claims -> claims.get("role", String.class));
+
+        assertEquals("MALE", extractedGender, "Token should contain gender claim");
+        assertEquals(userId, extractedUserId, "Token should contain userId claim");
+        assertEquals(firstName, extractedFirstName, "Token should contain firstName claim");
+        assertEquals(lastName, extractedLastName, "Token should contain lastName claim");
+        assertEquals(role, extractedRole, "Token should contain role claim");
+    }
+
+    @Test
+    void testGenerateTokenWithoutGender_ShouldExcludeGenderClaim() {
+        // Given
+        Long userId = 456L;
+        String firstName = "Jane";
+        String lastName = "Smith";
+        String role = "ROLE_STUDENT";
+        String gender = null;
+
+        // When
+        String token = jwtTokenService.generateToken(testUserDetails, userId, firstName, lastName, role, gender);
+
+        // Then
+        assertNotNull(token, "Token should not be null");
+        String extractedGender = jwtTokenService.extractClaim(token, claims -> claims.get("gender", String.class));
+        Long extractedUserId = jwtTokenService.extractClaim(token, claims -> claims.get("userId", Long.class));
+        String extractedFirstName = jwtTokenService.extractClaim(token, claims -> claims.get("firstName", String.class));
+        String extractedLastName = jwtTokenService.extractClaim(token, claims -> claims.get("lastName", String.class));
+        String extractedRole = jwtTokenService.extractClaim(token, claims -> claims.get("role", String.class));
+
+        assertNull(extractedGender, "Token should not contain gender claim when gender is null");
+        assertEquals(userId, extractedUserId, "Token should contain userId claim");
+        assertEquals(firstName, extractedFirstName, "Token should contain firstName claim");
+        assertEquals(lastName, extractedLastName, "Token should contain lastName claim");
+        assertEquals(role, extractedRole, "Token should contain role claim");
+    }
 }

@@ -2,8 +2,10 @@ package com.studymate.backend.service;
 
 import com.studymate.backend.dto.AuthResponse;
 import com.studymate.backend.dto.OwnerRegistrationRequest;
+import com.studymate.backend.dto.RegisterRequest;
 import com.studymate.backend.exception.DuplicateResourceException;
 import com.studymate.backend.model.AccountStatus;
+import com.studymate.backend.model.Gender;
 import com.studymate.backend.model.OwnerProfile;
 import com.studymate.backend.model.User;
 import com.studymate.backend.model.UserRole;
@@ -98,7 +100,8 @@ class AuthServiceImplTest {
         when(passwordEncoder.encode(anyString())).thenReturn("$2a$12$hashedPassword");
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
         when(ownerProfileRepository.save(any(OwnerProfile.class))).thenReturn(savedProfile);
-        when(jwtTokenService.generateToken(any(UserDetails.class))).thenReturn("mock-jwt-token");
+        when(jwtTokenService.generateToken(any(UserDetails.class), anyLong(), anyString(), anyString(), anyString(), any()))
+                .thenReturn("mock-jwt-token");
 
         // Act
         AuthResponse response = authService.registerOwner(validRequest);
@@ -119,7 +122,7 @@ class AuthServiceImplTest {
         verify(passwordEncoder).encode("SecurePass@123");
         verify(userRepository).save(any(User.class));
         verify(ownerProfileRepository).save(any(OwnerProfile.class));
-        verify(jwtTokenService).generateToken(any(UserDetails.class));
+        verify(jwtTokenService).generateToken(any(UserDetails.class), anyLong(), anyString(), anyString(), anyString(), any());
     }
 
     @Test
@@ -146,7 +149,7 @@ class AuthServiceImplTest {
         when(passwordEncoder.encode(anyString())).thenReturn("$2a$12$hashedPassword");
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
         when(ownerProfileRepository.save(any(OwnerProfile.class))).thenReturn(savedProfile);
-        when(jwtTokenService.generateToken(any(UserDetails.class))).thenReturn("mock-jwt-token");
+        when(jwtTokenService.generateToken(any(UserDetails.class), anyLong(), anyString(), anyString(), anyString(), any())).thenReturn("mock-jwt-token");
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
@@ -170,7 +173,7 @@ class AuthServiceImplTest {
         when(passwordEncoder.encode(anyString())).thenReturn("$2a$12$hashedPassword");
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
         when(ownerProfileRepository.save(any(OwnerProfile.class))).thenReturn(savedProfile);
-        when(jwtTokenService.generateToken(any(UserDetails.class))).thenReturn("mock-jwt-token");
+        when(jwtTokenService.generateToken(any(UserDetails.class), anyLong(), anyString(), anyString(), anyString(), any())).thenReturn("mock-jwt-token");
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
@@ -191,7 +194,7 @@ class AuthServiceImplTest {
         when(passwordEncoder.encode(anyString())).thenReturn("$2a$12$hashedPassword");
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
         when(ownerProfileRepository.save(any(OwnerProfile.class))).thenReturn(savedProfile);
-        when(jwtTokenService.generateToken(any(UserDetails.class))).thenReturn("mock-jwt-token");
+        when(jwtTokenService.generateToken(any(UserDetails.class), anyLong(), anyString(), anyString(), anyString(), any())).thenReturn("mock-jwt-token");
 
         ArgumentCaptor<OwnerProfile> profileCaptor = ArgumentCaptor.forClass(OwnerProfile.class);
 
@@ -214,14 +217,14 @@ class AuthServiceImplTest {
         when(passwordEncoder.encode(anyString())).thenReturn("$2a$12$hashedPassword");
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
         when(ownerProfileRepository.save(any(OwnerProfile.class))).thenReturn(savedProfile);
-        when(jwtTokenService.generateToken(any(UserDetails.class))).thenReturn("generated-jwt-token");
+        when(jwtTokenService.generateToken(any(UserDetails.class), anyLong(), anyString(), anyString(), anyString(), any())).thenReturn("generated-jwt-token");
 
         // Act
         AuthResponse response = authService.registerOwner(validRequest);
 
         // Assert
         assertThat(response.getToken()).isEqualTo("generated-jwt-token");
-        verify(jwtTokenService).generateToken(any(UserDetails.class));
+        verify(jwtTokenService).generateToken(any(UserDetails.class), anyLong(), anyString(), anyString(), anyString(), any());
     }
 
     @Test
@@ -241,7 +244,7 @@ class AuthServiceImplTest {
         when(passwordEncoder.encode(anyString())).thenReturn("$2a$12$hashedPassword");
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
         when(ownerProfileRepository.save(any(OwnerProfile.class))).thenReturn(savedProfile);
-        when(jwtTokenService.generateToken(any(UserDetails.class))).thenReturn("mock-jwt-token");
+        when(jwtTokenService.generateToken(any(UserDetails.class), anyLong(), anyString(), anyString(), anyString(), any())).thenReturn("mock-jwt-token");
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
@@ -263,7 +266,7 @@ class AuthServiceImplTest {
         when(passwordEncoder.encode(anyString())).thenReturn("$2a$12$hashedPassword");
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
         when(ownerProfileRepository.save(any(OwnerProfile.class))).thenReturn(savedProfile);
-        when(jwtTokenService.generateToken(any(UserDetails.class))).thenReturn("mock-jwt-token");
+        when(jwtTokenService.generateToken(any(UserDetails.class), anyLong(), anyString(), anyString(), anyString(), any())).thenReturn("mock-jwt-token");
 
         ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
@@ -278,5 +281,154 @@ class AuthServiceImplTest {
         assertThat(capturedUser.getLocked()).isFalse();
         assertThat(capturedUser.getEmailVerified()).isFalse();
         assertThat(capturedUser.getFailedLoginAttempts()).isZero();
+    }
+
+    @Test
+    @DisplayName("Should register owner with gender when provided")
+    void registerOwner_WithGender_ShouldSetGender() {
+        // Arrange
+        OwnerRegistrationRequest requestWithGender = OwnerRegistrationRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .password("SecurePass@123")
+                .phone("9876543210")
+                .businessName("Study Hub Pvt Ltd")
+                .gender(Gender.MALE)
+                .build();
+
+        User savedUserWithGender = new User();
+        savedUserWithGender.setId(1L);
+        savedUserWithGender.setEmail("john.doe@example.com");
+        savedUserWithGender.setPasswordHash("$2a$12$hashedPassword");
+        savedUserWithGender.setFirstName("John");
+        savedUserWithGender.setLastName("Doe");
+        savedUserWithGender.setRole(UserRole.ROLE_OWNER);
+        savedUserWithGender.setGender(Gender.MALE);
+        savedUserWithGender.setEnabled(true);
+        savedUserWithGender.setLocked(false);
+
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+        when(passwordEncoder.encode(anyString())).thenReturn("$2a$12$hashedPassword");
+        when(userRepository.save(any(User.class))).thenReturn(savedUserWithGender);
+        when(ownerProfileRepository.save(any(OwnerProfile.class))).thenReturn(savedProfile);
+        when(jwtTokenService.generateToken(any(UserDetails.class), anyLong(), anyString(), anyString(), anyString(), anyString()))
+                .thenReturn("mock-jwt-token");
+
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+
+        // Act
+        AuthResponse response = authService.registerOwner(requestWithGender);
+
+        // Assert
+        verify(userRepository).save(userCaptor.capture());
+        User capturedUser = userCaptor.getValue();
+        assertThat(capturedUser.getGender()).isEqualTo(Gender.MALE);
+        assertThat(response.getUser().getGender()).isEqualTo("MALE");
+    }
+
+    @Test
+    @DisplayName("Should register owner without gender when not provided")
+    void registerOwner_WithoutGender_ShouldAllowNullGender() {
+        // Arrange - validRequest already has no gender
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+        when(passwordEncoder.encode(anyString())).thenReturn("$2a$12$hashedPassword");
+        when(userRepository.save(any(User.class))).thenReturn(savedUser);
+        when(ownerProfileRepository.save(any(OwnerProfile.class))).thenReturn(savedProfile);
+        when(jwtTokenService.generateToken(any(UserDetails.class), anyLong(), anyString(), anyString(), anyString(), any())).thenReturn("mock-jwt-token");
+
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+
+        // Act
+        AuthResponse response = authService.registerOwner(validRequest);
+
+        // Assert
+        verify(userRepository).save(userCaptor.capture());
+        User capturedUser = userCaptor.getValue();
+        assertThat(capturedUser.getGender()).isNull();
+        assertThat(response.getUser().getGender()).isNull();
+    }
+
+    @Test
+    @DisplayName("Should register student with gender when provided")
+    void registerStudent_WithGender_ShouldSetGender() {
+        // Arrange
+        RegisterRequest studentRequest = new RegisterRequest(
+                "student@example.com",
+                "SecurePass@123",
+                "Jane",
+                "Smith",
+                UserRole.ROLE_STUDENT,
+                Gender.FEMALE
+        );
+
+        User savedStudent = new User();
+        savedStudent.setId(2L);
+        savedStudent.setEmail("student@example.com");
+        savedStudent.setPasswordHash("$2a$12$hashedPassword");
+        savedStudent.setFirstName("Jane");
+        savedStudent.setLastName("Smith");
+        savedStudent.setRole(UserRole.ROLE_STUDENT);
+        savedStudent.setGender(Gender.FEMALE);
+        savedStudent.setEnabled(true);
+        savedStudent.setLocked(false);
+
+        when(userRepository.findByEmail(anyString())).thenReturn(java.util.Optional.empty());
+        when(passwordEncoder.encode(anyString())).thenReturn("$2a$12$hashedPassword");
+        when(userRepository.save(any(User.class))).thenReturn(savedStudent);
+        when(jwtTokenService.generateToken(any(UserDetails.class), anyLong(), anyString(), anyString(), anyString(), any()))
+                .thenReturn("mock-jwt-token");
+
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+
+        // Act
+        AuthResponse response = authService.register(studentRequest);
+
+        // Assert
+        verify(userRepository).save(userCaptor.capture());
+        User capturedUser = userCaptor.getValue();
+        assertThat(capturedUser.getGender()).isEqualTo(Gender.FEMALE);
+        assertThat(response.getUser().getGender()).isEqualTo("FEMALE");
+    }
+
+    @Test
+    @DisplayName("Should register student without gender when not provided")
+    void registerStudent_WithoutGender_ShouldAllowNullGender() {
+        // Arrange
+        RegisterRequest studentRequest = new RegisterRequest(
+                "student@example.com",
+                "SecurePass@123",
+                "Jane",
+                "Smith",
+                UserRole.ROLE_STUDENT,
+                null
+        );
+
+        User savedStudent = new User();
+        savedStudent.setId(2L);
+        savedStudent.setEmail("student@example.com");
+        savedStudent.setPasswordHash("$2a$12$hashedPassword");
+        savedStudent.setFirstName("Jane");
+        savedStudent.setLastName("Smith");
+        savedStudent.setRole(UserRole.ROLE_STUDENT);
+        savedStudent.setGender(null);
+        savedStudent.setEnabled(true);
+        savedStudent.setLocked(false);
+
+        when(userRepository.findByEmail(anyString())).thenReturn(java.util.Optional.empty());
+        when(passwordEncoder.encode(anyString())).thenReturn("$2a$12$hashedPassword");
+        when(userRepository.save(any(User.class))).thenReturn(savedStudent);
+        when(jwtTokenService.generateToken(any(UserDetails.class), anyLong(), anyString(), anyString(), anyString(), any())).thenReturn("mock-jwt-token");
+
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+
+        // Act
+        AuthResponse response = authService.register(studentRequest);
+
+        // Assert
+        verify(userRepository).save(userCaptor.capture());
+        User capturedUser = userCaptor.getValue();
+        assertThat(capturedUser.getGender()).isNull();
+        assertThat(response.getUser().getGender()).isNull();
     }
 }

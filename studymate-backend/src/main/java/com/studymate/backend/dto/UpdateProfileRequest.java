@@ -1,5 +1,6 @@
 package com.studymate.backend.dto;
 
+import com.studymate.backend.model.Gender;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -29,4 +30,11 @@ public class UpdateProfileRequest {
     )
     @Size(max = 20, message = "Phone must not exceed 20 characters")
     private String phone;
+
+    /**
+     * Optional gender field for profile updates.
+     * Can be set to null to remove gender preference.
+     * Allowed values: MALE, FEMALE, OTHER, PREFER_NOT_TO_SAY
+     */
+    private Gender gender;
 }

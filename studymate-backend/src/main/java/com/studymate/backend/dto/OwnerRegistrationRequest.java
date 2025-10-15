@@ -1,5 +1,6 @@
 package com.studymate.backend.dto;
 
+import com.studymate.backend.model.Gender;
 import com.studymate.backend.validation.ValidPassword;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -42,4 +43,10 @@ public class OwnerRegistrationRequest {
     @NotBlank(message = "Business name is required")
     @Size(max = 255, message = "Business name must not exceed 255 characters")
     private String businessName;
+
+    /**
+     * Optional gender field for ladies-only seat booking validation.
+     * If not provided, will be stored as NULL in database.
+     */
+    private Gender gender;
 }

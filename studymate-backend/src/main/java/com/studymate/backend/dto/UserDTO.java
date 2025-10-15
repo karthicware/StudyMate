@@ -41,6 +41,11 @@ public class UserDTO {
     private String role;
 
     /**
+     * User's gender (optional, may be null).
+     */
+    private String gender;
+
+    /**
      * Whether the user account is enabled.
      */
     private Boolean enabled;

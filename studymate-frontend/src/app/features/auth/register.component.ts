@@ -10,6 +10,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { Gender } from '../../core/models/auth.models';
 
 @Component({
   selector: 'app-register',
@@ -167,6 +168,31 @@ import { AuthService } from '../../core/services/auth.service';
                 <p class="mt-2 text-sm text-danger-500">Passwords do not match</p>
               }
             </div>
+
+            <!-- Gender Dropdown - Optional -->
+            <div>
+              <label for="gender" class="block text-xs font-medium text-gray-700 mb-2">
+                Gender (Optional)
+              </label>
+              <select
+                id="gender"
+                formControlName="gender"
+                class="w-full py-3 px-4 rounded-lg border border-gray-400
+                       text-base font-normal text-gray-900
+                       transition-all duration-200
+                       focus:outline-none focus:border-2 focus:border-black
+                       disabled:opacity-50 disabled:cursor-not-allowed
+                       appearance-none cursor-pointer bg-white"
+                aria-describedby="gender-help"
+              >
+                @for (option of genderOptions; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+              <p id="gender-help" class="mt-2 text-xs text-gray-500">
+                Used for ladies-only seat booking validation
+              </p>
+            </div>
           </div>
 
           <!-- Primary Action Button with Gradient Enhancement -->
@@ -240,6 +266,14 @@ export class RegisterComponent {
   isLoading = signal(false);
   errorMessage = signal('');
 
+  // Gender options for dropdown
+  genderOptions = [
+    { value: '', label: 'Prefer not to say' },
+    { value: 'MALE', label: 'Male' },
+    { value: 'FEMALE', label: 'Female' },
+    { value: 'OTHER', label: 'Other' }
+  ];
+
   registerForm: FormGroup = this.fb.group(
     {
       email: ['', [Validators.required, Validators.email]],
@@ -247,6 +281,7 @@ export class RegisterComponent {
       confirmPassword: ['', [Validators.required]],
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
+      gender: [''], // Optional gender field
     },
     { validators: this.passwordMatchValidator },
   );
@@ -275,6 +310,11 @@ export class RegisterComponent {
 
     // Remove confirmPassword before sending to API
     const { confirmPassword, ...registerData } = this.registerForm.value;
+
+    // Remove gender if empty string (not selected)
+    if (registerData.gender === '') {
+      delete registerData.gender;
+    }
 
     this.authService.register(registerData).subscribe({
       next: () => {

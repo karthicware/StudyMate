@@ -4,6 +4,7 @@ import com.studymate.backend.dto.OwnerProfileDTO;
 import com.studymate.backend.dto.UpdateProfileRequest;
 import com.studymate.backend.exception.InvalidRequestException;
 import com.studymate.backend.exception.ResourceNotFoundException;
+import com.studymate.backend.model.Gender;
 import com.studymate.backend.model.StudyHall;
 import com.studymate.backend.model.User;
 import com.studymate.backend.model.UserRole;
@@ -295,6 +296,115 @@ class OwnerProfileServiceTest {
 
         verify(fileStorageService, never()).delete(anyString());
         verify(fileStorageService).store(file, "avatars");
+        verify(userRepository).save(testOwner);
+    }
+
+    // ==================== Gender Field Tests ====================
+
+    @Test
+    @DisplayName("getProfile - With Gender Set")
+    void getProfile_WithGenderSet() {
+        // Arrange
+        testOwner.setGender(Gender.FEMALE);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testOwner));
+        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testStudyHall));
+
+        // Act
+        OwnerProfileDTO result = ownerProfileService.getProfile(1L);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("FEMALE", result.getGender());
+        verify(userRepository).findById(1L);
+    }
+
+    @Test
+    @DisplayName("getProfile - With Null Gender")
+    void getProfile_WithNullGender() {
+        // Arrange
+        testOwner.setGender(null);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testOwner));
+        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testStudyHall));
+
+        // Act
+        OwnerProfileDTO result = ownerProfileService.getProfile(1L);
+
+        // Assert
+        assertNotNull(result);
+        assertNull(result.getGender());
+        verify(userRepository).findById(1L);
+    }
+
+    @Test
+    @DisplayName("updateProfile - Update Gender to MALE")
+    void updateProfile_UpdateGenderToMale() {
+        // Arrange
+        testOwner.setGender(null);
+        UpdateProfileRequest request = new UpdateProfileRequest();
+        request.setFirstName("John");
+        request.setLastName("Doe");
+        request.setPhone("+1-555-123-4567");
+        request.setGender(Gender.MALE);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testOwner));
+        when(userRepository.save(any(User.class))).thenReturn(testOwner);
+        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testStudyHall));
+
+        // Act
+        OwnerProfileDTO result = ownerProfileService.updateProfile(1L, request);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(Gender.MALE, testOwner.getGender());
+        verify(userRepository).save(testOwner);
+    }
+
+    @Test
+    @DisplayName("updateProfile - Update Gender to PREFER_NOT_TO_SAY")
+    void updateProfile_UpdateGenderToPreferNotToSay() {
+        // Arrange
+        testOwner.setGender(Gender.FEMALE);
+        UpdateProfileRequest request = new UpdateProfileRequest();
+        request.setFirstName("John");
+        request.setLastName("Doe");
+        request.setPhone("+1-555-123-4567");
+        request.setGender(Gender.PREFER_NOT_TO_SAY);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testOwner));
+        when(userRepository.save(any(User.class))).thenReturn(testOwner);
+        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testStudyHall));
+
+        // Act
+        OwnerProfileDTO result = ownerProfileService.updateProfile(1L, request);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(Gender.PREFER_NOT_TO_SAY, testOwner.getGender());
+        verify(userRepository).save(testOwner);
+    }
+
+    @Test
+    @DisplayName("updateProfile - Omit Gender Field (Should Not Change)")
+    void updateProfile_OmitGenderField() {
+        // Arrange
+        testOwner.setGender(Gender.FEMALE);
+        UpdateProfileRequest request = new UpdateProfileRequest();
+        request.setFirstName("Jane");
+        request.setLastName("Smith");
+        request.setPhone("+1-555-999-8888");
+        request.setGender(null); // Explicitly null, should not update
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testOwner));
+        when(userRepository.save(any(User.class))).thenReturn(testOwner);
+        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testStudyHall));
+
+        // Act
+        OwnerProfileDTO result = ownerProfileService.updateProfile(1L, request);
+
+        // Assert
+        assertNotNull(result);
+        // Gender should remain FEMALE (not changed because request.gender was null)
+        assertEquals(Gender.FEMALE, testOwner.getGender());
         verify(userRepository).save(testOwner);
     }
 }
