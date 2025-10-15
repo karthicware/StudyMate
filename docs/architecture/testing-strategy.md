@@ -399,6 +399,37 @@ class BookingServiceIntegrationTest {
 - ✅ Test evidence attached (screenshots, reports)
 - ✅ 90%+ compliance with testing requirements
 
+### Story-Level E2E Integration Testing Enforcement
+
+**For UI and Full-Stack stories, the following E2E integration testing requirements are MANDATORY:**
+
+#### Story Template Requirements
+Every UI/Full-Stack story MUST include the "E2E Integration Testing Requirements" section with:
+- Critical user workflows to test end-to-end
+- API endpoints to validate with UI
+- Test data requirements
+- Expected test utilities to use (from `e2e/utils/`)
+
+#### Definition of Done for UI/Full-Stack Stories
+- ✅ E2E integration tests written (validating backend + frontend together)
+- ✅ E2E tests use Story 0.25 test infrastructure (backend test server port 8081, test database `studymate_test`)
+- ✅ E2E tests validate API payloads and responses
+- ✅ E2E tests cover critical user workflows from story acceptance criteria
+- ✅ All E2E integration tests passing
+- ✅ No browser console errors during E2E test execution
+
+#### When E2E Integration Tests Are NOT Required
+- Backend-only stories (no UI component)
+- Infrastructure stories (like Story 0.25 itself)
+- Database migration stories
+- Documentation-only stories
+
+#### Reference
+- Infrastructure Setup: Story 0.25
+- Testing Guide: [docs/testing/e2e-testing-guide.md](../testing/e2e-testing-guide.md)
+- Test Utilities: `studymate-frontend/e2e/utils/`
+- Test Fixtures: `studymate-frontend/e2e/fixtures/`
+
 ---
 
 ## CI/CD Pipeline Testing
