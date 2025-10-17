@@ -71,13 +71,30 @@ public class SecurityConfig {
             // Configure CORS
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
+            // Configure exception handling to return 401 Unauthorized instead of 403 Forbidden
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(401);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\":\"Unauthorized\",\"message\":\"" +
+                        authException.getMessage() + "\"}");
+                })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.setStatus(403);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\":\"Forbidden\",\"message\":\"" +
+                        accessDeniedException.getMessage() + "\"}");
+                })
+            )
+
             // Configure authorization rules
             .authorizeHttpRequests(auth -> auth
                 // Public endpoints - no authentication required
-                .requestMatchers("/auth/register", "/auth/login", "/auth/owner/register", "/health").permitAll()
+                .requestMatchers("/health").permitAll()
 
-                // Protected auth endpoints - JWT authentication required
+                // Auth endpoints - most are public except /auth/me and /auth/refresh
                 .requestMatchers("/auth/me", "/auth/refresh").authenticated()
+                .requestMatchers("/auth/**").permitAll()
 
                 // Protected API endpoints - JWT authentication required
                 .requestMatchers("/api/**").authenticated()

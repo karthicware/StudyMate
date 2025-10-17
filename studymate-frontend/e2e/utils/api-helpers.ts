@@ -54,7 +54,7 @@ export async function registerUser(
     businessName?: string;
   }
 ): Promise<APIResponse> {
-  return await apiRequest(page, '/api/v1/auth/register', {
+  return await apiRequest(page, '/auth/register', {
     method: 'POST',
     body: userData,
   });
@@ -68,7 +68,7 @@ export async function loginUser(
   email: string,
   password: string
 ): Promise<string | null> {
-  const response = await apiRequest(page, '/api/v1/auth/login', {
+  const response = await apiRequest(page, '/auth/login', {
     method: 'POST',
     body: { email, password },
   });
@@ -78,6 +78,7 @@ export async function loginUser(
     return data.token || data.accessToken || null;
   }
 
+  console.error('Login failed:', await response.text());
   return null;
 }
 
@@ -89,7 +90,7 @@ export async function deleteUser(
   email: string,
   token: string
 ): Promise<APIResponse> {
-  return await apiRequest(page, `/api/v1/users/${email}`, {
+  return await apiRequest(page, `/users/${email}`, {
     method: 'DELETE',
     token,
   });

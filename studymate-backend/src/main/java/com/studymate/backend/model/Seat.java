@@ -47,6 +47,9 @@ public class Seat {
     @Column(name = "custom_price", precision = 10, scale = 2)
     private java.math.BigDecimal customPrice;
 
+    @Column(name = "is_ladies_only")
+    private Boolean isLadiesOnly = false;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

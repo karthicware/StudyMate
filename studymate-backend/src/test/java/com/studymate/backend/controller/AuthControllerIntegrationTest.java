@@ -230,7 +230,7 @@ class AuthControllerIntegrationTest {
     void shouldRejectGetCurrentUserWithoutToken() throws Exception {
         // When & Then - no authorization header
         mockMvc.perform(get("/auth/me"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -238,7 +238,7 @@ class AuthControllerIntegrationTest {
         // When & Then - invalid token
         mockMvc.perform(get("/auth/me")
                         .header("Authorization", "Bearer invalid-token"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -294,7 +294,7 @@ class AuthControllerIntegrationTest {
     void shouldRejectRefreshWithoutToken() throws Exception {
         // When & Then - no authorization header
         mockMvc.perform(post("/auth/refresh"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -302,7 +302,7 @@ class AuthControllerIntegrationTest {
         // When & Then - invalid token
         mockMvc.perform(post("/auth/refresh")
                         .header("Authorization", "Bearer invalid-token"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

@@ -1,5 +1,7 @@
 package com.studymate.backend.security;
 
+import com.studymate.backend.model.User;
+import com.studymate.backend.repository.UserRepository;
 import com.studymate.backend.service.JwtTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -41,17 +43,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenService jwtTokenService;
     private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
 
     /**
      * Constructor with dependency injection.
      *
      * @param jwtTokenService service for JWT token operations
      * @param customUserDetailsService our custom service to load user details from database
+     * @param userRepository repository for loading User entities (optional for @WebMvcTest compatibility)
      */
     public JwtAuthenticationFilter(JwtTokenService jwtTokenService,
-                                   CustomUserDetailsService customUserDetailsService) {
+                                   CustomUserDetailsService customUserDetailsService,
+                                   @org.springframework.beans.factory.annotation.Autowired(required = false) UserRepository userRepository) {
         this.jwtTokenService = jwtTokenService;
         this.userDetailsService = customUserDetailsService;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -77,12 +83,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 // Only set authentication if not already authenticated
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    // Load UserDetails for authorities
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                    // Create authentication token and set in SecurityContext
+                    Object principal;
+
+                    // Try to load the actual User entity if UserRepository is available
+                    // This allows @AuthenticationPrincipal User to work in controllers
+                    // If UserRepository is not available (e.g., in @WebMvcTest), fall back to UserDetails
+                    if (userRepository != null) {
+                        User user = userRepository.findByEmail(username).orElse(null);
+                        principal = (user != null) ? user : userDetails;
+                    } else {
+                        principal = userDetails;
+                    }
+
+                    // Create authentication token with User entity (or UserDetails) as principal
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
-                                    userDetails,
+                                    principal,
                                     null,
                                     userDetails.getAuthorities()
                             );

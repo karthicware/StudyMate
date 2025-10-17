@@ -9,7 +9,7 @@ INSERT INTO users (id, email, password_hash, first_name, last_name, role, enable
 VALUES (
     1,
     'test.owner@studymate.test',
-    '$2a$10$rQ8F6pHYqE3DhYk5GxBJ6eWxZ9fKzVxZqHZ9JxKzVxZqHZ9JxKzVx', -- Test@123
+    '$2b$10$SwpaXoIFc.qsE96FV8Ao2eXkxgfiya36Vda6i2Mov.tS95/pr4z1i', -- Test@123
     'Test',
     'Owner',
     'ROLE_OWNER',
@@ -25,7 +25,7 @@ INSERT INTO users (id, email, password_hash, first_name, last_name, role, enable
 VALUES (
     2,
     'test.student@studymate.test',
-    '$2a$10$rQ8F6pHYqE3DhYk5GxBJ6eWxZ9fKzVxZqHZ9JxKzVxZqHZ9JxKzVx', -- Test@123
+    '$2b$10$SwpaXoIFc.qsE96FV8Ao2eXkxgfiya36Vda6i2Mov.tS95/pr4z1i', -- Test@123
     'Test',
     'Student',
     'ROLE_STUDENT',
@@ -41,7 +41,7 @@ INSERT INTO users (id, email, password_hash, first_name, last_name, role, enable
 VALUES (
     3,
     'test.owner2@studymate.test',
-    '$2a$10$rQ8F6pHYqE3DhYk5GxBJ6eWxZ9fKzVxZqHZ9JxKzVxZqHZ9JxKzVx', -- Test@123
+    '$2b$10$SwpaXoIFc.qsE96FV8Ao2eXkxgfiya36Vda6i2Mov.tS95/pr4z1i', -- Test@123
     'Second',
     'Owner',
     'ROLE_OWNER',

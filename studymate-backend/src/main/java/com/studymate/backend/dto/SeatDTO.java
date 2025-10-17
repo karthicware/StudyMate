@@ -42,6 +42,8 @@ public class SeatDTO {
     @Digits(integer = 4, fraction = 2, message = "Custom price must have at most 2 decimal places")
     private BigDecimal customPrice;
 
+    private Boolean isLadiesOnly = false;
+
     private Long hallId;
 
     private LocalDateTime createdAt;

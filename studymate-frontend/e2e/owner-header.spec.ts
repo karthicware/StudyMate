@@ -1,4 +1,5 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
+import { loginAsOwnerAPI } from './utils/auth-helpers';
 
 /**
  * Owner Header Navigation E2E Tests
@@ -13,16 +14,13 @@ import { test, expect, Page } from '@playwright/test';
  */
 
 test.describe('Owner Header Navigation', () => {
-  // Helper function to login as owner (placeholder - update when auth is implemented)
-  async function loginAsOwner(page: Page) {
-    // TODO: Implement actual login flow when auth is ready
-    // For now, we'll navigate directly and assume we're logged in
-    await page.goto('/owner/dashboard');
-  }
-
   test.beforeEach(async ({ page }) => {
     // Login as owner before each test
-    await loginAsOwner(page);
+    const token = await loginAsOwnerAPI(page);
+    expect(token).toBeTruthy();
+
+    // Navigate to dashboard after login
+    await page.goto('/owner/dashboard');
   });
 
   test.describe('Header Display and Structure', () => {

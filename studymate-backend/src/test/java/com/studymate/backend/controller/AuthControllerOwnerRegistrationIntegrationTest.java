@@ -60,11 +60,11 @@ class AuthControllerOwnerRegistrationIntegrationTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.token").exists())
-                .andExpect(jsonPath("$.email").value("john.doe@example.com"))
-                .andExpect(jsonPath("$.role").value("OWNER"))
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Doe"))
-                .andExpect(jsonPath("$.userId").exists())
+                .andExpect(jsonPath("$.user.email").value("john.doe@example.com"))
+                .andExpect(jsonPath("$.user.role").value("ROLE_OWNER"))
+                .andExpect(jsonPath("$.user.firstName").value("John"))
+                .andExpect(jsonPath("$.user.lastName").value("Doe"))
+                .andExpect(jsonPath("$.user.id").exists())
                 .andExpect(jsonPath("$.message").value(containsString("Registration successful")));
     }
 

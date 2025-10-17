@@ -1,10 +1,15 @@
 import { test, expect } from '@playwright/test';
+import { loginAsOwnerAPI } from './utils/auth-helpers';
 
 test.describe('Owner Dashboard', () => {
   const hallId = 'test-hall-123';
   const dashboardUrl = `/owner/dashboard/${hallId}`;
 
   test.beforeEach(async ({ page }) => {
+    // Login as owner before each test
+    const token = await loginAsOwnerAPI(page);
+    expect(token).toBeTruthy();
+
     // Mock API response
     await page.route(`/api/owner/dashboard/${hallId}`, async (route) => {
       await route.fulfill({

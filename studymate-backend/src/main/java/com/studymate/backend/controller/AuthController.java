@@ -1,11 +1,11 @@
 package com.studymate.backend.controller;
 
-import com.studymate.backend.dto.ApiResponse;
 import com.studymate.backend.dto.AuthResponse;
 import com.studymate.backend.dto.LoginRequest;
 import com.studymate.backend.dto.OwnerRegistrationRequest;
 import com.studymate.backend.dto.RegisterRequest;
 import com.studymate.backend.dto.UserDTO;
+import com.studymate.backend.model.User;
 import com.studymate.backend.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -87,7 +88,7 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String email = extractEmailFromAuthentication(authentication);
 
         log.info("GET /auth/me - Fetching profile for: {}", email);
         UserDTO user = authService.getCurrentUser(email);
@@ -105,10 +106,34 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refreshToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        String email = extractEmailFromAuthentication(authentication);
 
         log.info("POST /auth/refresh - Refreshing token for: {}", email);
         AuthResponse response = authService.refreshToken(email);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Helper method to extract email from Authentication object.
+     * Handles both User entity and UserDetails principal types.
+     *
+     * @param authentication the authentication object
+     * @return the user's email
+     */
+    private String extractEmailFromAuthentication(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+
+        // If principal is User entity (from JWT filter with UserRepository)
+        if (principal instanceof User) {
+            return ((User) principal).getEmail();
+        }
+
+        // If principal is UserDetails (from JWT filter without UserRepository)
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        }
+
+        // Fallback to getName()
+        return authentication.getName();
     }
 }

@@ -7,8 +7,8 @@
 **Status:** In Progress (Design System Alignment Required)
 **Priority:** High
 **Target Release:** MVP
-**Total Stories:** 31 (29 original + 2 design system alignment)
-**Story Points:** ~110 SP
+**Total Stories:** 35 (29 original + 2 design system alignment + 4 new space types/amenities/maintenance)
+**Story Points:** ~145 SP (~110 SP original + ~35 SP new features)
 
 ### Epic Description
 
@@ -56,8 +56,9 @@ Enable study hall owners to efficiently manage their facilities (multiple study 
 **Acceptance Criteria:**
 1. Owner must select a specific hall first before configuring seat map
 2. Owner can drag-and-drop to place seats and assign seat numbers (using `POST /owner/seats/config/{hallId}`)
-3. Owner can define customizable shift names and start/end times
-4. Seat map configuration scoped to selected hall
+3. Each seat displays a dropdown to select space type: Cabin, Seat Row, 4-Person Table, Study Pod, Meeting Room, or Lounge Area
+4. Owner can define customizable shift names and start/end times
+5. Seat map configuration scoped to selected hall
 
 **Related Stories:**
 - Story 1.4: Seat Map Editor - Drag & Drop Interface (Frontend)
@@ -114,7 +115,45 @@ Enable study hall owners to efficiently manage their facilities (multiple study 
 
 ---
 
-### Feature 1.5: Owner Portal Infrastructure
+### Feature 1.5: Hall Amenities Configuration
+**As an** Owner,
+**I want** to configure amenities available at my study hall
+**so that** students can discover and filter halls based on their needs.
+
+**Acceptance Criteria:**
+1. Hall settings page displays amenity multi-select checkboxes
+2. Predefined amenity options: Air Conditioning (AC), Wi-Fi
+3. Amenities saved via `PUT /owner/halls/{hallId}/amenities`
+4. Amenities displayed to students in discovery interface via `GET /student/search/halls`
+5. Amenity changes reflect immediately in student search results
+
+**Related Stories:**
+- Story 1.22: Hall Amenities Configuration UI (Frontend)
+- Story 1.22-backend: Hall Amenities API Implementation (Backend)
+
+---
+
+### Feature 1.6: Seat Maintenance Management
+**As an** Owner/Admin,
+**I want** to mark individual seats or entire space types as under maintenance
+**so that** students cannot book them during repairs or cleaning.
+
+**Acceptance Criteria:**
+1. Seat map editor allows right-click on seat → "Mark as Maintenance"
+2. Owner can select multiple seats and bulk-update status to "Maintenance"
+3. Maintenance seats display with distinct visual indicator (orange/yellow with wrench icon)
+4. Maintenance status saved via `PUT /owner/seats/{seatId}/status` or bulk `PUT /owner/seats/bulk-status`
+5. Maintenance seats hidden from student seat selection (grayed out, not clickable)
+6. Owner can restore seat to "Available" status via `PUT /owner/seats/{seatId}/status`
+7. Dashboard shows count of seats under maintenance per hall
+
+**Related Stories:**
+- Story 1.23: Seat Maintenance Management UI (Frontend)
+- Story 1.23-backend: Seat Maintenance API Implementation (Backend)
+
+---
+
+### Feature 1.7: Owner Portal Infrastructure
 **As an** Owner,
 **I want** a complete portal interface with navigation, profile management, and settings
 **so that** I can access all dashboard features seamlessly and manage my account preferences.
@@ -141,7 +180,7 @@ Enable study hall owners to efficiently manage their facilities (multiple study 
 
 ---
 
-### Feature 1.6: API Validation & Testing
+### Feature 1.8: API Validation & Testing
 **As a** QA Engineer,
 **I want** all Epic 1 APIs validated end-to-end using PostgreSQL MCP with dummy data
 **so that** I can verify all endpoints work correctly with real database interactions and capture evidence.
@@ -206,6 +245,11 @@ Enable study hall owners to efficiently manage their facilities (multiple study 
 | POST | `/owner/profile/avatar` | Upload owner profile picture (multipart/form-data) |
 | GET | `/owner/settings` | Retrieve authenticated owner's settings and preferences |
 | PUT | `/owner/settings` | Update authenticated owner's settings (partial updates allowed) |
+| PUT | `/owner/halls/{hallId}/amenities` | Update hall amenities (AC, Wi-Fi) |
+| GET | `/owner/halls/{hallId}/amenities` | Retrieve hall amenities configuration |
+| PUT | `/owner/seats/{seatId}/status` | Update seat status (maintenance, available, etc.) |
+| PUT | `/owner/seats/bulk-status` | Bulk update seat status for multiple seats |
+| GET | `/owner/seats/{seatId}/maintenance` | Get maintenance details for a seat |
 
 ---
 
@@ -245,3 +289,4 @@ Enable study hall owners to efficiently manage their facilities (multiple study 
 | 2025-10-12 | 4.0 | Added Story 1.14a (Router Test Fix - BLOCKER); Added Feature 1.5 (Owner Portal Infrastructure) with 7 stories; renumbered Feature 5.1→1.4, Feature 1.4→1.6; fixed feature numbering conflicts; updated story count from 19 to 27 stories | Sarah (PO) |
 | 2025-10-12 | 5.0 | **CRITICAL UPDATE:** Added Epic 0.1 as BLOCKER dependency; Updated epic description for multi-tenant context (owners manage multiple halls); Updated Features 1.1-1.3 with hall selection and scoping clarifications; No story rewrites required | Sarah (PO) |
 | 2025-10-13 | 6.0 | Added Stories 1.15.1 & 1.16.1 for design system alignment (Section 9); Updated Feature 1.5 acceptance criteria; Updated story count from 29 to 31 stories; Updated SP from ~105 to ~110 SP | Bob (Scrum Master) |
+| 2025-10-16 | 7.0 | **Sprint Change Proposal B:** Added Feature 1.5 (Hall Amenities Configuration) and Feature 1.6 (Seat Maintenance Management); Modified Feature 1.2 AC3 for space type selection; Renumbered old Features 1.5→1.7, 1.6→1.8; Added 4 stories (1.22, 1.22-backend, 1.23, 1.23-backend); Added 5 API endpoints; Updated story count from 31 to 35 stories; Updated SP from ~110 to ~145 SP | Sarah (PO) |

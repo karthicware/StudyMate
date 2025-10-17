@@ -170,13 +170,13 @@ class ReportControllerIntegrationTest {
     }
 
     @Test
-    void generateReport_WithoutAuthentication_ReturnsForbidden() throws Exception {
-        // Act & Assert
+    void generateReport_WithoutAuthentication_ReturnsUnauthorized() throws Exception {
+        // Act & Assert - No authentication returns 401 Unauthorized, not 403 Forbidden
         mockMvc.perform(get("/api/v1/owner/reports/1")
                 .param("format", "pdf")
                 .param("startDate", "2025-01-01")
                 .param("endDate", "2025-01-31"))
-            .andExpect(status().isForbidden());
+            .andExpect(status().isUnauthorized());
     }
 
     @Test

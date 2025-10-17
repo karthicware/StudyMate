@@ -38,14 +38,21 @@ export async function loginViaAPI(
   email: string,
   password: string
 ): Promise<string | null> {
+  // Navigate to a page first to ensure localStorage is accessible
+  await page.goto('/');
+
   const token = await loginUser(page, email, password);
 
   if (token) {
-    // Store token in localStorage
+    // Store token in localStorage to match AuthService behavior
     await page.evaluate((tokenValue) => {
-      localStorage.setItem('authToken', tokenValue);
       localStorage.setItem('token', tokenValue);
     }, token);
+
+    console.log(`✅ Successfully logged in ${email} via API`);
+    console.log(`   Token stored in localStorage['token']`);
+  } else {
+    console.error(`❌ Failed to login ${email} via API`);
   }
 
   return token;
@@ -95,7 +102,6 @@ export async function logout(page: Page): Promise<void> {
   } else {
     // Clear auth tokens manually
     await page.evaluate(() => {
-      localStorage.removeItem('authToken');
       localStorage.removeItem('token');
       sessionStorage.clear();
     });
@@ -110,7 +116,7 @@ export async function logout(page: Page): Promise<void> {
  */
 export async function isLoggedIn(page: Page): Promise<boolean> {
   const token = await page.evaluate(() => {
-    return localStorage.getItem('authToken') || localStorage.getItem('token');
+    return localStorage.getItem('token');
   });
 
   return !!token;

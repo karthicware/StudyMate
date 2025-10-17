@@ -37,10 +37,11 @@ Provide students with a complete end-to-end experience: discovering study halls 
 
 **Acceptance Criteria:**
 1. Google Maps integration displays study halls within a configurable radius
-2. Search filters include: distance, seat availability, price range, ratings
-3. Search results show hall images, ratings, amenities, and real-time seat availability
+2. Search filters include: distance, seat availability, price range, ratings, amenities (AC, Wi-Fi)
+3. Search results show hall images, ratings, amenities (AC, Wi-Fi icons), and real-time seat availability
 4. Map markers display hall locations with clustering for dense areas
 5. Search interface similar to Airbnb discovery page (intuitive, visual)
+6. Amenity filters dynamically update search results (filter by AC, Wi-Fi, or both)
 
 **Related Stories:**
 - Story 2.1: Google Maps API Integration
@@ -116,8 +117,10 @@ Provide students with a complete end-to-end experience: discovering study halls 
 **so that** I know exactly where I will be sitting.
 
 **Acceptance Criteria:**
-1. The map must show real-time availability (Green=Available, Red=Booked)
+1. The map must show real-time availability with space type visual differentiation: Green=Available, Red=Booked, Orange=Maintenance (not selectable), with distinct icons/shapes per space type (Cabin, Seat Row, 4-Person Table, Study Pod, Meeting Room, Lounge Area)
 2. Selection triggers seat lock and reservation process (using `POST /booking/seats/lock`)
+3. Maintenance seats are grayed out and not clickable
+4. Tooltip on hover shows space type name and maintenance status (if applicable)
 
 **Related Stories:**
 - Story 2.1-backend: Seat Booking APIs Implementation (Backend)
@@ -276,3 +279,4 @@ Provide students with a complete end-to-end experience: discovering study halls 
 | 2025-10-10 | 2.0 | Added Feature 2.0 (Study Hall Search with Google Maps), Feature 2.1 (Student Dashboard), Feature 2.2 (Student Profile), Feature 2.3 (Student Settings); renumbered existing features to 2.4 and 2.5; increased story count from 8 to 23 stories | Sarah (PO) |
 | 2025-10-11 | 3.0 | Added Feature 2.6 (API Validation & Testing) with Story 2.99; updated story count from 23 to 24 stories | Bob (Scrum Master) |
 | 2025-10-11 | 3.1 | Added backend implementation stories: 2.1-backend, 2.5-backend, 2.8-backend; updated story count from 24 to 27 stories | Bob (Scrum Master) |
+| 2025-10-16 | 4.0 | **Sprint Change Proposal B:** Updated Feature 2.0 AC2, AC3, AC6 to include amenity filters (AC, Wi-Fi); Updated Feature 2.4 AC1, AC3, AC4 for space type visual differentiation and maintenance status display; No new stories added, modifications only | Sarah (PO) |

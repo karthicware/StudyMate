@@ -1,10 +1,11 @@
 # Epic-1: Story Implementation Order
 
 **Epic:** Owner Dashboard & Analytics
-**Total Stories:** 31
-**Total Estimated Story Points:** ~110+ SP
+**Total Stories:** 32
+**Total Estimated Story Points:** ~114+ SP
 **Estimated Duration:** 3-4 Sprints (assuming 2-week sprints, team velocity ~25-30 SP)
 **Note:** Stories 1.15.1 & 1.16.1 added for design system alignment (2025-10-13)
+**Note:** Story 1.4.1 added for ladies-only seat configuration (2025-10-14)
 
 ---
 
@@ -26,6 +27,7 @@
 | 1.3 | Seat Map Visualization | 5 SP | Feature (FE) | Ready |
 | 1.4 | Seat Map Editor - Drag & Drop | 8 SP | Feature (FE) | Ready |
 | 1.4-backend | Seat Configuration API | 5 SP | Feature (BE) | Ready |
+| 1.4.1 | Ladies-Only Seat Configuration | 4 SP | Feature (Full-Stack) | Draft |
 | 1.5 | Seat Number Assignment | 3 SP | Feature (FE) | Ready |
 | 1.6 | Shift Configuration Management | 5 SP | Feature (FE) | Ready |
 | 1.7 | User Management Dashboard | 8 SP | Feature (FE) | Ready |
@@ -53,7 +55,8 @@
 2. **Story 1.2.1** fixes OwnerRegisterComponent tests (can run after Story 1.14a, benefits from Story 1.14b utilities)
 3. **Story 1.14b** creates reusable Router test utilities (enables efficient testing in Stories 1.15-1.21)
 4. **Story 1.17** must complete before implementing feature pages (Stories 1.1-1.14, 1.18, 1.20)
-5. Backend stories can run in parallel with frontend when appropriate
+5. **Story 1.4.1** depends on Story 1.4 (Seat Map Editor) AND Story 0.1.5-backend (Gender Field) from Epic 0.1
+6. Backend stories can run in parallel with frontend when appropriate
 
 ### Parallel Execution Opportunities
 - Frontend + Backend pairs can run simultaneously
@@ -115,13 +118,15 @@
 |-------|----------|-------|-----|-------------|-----------------|
 | 9 | **1.4-backend** | Seat Configuration API | 5 | None | Backend Dev |
 | 10 | **1.4** | Seat Map Editor - Drag & Drop | 8 | 1.4-backend, 1.17 | Frontend Dev 2 |
-| 11 | **1.5** | Seat Number Assignment | 3 | 1.4 | Frontend Dev 2 |
-| 12 | **1.6** | Shift Configuration Management | 5 | 1.4 | Frontend Dev 2 |
+| 11 | **1.4.1** | Ladies-Only Seat Configuration | 4 | 1.4, 0.1.5-backend | Full-Stack Dev |
+| 12 | **1.5** | Seat Number Assignment | 3 | 1.4 | Frontend Dev 2 |
+| 13 | **1.6** | Shift Configuration Management | 5 | 1.4 | Frontend Dev 2 |
 
 **Sprint N+1 Deliverables:**
 - ✅ Dashboard with real-time metrics
 - ✅ Seat map visualization
 - ✅ Seat map editor with drag & drop
+- ✅ Ladies-only seat configuration
 - ✅ Shift configuration
 
 **Sprint N+1 Testing:**
@@ -140,19 +145,19 @@
 
 | Order | Story ID | Title | SP | Dependencies | Team Assignment |
 |-------|----------|-------|-----|-------------|-----------------|
-| 13 | **1.7-backend** | User Management CRUD APIs | 5 | None | Backend Dev |
-| 14 | **1.7** | User Management Dashboard | 8 | 1.7-backend, 1.17 | Frontend Dev 1 |
-| 15 | **1.8** | Student Profile View & Edit | 5 | 1.7 | Frontend Dev 1 |
-| 16 | **1.9** | Staff Account Management | 5 | 1.7 | Frontend Dev 1 |
-| 17 | **1.10** | User Search & Filtering | 3 | 1.7 | Frontend Dev 1 |
-| 18 | **1.11** | User Booking & Attendance History | 5 | 1.7 | Frontend Dev 1 |
+| 14 | **1.7-backend** | User Management CRUD APIs | 5 | None | Backend Dev |
+| 15 | **1.7** | User Management Dashboard | 8 | 1.7-backend, 1.17 | Frontend Dev 1 |
+| 16 | **1.8** | Student Profile View & Edit | 5 | 1.7 | Frontend Dev 1 |
+| 17 | **1.9** | Staff Account Management | 5 | 1.7 | Frontend Dev 1 |
+| 18 | **1.10** | User Search & Filtering | 3 | 1.7 | Frontend Dev 1 |
+| 19 | **1.11** | User Booking & Attendance History | 5 | 1.7 | Frontend Dev 1 |
 
 **Group D: Owner Profile (Can run in parallel)**
 
 | Order | Story ID | Title | SP | Dependencies | Team Assignment |
 |-------|----------|-------|-----|-------------|-----------------|
-| 19 | **1.19** | Owner Profile API Implementation | 5 | None | Backend Dev |
-| 20 | **1.18** | Owner Profile Management Page | 5 | 1.19, 1.17 | Frontend Dev 2 |
+| 20 | **1.19** | Owner Profile API Implementation | 5 | None | Backend Dev |
+| 21 | **1.18** | Owner Profile Management Page | 5 | 1.19, 1.17 | Frontend Dev 2 |
 
 **Sprint N+2 Deliverables:**
 - ✅ Complete user management system
@@ -176,17 +181,17 @@
 
 | Order | Story ID | Title | SP | Dependencies | Team Assignment |
 |-------|----------|-------|-----|-------------|-----------------|
-| 21 | **1.13** | Report Data Aggregation | 5 | None | Backend Dev |
-| 22 | **1.12-backend** | Report Generation API (PDF/Excel) | 8 | 1.13 | Backend Dev |
-| 23 | **1.12** | Report Download Interface | 5 | 1.12-backend, 1.17 | Frontend Dev 1 |
-| 24 | **1.14** | Report Filter & Date Range Selection | 3 | 1.12 | Frontend Dev 1 |
+| 22 | **1.13** | Report Data Aggregation | 5 | None | Backend Dev |
+| 23 | **1.12-backend** | Report Generation API (PDF/Excel) | 8 | 1.13 | Backend Dev |
+| 24 | **1.12** | Report Download Interface | 5 | 1.12-backend, 1.17 | Frontend Dev 1 |
+| 25 | **1.14** | Report Filter & Date Range Selection | 3 | 1.12 | Frontend Dev 1 |
 
 **Group F: Owner Settings (Can run in parallel)**
 
 | Order | Story ID | Title | SP | Dependencies | Team Assignment |
 |-------|----------|-------|-----|-------------|-----------------|
-| 25 | **1.21** | Owner Settings API Implementation | 5 | None | Backend Dev |
-| 26 | **1.20** | Owner Settings Page | 5 | 1.21, 1.17 | Frontend Dev 2 |
+| 26 | **1.21** | Owner Settings API Implementation | 5 | None | Backend Dev |
+| 27 | **1.20** | Owner Settings Page | 5 | 1.21, 1.17 | Frontend Dev 2 |
 
 **Sprint N+3 Deliverables:**
 - ✅ Report generation (PDF/Excel)
@@ -208,7 +213,7 @@
 
 | Order | Story ID | Title | SP | Dependencies | Team Assignment |
 |-------|----------|-------|-----|-------------|-----------------|
-| 27 | **1.99** | Epic 1 API Validation with PostgreSQL MCP | 8 | All APIs (1-26) | QA + Dev Team |
+| 28 | **1.99** | Epic 1 API Validation with PostgreSQL MCP | 8 | All APIs (1-27) | QA + Dev Team |
 
 **Final Validation Deliverables:**
 - ✅ All APIs tested end-to-end
@@ -248,9 +253,10 @@ Frontend Track 1 (Developer A):
   Week 4:   [1.3: Seat Map Viz]
 
 Frontend Track 2 (Developer B):
-  Week 3-4: [1.4: Seat Editor] → [1.5: Seat Assignment] → [1.6: Shifts]
+  Week 3-4: [1.4: Seat Editor] → [1.4.1: Ladies-Only Config] → [1.5: Seat Assignment] → [1.6: Shifts]
 
   ✓ Checkpoint: Core dashboard features complete
+  ✓ Checkpoint: Ladies-only seat configuration complete
 
 SPRINT N+2 (Weeks 5-6)
 ═══════════════════════════════════════════════════
@@ -282,7 +288,7 @@ Frontend Track 2 (Developer B):
 Final Validation:
   Week 8:   [1.99: API Validation] ← Entire Team
 
-  ✓ Checkpoint: All 29 stories complete
+  ✓ Checkpoint: All 32 stories complete
   ✓ Checkpoint: Epic-1 ready for production
 ```
 
@@ -314,10 +320,10 @@ Final Validation:
 | Sprint | Story Points | Stories Completed | Key Deliverables |
 |--------|-------------|-------------------|------------------|
 | **Sprint N** | 23 SP | 1.14a, 1.2.1, 1.14b, 1.15, 1.16, 1.15.1, 1.16.1, 1.17 | Test fixes, utilities, layout infrastructure, design system alignment |
-| **Sprint N+1** | 26 SP | 1.1-1.6 + backends | Dashboard & Seat Mgmt |
+| **Sprint N+1** | 30 SP | 1.1-1.6, 1.4.1 + backends | Dashboard, Seat Mgmt, Ladies-Only Config |
 | **Sprint N+2** | 28 SP | 1.7-1.11, 1.18-1.19 | User Mgmt & Profile |
 | **Sprint N+3** | 31 SP | 1.12-1.14, 1.20-1.21, 1.99 | Reports, Settings, Validation |
-| **Total** | **108 SP** | **31 stories** | **Complete Epic-1** |
+| **Total** | **112 SP** | **32 stories** | **Complete Epic-1** |
 
 ---
 
@@ -346,9 +352,10 @@ Final Validation:
 Epic-1 is complete when:
 
 ### Functionality
-- [ ] All 29 stories completed and tested
+- [ ] All 32 stories completed and tested
 - [ ] Dashboard displays metrics correctly
 - [ ] Seat map editor functional
+- [ ] Ladies-only seat configuration working
 - [ ] User management CRUD working
 - [ ] Reports generate (PDF/Excel)
 - [ ] Owner profile and settings functional
@@ -413,6 +420,7 @@ Epic-1 is complete when:
 ### If Story 1.17 IS complete:
 - ✅ Can start: ALL frontend feature stories (1.1-1.14, 1.18, 1.20)
 - ✅ Prioritize: Dashboard (1.1-1.3) first for demo value
+- ⚠️ Story 1.4.1 requires: (1) Story 1.4 complete AND (2) Story 0.1.5-backend from Epic 0.1 complete
 
 ### Anytime:
 - ✅ Backend stories can always run ahead of frontend
@@ -434,7 +442,12 @@ Epic-1 is complete when:
 
 ---
 
-**Document Version:** 1.0
-**Last Updated:** 2025-10-12
+**Document Version:** 1.1
+**Last Updated:** 2025-10-14
 **Next Review:** Start of each sprint
 **Owner:** Sarah (PO) / Bob (Scrum Master)
+
+**Change Log:**
+- 2025-10-14: Added Story 1.4.1 (Ladies-Only Seat Configuration) - 4 SP
+- 2025-10-13: Added Stories 1.15.1 & 1.16.1 (Design System Alignment)
+- 2025-10-12: Initial version

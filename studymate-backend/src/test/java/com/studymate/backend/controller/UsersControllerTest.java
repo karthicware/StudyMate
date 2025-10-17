@@ -56,6 +56,7 @@ class UsersControllerTest {
         testUser = new User();
         testUser.setId(1L);
         testUser.setEmail("test@example.com");
+        testUser.setPasswordHash("$2a$12$hashedpassword"); // Required field
         testUser.setFirstName("Test");
         testUser.setRole(UserRole.ROLE_OWNER);
     }

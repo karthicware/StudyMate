@@ -280,7 +280,11 @@ CREATE TABLE seats (
     x_coord             INT NOT NULL, -- X coordinate on seat map (pixels or grid units)
     y_coord             INT NOT NULL, -- Y coordinate on seat map (pixels or grid units)
     status              VARCHAR(50) DEFAULT 'available' CHECK (status IN ('available', 'booked', 'locked', 'maintenance')),
+    space_type          VARCHAR(50) DEFAULT 'Cabin' CHECK (space_type IN ('Cabin', 'Seat Row', '4-Person Table', 'Study Pod', 'Meeting Room', 'Lounge Area')),
     custom_price        DECIMAL(10, 2), -- NULL means use hall's base_price
+    maintenance_reason  VARCHAR(255), -- Reason for maintenance (Cleaning, Repair, Inspection, Other)
+    maintenance_started TIMESTAMP, -- Timestamp when seat was marked for maintenance
+    maintenance_until   TIMESTAMP, -- Estimated completion time for maintenance
     locked_by           UUID REFERENCES users(id) ON DELETE SET NULL, -- Temporary lock during booking
     locked_at           TIMESTAMP,
     lock_expiry         TIMESTAMP, -- Auto-unlock after 10 minutes
@@ -292,8 +296,10 @@ CREATE TABLE seats (
 -- Indexes
 CREATE INDEX idx_seats_hall_id ON seats(hall_id);
 CREATE INDEX idx_seats_status ON seats(status);
+CREATE INDEX idx_seats_space_type ON seats(space_type);
 CREATE INDEX idx_seats_locked_by ON seats(locked_by);
 CREATE INDEX idx_seats_lock_expiry ON seats(lock_expiry);
+CREATE INDEX idx_seats_maintenance_until ON seats(maintenance_until);
 ```
 
 **Constraints**:
@@ -627,7 +633,11 @@ export interface Seat {
   xCoord: number;
   yCoord: number;
   status: 'available' | 'booked' | 'locked' | 'maintenance';
+  spaceType: 'Cabin' | 'Seat Row' | '4-Person Table' | 'Study Pod' | 'Meeting Room' | 'Lounge Area';
   customPrice?: number;
+  maintenanceReason?: string;
+  maintenanceStarted?: Date;
+  maintenanceUntil?: Date;
   lockedBy?: string;
   lockedAt?: Date;
   lockExpiry?: Date;
@@ -881,6 +891,25 @@ public class StudyHall {
 
 public enum HallStatus {
     DRAFT, ACTIVE, INACTIVE, SUSPENDED
+}
+
+public enum SpaceType {
+    CABIN("Cabin"),
+    SEAT_ROW("Seat Row"),
+    FOUR_PERSON_TABLE("4-Person Table"),
+    STUDY_POD("Study Pod"),
+    MEETING_ROOM("Meeting Room"),
+    LOUNGE_AREA("Lounge Area");
+
+    private final String displayName;
+
+    SpaceType(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
 }
 ```
 

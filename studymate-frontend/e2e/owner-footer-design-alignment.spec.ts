@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { loginAsOwnerAPI } from './utils/auth-helpers';
 
 /**
  * Story 1.16.1: Owner Footer - Design System Alignment Tests
@@ -16,6 +17,10 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Owner Footer - Design System Alignment (Story 1.16.1)', () => {
   test.beforeEach(async ({ page }) => {
+    // Login as owner before each test
+    const token = await loginAsOwnerAPI(page);
+    expect(token).toBeTruthy();
+
     // Navigate to owner portal page with footer
     await page.goto('http://localhost:4200/owner/dashboard');
     await page.waitForLoadState('networkidle');

@@ -57,12 +57,11 @@ class OwnerDashboardControllerIntegrationTest {
     }
 
     @Test
-    void getDashboard_WithoutAuthentication_ReturnsForbidden() throws Exception {
+    void getDashboard_WithoutAuthentication_ReturnsUnauthorized() throws Exception {
         // Act & Assert
-        // Spring Security returns 403 (Forbidden) by default when no authentication is provided
-        // This is standard behavior - 401 (Unauthorized) requires custom entry point configuration
+        // With custom authenticationEntryPoint in SecurityConfig, returns 401 Unauthorized
         mockMvc.perform(get("/api/v1/owner/dashboard/1"))
-            .andExpect(status().isForbidden());
+            .andExpect(status().isUnauthorized());
     }
 
     @Test

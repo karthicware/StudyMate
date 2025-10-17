@@ -1,5 +1,6 @@
 package com.studymate.backend.repository;
 
+import com.studymate.backend.model.Gender;
 import com.studymate.backend.model.User;
 import com.studymate.backend.model.UserRole;
 import org.springframework.data.domain.Page;
@@ -9,12 +10,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     boolean existsByEmail(String email);
+    List<User> findByGender(Gender gender);
 
     /**
      * Find all non-deleted users by hall ID with pagination and optional filters.
