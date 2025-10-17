@@ -60,11 +60,23 @@ Playwright automatically starts both servers when tests run (configured in `play
 - User: `studymate_user`
 - Password: `studymate_user`
 
+### Schema Management (IMPORTANT)
+**The test database uses Flyway migrations (same as production) to prevent schema drift:**
+- ✅ Schema created from Flyway migration files (`db/migration/`)
+- ✅ Ensures E2E tests use production-identical schema
+- ✅ Hibernate validates entities match the schema (`ddl-auto=validate`)
+- ⚠️ **Always start backend server before seeding data** (migrations must run first)
+
 ### Seeded Test Data
 The test database is pre-seeded with:
 - 3 test users (2 owners, 1 student)
 - 3 test study halls
 - See `studymate-backend/src/test/resources/test-data/` for seed scripts
+
+**Seeding workflow:**
+1. Start backend server (Flyway migrations run automatically)
+2. Wait for server startup to complete
+3. Run seed script: `./scripts/seed-test-data.sh`
 
 ### Database Management
 
@@ -480,6 +492,29 @@ test.describe('Mobile view', () => {
 - Use transactions for test isolation
 - Clear created test data in `afterEach` hooks
 
+### Schema Validation Errors
+
+**Problem**: Backend fails to start with Hibernate validation errors like "Missing column" or "Schema mismatch".
+
+**Root Cause**: Java entities don't match Flyway migration schema.
+
+**Solutions**:
+1. **Check for missing migrations**:
+   - Did you add a field to a Java entity but forget to create a migration?
+   - Create migration: `V{next_version}__add_{field_name}.sql`
+2. **Verify migration ran**:
+   - Check Flyway history: `SELECT * FROM flyway_schema_history;`
+3. **Clean and recreate schema**:
+   ```bash
+   # This forces fresh migration execution
+   ./scripts/start-test-server.sh
+   ```
+4. **Check column names match**:
+   - Java: `@Column(name = "first_name")`
+   - SQL: `first_name VARCHAR(100)`
+
+**Prevention**: See [Schema Drift Prevention Guide](../testing/schema-drift-prevention.md)
+
 ### Flaky Tests
 
 **Problem**: Tests pass sometimes, fail other times.
@@ -497,6 +532,7 @@ test.describe('Mobile view', () => {
 
 - [Playwright Documentation](https://playwright.dev)
 - [Backend Test Environment Setup](./backend-test-environment.md)
+- [Schema Drift Prevention Guide](./schema-drift-prevention.md) ⭐ **IMPORTANT**
 - [Coding Standards - Playwright Rules](../architecture/coding-standards.md#playwright)
 - [Test Fixtures](../../studymate-frontend/e2e/fixtures/)
 - [Test Utilities](../../studymate-frontend/e2e/utils/)

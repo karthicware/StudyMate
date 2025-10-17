@@ -10,7 +10,16 @@ This document describes the configuration and setup of the Spring Boot backend f
 - **Host**: `localhost:5432`
 - **Username**: `studymate_user`
 - **Password**: `studymate_user`
-- **Schema Management**: Flyway migrations (same as dev/prod)
+- **Schema Management**: Flyway migrations (same as dev/prod) ⭐ **IMPORTANT**
+
+**Schema Drift Prevention:**
+The test environment uses Flyway migrations to create the database schema (NOT Hibernate auto-generation). This ensures:
+- ✅ E2E tests use **production-identical** schema
+- ✅ Schema changes require Flyway migration files
+- ✅ Hibernate validates entities match schema (`ddl-auto=validate`)
+- ❌ No schema drift between test and production environments
+
+See [Schema Drift Prevention Guide](./schema-drift-prevention.md) for details.
 
 ### Server Configuration
 - **Port**: `8081` (configurable via `TEST_SERVER_PORT` env var)
@@ -51,8 +60,9 @@ cd studymate-backend
 
 This script:
 - ✅ Validates database connection
+- ✅ Cleans database schema (drops and recreates)
 - ✅ Sets correct environment variables
-- ✅ Runs Flyway migrations
+- ✅ Runs Flyway migrations (creates production-identical schema)
 - ✅ Starts server on port 8081
 
 ### Method 2: Manual Maven Command
@@ -151,8 +161,22 @@ Location: `studymate-backend/src/main/resources/application-test.properties`
 Key settings:
 - Server port: 8081
 - Database: studymate_test
-- Flyway: enabled
+- **Flyway: enabled** (prevents schema drift)
+- **Hibernate: ddl-auto=validate** (validates entity-schema match)
 - Logging: DEBUG level for com.studymate.backend
+
+**CRITICAL Configuration:**
+```properties
+# Validate schema instead of auto-generation
+spring.jpa.hibernate.ddl-auto=validate
+
+# Use Flyway migrations (same as production)
+spring.flyway.enabled=true
+spring.flyway.clean-disabled=false
+spring.flyway.baseline-on-migrate=true
+```
+
+This configuration ensures test database schema is **identical to production**.
 
 ## Troubleshooting
 
@@ -194,6 +218,31 @@ PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d postgres -c \
   "DROP DATABASE studymate_test; CREATE DATABASE studymate_test;"
 ```
 
+### Schema Validation Errors (Hibernate)
+**Problem**: Server fails to start with error like:
+```
+Schema-validation: missing column [field_name] in table [table_name]
+```
+
+**Root Cause**: Java entity has a field that doesn't exist in the database schema.
+
+**Solutions**:
+1. **Check if migration file exists** for the new field
+2. **Create migration** if missing:
+   ```bash
+   # Example: Adding date_of_birth field
+   cat > src/main/resources/db/migration/V6__add_date_of_birth.sql <<EOF
+   ALTER TABLE users ADD COLUMN date_of_birth DATE;
+   EOF
+   ```
+3. **Restart server** to run new migration:
+   ```bash
+   ./scripts/start-test-server.sh
+   ```
+
+**Prevention**: Always create Flyway migration when adding fields to entities.
+See [Schema Drift Prevention Guide](./schema-drift-prevention.md).
+
 ### Server Won't Start
 1. Check logs for errors
 2. Verify Java version: `java -version` (requires Java 17+)
@@ -221,5 +270,6 @@ See [E2E Testing Guide](./e2e-testing-guide.md) for integration details.
 
 ## Related Documentation
 - [E2E Testing Guide](./e2e-testing-guide.md)
+- [Schema Drift Prevention Guide](./schema-drift-prevention.md) ⭐ **IMPORTANT**
 - [Coding Standards](../architecture/coding-standards.md)
 - [Testing Strategy](../architecture/testing-strategy.md)

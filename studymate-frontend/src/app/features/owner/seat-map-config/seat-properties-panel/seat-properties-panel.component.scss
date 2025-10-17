@@ -1,0 +1,28 @@
+.seat-properties-panel {
+  position: fixed;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  z-index: 1000;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Custom scrollbar for better UX */
+.seat-properties-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.seat-properties-panel::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.seat-properties-panel::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.seat-properties-panel::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

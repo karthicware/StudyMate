@@ -4,6 +4,17 @@
  */
 
 /**
+ * Space type options for seats
+ */
+export type SpaceType =
+  | 'Cabin'
+  | 'Seat Row'
+  | '4-Person Table'
+  | 'Study Pod'
+  | 'Meeting Room'
+  | 'Lounge Area';
+
+/**
  * Represents a seat in the configuration system
  */
 export interface Seat {
@@ -13,7 +24,9 @@ export interface Seat {
   xCoord: number;
   yCoord: number;
   status?: 'available' | 'booked' | 'locked' | 'maintenance';
+  spaceType?: SpaceType;
   customPrice?: number;
+  isLadiesOnly?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

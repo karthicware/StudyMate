@@ -34,6 +34,23 @@ fi
 
 echo -e "${GREEN}✓ Test database connection successful${NC}"
 
+# Clean test database schema for fresh Flyway migrations
+echo -e "${YELLOW}Cleaning test database schema for Flyway migrations...${NC}"
+PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test > /dev/null 2>&1 <<EOF
+    -- Drop all tables, sequences, and constraints
+    DROP SCHEMA IF EXISTS public CASCADE;
+    CREATE SCHEMA public;
+    GRANT ALL ON SCHEMA public TO studymate_user;
+    GRANT ALL ON SCHEMA public TO public;
+EOF
+
+if [ $? -eq 0 ]; then
+    echo -e "${GREEN}✓ Test database schema cleaned${NC}"
+    echo -e "${YELLOW}Flyway will recreate schema from migrations on startup${NC}"
+else
+    echo -e "${RED}WARNING: Schema cleanup failed (may not be critical)${NC}"
+fi
+
 # Set environment variables for test mode
 export SPRING_PROFILES_ACTIVE=test
 export TEST_SERVER_PORT=${TEST_SERVER_PORT:-8081}

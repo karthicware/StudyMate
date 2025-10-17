@@ -3,7 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CdkDrag, CdkDragEnd } from '@angular/cdk/drag-drop';
 import { SeatConfigService } from '../../../core/services/seat-config.service';
-import { Seat, Shift } from '../../../core/models/seat-config.model';
+import { Seat, Shift, SpaceType } from '../../../core/models/seat-config.model';
+import { StudyHall } from '../../../core/models/study-hall.model';
+import { getSpaceTypeConfig } from '../../../core/utils/space-type-icons';
+import { SeatPropertiesPanelComponent } from './seat-properties-panel/seat-properties-panel.component';
 
 /**
  * Seat Map Configuration Component
@@ -12,7 +15,7 @@ import { Seat, Shift } from '../../../core/models/seat-config.model';
 @Component({
   selector: 'app-seat-map-config',
   standalone: true,
-  imports: [CommonModule, FormsModule, CdkDrag],
+  imports: [CommonModule, FormsModule, CdkDrag, SeatPropertiesPanelComponent],
   templateUrl: './seat-map-config.component.html',
   styleUrls: ['./seat-map-config.component.scss'],
 })
@@ -20,16 +23,18 @@ export class SeatMapConfigComponent implements OnInit {
   private seatConfigService = inject(SeatConfigService);
 
   // Signals for reactive state management
+  studyHalls = signal<StudyHall[]>([]);
+  selectedHallId = signal<string | null>(null);
   seats = signal<Seat[]>([]);
   shifts = signal<Shift[]>([]);
   selectedSeat = signal<Seat | null>(null);
   isLoading = signal(false);
+  editorDisabled = computed(() => !this.selectedHallId());
   saveSuccess = signal(false);
   errorMessage = signal<string | null>(null);
 
   // Form inputs for seat/shift management
   newSeatNumber = signal('');
-  editingSeatNumber = signal('');
   showSeatModal = signal(false);
   showShiftModal = signal(false);
 
@@ -40,28 +45,59 @@ export class SeatMapConfigComponent implements OnInit {
   editingShiftIndex = signal<number | null>(null);
 
   // Canvas dimensions for seat map
-  readonly canvasWidth = 700;
-  readonly canvasHeight = 500;
-  readonly gridSize = 50; // Grid spacing in pixels
-
-  // Mock hall ID (in production, get from route params or auth service)
-  hallId = 'hall-123';
+  readonly canvasWidth = 800; // Updated to match backend validation
+  readonly canvasHeight = 600; // Updated to match backend validation
+  readonly gridSize = 10; // Grid snapping in pixels
+  readonly seatSize = 50; // Seat dimensions
 
   // Computed values
   seatCount = computed(() => this.seats().length);
   hasUnsavedChanges = signal(false);
 
   ngOnInit(): void {
-    this.loadSeatConfiguration();
-    this.loadShiftConfiguration();
+    this.loadStudyHalls();
   }
 
   /**
-   * Load existing seat configuration
+   * Load study halls for dropdown
    */
-  private loadSeatConfiguration(): void {
+  private loadStudyHalls(): void {
+    // TODO: Replace with actual API call when study halls service is available
+    // For now, using mock data
+    this.studyHalls.set([
+      { id: '1', name: 'Main Campus Hall', city: 'Mumbai', basePrice: 200, status: 'active' },
+      { id: '2', name: 'Downtown Study Center', city: 'Mumbai', basePrice: 250, status: 'active' },
+      { id: '3', name: 'East Side Branch', city: 'Pune', basePrice: 180, status: 'active' },
+    ]);
+  }
+
+  /**
+   * Handle hall selection change
+   */
+  onHallSelectionChange(hallId: string): void {
+    this.selectedHallId.set(hallId);
+    this.clearCanvas();
+    this.loadSeatConfiguration(hallId);
+    this.loadShiftConfiguration(hallId);
+  }
+
+  /**
+   * Clear canvas when switching halls
+   */
+  private clearCanvas(): void {
+    this.seats.set([]);
+    this.selectedSeat.set(null);
+    this.hasUnsavedChanges.set(false);
+  }
+
+  /**
+   * Load existing seat configuration for selected hall
+   */
+  private loadSeatConfiguration(hallId: string): void {
     this.isLoading.set(true);
-    this.seatConfigService.getSeatConfiguration(this.hallId).subscribe({
+    this.errorMessage.set(null);
+
+    this.seatConfigService.getSeatConfiguration(hallId).subscribe({
       next: (seats) => {
         this.seats.set(seats);
         this.isLoading.set(false);
@@ -75,18 +111,16 @@ export class SeatMapConfigComponent implements OnInit {
   }
 
   /**
-   * Load existing shift configuration
+   * Load existing shift configuration for selected hall
    */
-  private loadShiftConfiguration(): void {
-    this.seatConfigService.getShiftConfiguration(this.hallId).subscribe({
+  private loadShiftConfiguration(hallId: string): void {
+    this.seatConfigService.getShiftConfiguration(hallId).subscribe({
       next: (_openingHours) => {
-        // Extract shifts from opening hours (simplified for now)
         const defaultShifts = this.seatConfigService.getDefaultShifts();
         this.shifts.set(defaultShifts);
       },
       error: (err) => {
         console.error('Error loading shifts:', err);
-        // Use default shifts on error
         this.shifts.set(this.seatConfigService.getDefaultShifts());
       },
     });
@@ -97,7 +131,6 @@ export class SeatMapConfigComponent implements OnInit {
    */
   onSeatDragEnded(event: CdkDragEnd, seat: Seat): void {
     const distance = event.distance;
-    const seatSize = 50; // Seat dimensions
 
     // Calculate new position based on drag distance from original position
     let newX = seat.xCoord + distance.x;
@@ -108,8 +141,8 @@ export class SeatMapConfigComponent implements OnInit {
     newY = Math.round(newY / this.gridSize) * this.gridSize;
 
     // Ensure seat stays within canvas (accounting for seat size)
-    newX = Math.max(0, Math.min(newX, this.canvasWidth - seatSize));
-    newY = Math.max(0, Math.min(newY, this.canvasHeight - seatSize));
+    newX = Math.max(0, Math.min(newX, this.canvasWidth - this.seatSize));
+    newY = Math.max(0, Math.min(newY, this.canvasHeight - this.seatSize));
 
     // Update seat coordinates
     const updatedSeats = this.seats().map((s) => {
@@ -138,6 +171,13 @@ export class SeatMapConfigComponent implements OnInit {
   }
 
   /**
+   * Get space type configuration for visual representation
+   */
+  getSpaceTypeConfig(spaceType: SpaceType | string | undefined) {
+    return getSpaceTypeConfig(spaceType);
+  }
+
+  /**
    * Open modal to add new seat
    */
   openAddSeatModal(): void {
@@ -149,6 +189,11 @@ export class SeatMapConfigComponent implements OnInit {
    * Add new seat to the map
    */
   addSeat(): void {
+    if (!this.selectedHallId()) {
+      this.errorMessage.set('Please select a hall first');
+      return;
+    }
+
     const seatNumber = this.newSeatNumber().trim();
 
     if (!seatNumber) {
@@ -162,11 +207,12 @@ export class SeatMapConfigComponent implements OnInit {
       return;
     }
 
-    // Add seat at default position
+    // Add seat at default position with default space type
     const newSeat: Seat = {
       seatNumber,
       xCoord: 100,
       yCoord: 100,
+      spaceType: 'Cabin', // Default space type
       status: 'available',
     };
 
@@ -182,37 +228,27 @@ export class SeatMapConfigComponent implements OnInit {
    */
   selectSeat(seat: Seat): void {
     this.selectedSeat.set(seat);
-    this.editingSeatNumber.set(seat.seatNumber);
   }
 
   /**
-   * Update seat number
+   * Handle seat properties save from properties panel
    */
-  updateSeatNumber(): void {
-    const selected = this.selectedSeat();
-    if (!selected) return;
-
-    const newNumber = this.editingSeatNumber().trim();
-    if (!newNumber) {
-      this.errorMessage.set('Seat number cannot be empty');
-      return;
-    }
-
-    // Validate uniqueness (excluding current seat)
-    if (!this.seatConfigService.validateSeatNumberUnique(newNumber, this.seats(), selected.id)) {
-      this.errorMessage.set('Seat number must be unique');
-      return;
-    }
-
-    // Update seat
+  onSaveProperties(updatedSeat: Seat): void {
     const updatedSeats = this.seats().map((s) =>
-      s.seatNumber === selected.seatNumber ? { ...s, seatNumber: newNumber } : s,
+      s.seatNumber === updatedSeat.seatNumber ? updatedSeat : s,
     );
 
     this.seats.set(updatedSeats);
     this.hasUnsavedChanges.set(true);
     this.selectedSeat.set(null);
     this.errorMessage.set(null);
+  }
+
+  /**
+   * Handle cancel from properties panel
+   */
+  onCancelProperties(): void {
+    this.selectedSeat.set(null);
   }
 
   /**
@@ -236,10 +272,16 @@ export class SeatMapConfigComponent implements OnInit {
    * Save seat configuration to backend
    */
   saveSeatConfiguration(): void {
+    const hallId = this.selectedHallId();
+    if (!hallId) {
+      this.errorMessage.set('Please select a hall first');
+      return;
+    }
+
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    this.seatConfigService.saveSeatConfiguration(this.hallId, this.seats()).subscribe({
+    this.seatConfigService.saveSeatConfiguration(hallId, this.seats()).subscribe({
       next: (_response) => {
         this.saveSuccess.set(true);
         this.hasUnsavedChanges.set(false);
@@ -247,10 +289,13 @@ export class SeatMapConfigComponent implements OnInit {
 
         // Hide success message after 3 seconds
         setTimeout(() => this.saveSuccess.set(false), 3000);
+
+        // Reload configuration to get server-assigned IDs
+        this.loadSeatConfiguration(hallId);
       },
       error: (err) => {
         console.error('Error saving seats:', err);
-        this.errorMessage.set('Failed to save seat configuration');
+        this.errorMessage.set(err.error?.message || 'Failed to save seat configuration');
         this.isLoading.set(false);
       },
     });
@@ -330,6 +375,12 @@ export class SeatMapConfigComponent implements OnInit {
    * Save shift configuration to backend
    */
   saveShiftConfiguration(): void {
+    const hallId = this.selectedHallId();
+    if (!hallId) {
+      this.errorMessage.set('Please select a hall first');
+      return;
+    }
+
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
@@ -338,7 +389,7 @@ export class SeatMapConfigComponent implements OnInit {
       monday: { open: '09:00', close: '22:00', shifts: this.shifts() },
     };
 
-    this.seatConfigService.saveShiftConfiguration(this.hallId, openingHours).subscribe({
+    this.seatConfigService.saveShiftConfiguration(hallId, openingHours).subscribe({
       next: (_response) => {
         this.saveSuccess.set(true);
         this.hasUnsavedChanges.set(false);
@@ -352,13 +403,5 @@ export class SeatMapConfigComponent implements OnInit {
         this.isLoading.set(false);
       },
     });
-  }
-
-  /**
-   * Cancel seat editing
-   */
-  cancelSeatEdit(): void {
-    this.selectedSeat.set(null);
-    this.editingSeatNumber.set('');
   }
 }

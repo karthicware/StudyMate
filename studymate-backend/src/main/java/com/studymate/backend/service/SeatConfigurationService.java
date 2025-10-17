@@ -197,6 +197,7 @@ public class SeatConfigurationService {
         seat.setYCoord(dto.getYCoord());
         seat.setStatus(dto.getStatus() != null ? dto.getStatus() : "available");
         seat.setCustomPrice(dto.getCustomPrice());
+        seat.setIsLadiesOnly(dto.getIsLadiesOnly() != null ? dto.getIsLadiesOnly() : false);
         return seat;
     }
 
@@ -212,6 +213,7 @@ public class SeatConfigurationService {
         dto.setYCoord(seat.getYCoord());
         dto.setStatus(seat.getStatus());
         dto.setCustomPrice(seat.getCustomPrice());
+        dto.setIsLadiesOnly(seat.getIsLadiesOnly());
         dto.setCreatedAt(seat.getCreatedAt());
         dto.setUpdatedAt(seat.getUpdatedAt());
         return dto;
