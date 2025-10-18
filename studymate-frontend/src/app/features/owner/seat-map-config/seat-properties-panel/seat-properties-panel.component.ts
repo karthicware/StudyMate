@@ -42,6 +42,7 @@ export class SeatPropertiesPanelComponent implements OnChanges {
         seatNumber: this.seat.seatNumber,
         spaceType: this.seat.spaceType || 'Cabin',
         customPrice: this.seat.customPrice || null,
+        isLadiesOnly: this.seat.isLadiesOnly || false, // NEW: Populate ladies-only field
       });
     }
   }
@@ -50,8 +51,41 @@ export class SeatPropertiesPanelComponent implements OnChanges {
     this.propertiesForm = this.fb.group({
       seatNumber: [{ value: '', disabled: true }],
       spaceType: ['Cabin', Validators.required],
-      customPrice: [null, [Validators.min(50), Validators.max(1000)]],
+      customPrice: [null, [this.optionalRangeValidator(50, 1000)]],
+      isLadiesOnly: [false], // NEW: Ladies-only checkbox (default false)
     });
+  }
+
+  /**
+   * Validator for optional numeric fields with min/max range
+   * Only validates if value is provided (not null/empty)
+   */
+  private optionalRangeValidator(min: number, max: number) {
+    return (control: any) => {
+      const value = control.value;
+
+      // Allow null, undefined, or empty string (optional field)
+      if (value === null || value === undefined || value === '' || (typeof value === 'string' && value.trim() === '')) {
+        return null;
+      }
+
+      // Apply min/max validation only if value is provided
+      const numValue = Number(value);
+
+      // Check if conversion resulted in NaN
+      if (isNaN(numValue)) {
+        return { invalid: { value } };
+      }
+
+      if (numValue < min) {
+        return { min: { min, actual: numValue } };
+      }
+      if (numValue > max) {
+        return { max: { max, actual: numValue } };
+      }
+
+      return null;
+    };
   }
 
   /**
@@ -73,6 +107,7 @@ export class SeatPropertiesPanelComponent implements OnChanges {
       ...this.seat,
       spaceType: formValue.spaceType,
       customPrice: formValue.customPrice || undefined,
+      isLadiesOnly: !!formValue.isLadiesOnly, // NEW: Include ladies-only in save (always boolean)
     };
 
     this.errorMessage.set(null);

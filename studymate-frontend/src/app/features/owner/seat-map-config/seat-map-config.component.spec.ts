@@ -13,8 +13,8 @@ describe('SeatMapConfigComponent', () => {
   let mockSeatConfigService: jasmine.SpyObj<SeatConfigService>;
 
   const mockSeats: Seat[] = [
-    { id: '1', seatNumber: 'A1', xCoord: 100, yCoord: 150, status: 'available' },
-    { id: '2', seatNumber: 'A2', xCoord: 200, yCoord: 150, status: 'available' }
+    { id: '1', seatNumber: 'A1', xCoord: 100, yCoord: 150, status: 'available', spaceType: 'Cabin' },
+    { id: '2', seatNumber: 'A2', xCoord: 200, yCoord: 150, status: 'available', spaceType: 'Study Pod', customPrice: 500 }
   ];
 
   const mockShifts: Shift[] = [
@@ -53,16 +53,11 @@ describe('SeatMapConfigComponent', () => {
   });
 
   describe('ngOnInit', () => {
-    it('should load seat and shift configuration on init', () => {
-      mockSeatConfigService.getSeatConfiguration.and.returnValue(of(mockSeats));
-      mockSeatConfigService.getShiftConfiguration.and.returnValue(of({} as OpeningHours));
-      mockSeatConfigService.getDefaultShifts.and.returnValue(mockShifts);
-
+    it('should load study halls on init', () => {
       component.ngOnInit();
 
-      expect(mockSeatConfigService.getSeatConfiguration).toHaveBeenCalledWith('hall-123');
-      expect(component.seats().length).toBe(2);
-      expect(component.shifts().length).toBe(2);
+      expect(component.studyHalls().length).toBeGreaterThan(0);
+      expect(component.editorDisabled()).toBe(true); // No hall selected yet
     });
 
     it('should handle error when loading seats', () => {
@@ -144,29 +139,6 @@ describe('SeatMapConfigComponent', () => {
       component.selectSeat(seat);
 
       expect(component.selectedSeat()).toEqual(seat);
-      expect(component.editingSeatNumber()).toBe('A1');
-    });
-
-    it('should update seat number', () => {
-      component.selectedSeat.set(mockSeats[0]);
-      component.editingSeatNumber.set('A5');
-      mockSeatConfigService.validateSeatNumberUnique.and.returnValue(true);
-
-      component.updateSeatNumber();
-
-      expect(component.seats()[0].seatNumber).toBe('A5');
-      expect(component.hasUnsavedChanges()).toBe(true);
-      expect(component.selectedSeat()).toBeNull();
-    });
-
-    it('should not update seat number if empty', () => {
-      component.selectedSeat.set(mockSeats[0]);
-      component.editingSeatNumber.set('  ');
-
-      component.updateSeatNumber();
-
-      expect(component.errorMessage()).toBe('Seat number cannot be empty');
-      expect(component.seats()[0].seatNumber).toBe('A1');
     });
 
     it('should delete seat with confirmation', () => {
@@ -209,16 +181,6 @@ describe('SeatMapConfigComponent', () => {
 
       expect(style.left).toBe('100px');
       expect(style.top).toBe('200px');
-    });
-
-    it('should cancel seat edit', () => {
-      component.selectedSeat.set(mockSeats[0]);
-      component.editingSeatNumber.set('A5');
-
-      component.cancelSeatEdit();
-
-      expect(component.selectedSeat()).toBeNull();
-      expect(component.editingSeatNumber()).toBe('');
     });
   });
 
@@ -376,6 +338,161 @@ describe('SeatMapConfigComponent', () => {
 
       expect(component.errorMessage()).toBe('Failed to save shift configuration');
       expect(component.isLoading()).toBe(false);
+    });
+  });
+
+  describe('Hall Selection (AC1)', () => {
+    it('should enable editor after hall selection', () => {
+      expect(component.editorDisabled()).toBe(true);
+
+      mockSeatConfigService.getSeatConfiguration.and.returnValue(of(mockSeats));
+      mockSeatConfigService.getShiftConfiguration.and.returnValue(of({} as OpeningHours));
+      mockSeatConfigService.getDefaultShifts.and.returnValue(mockShifts);
+
+      component.onHallSelectionChange('1');
+
+      expect(component.selectedHallId()).toBe('1');
+      expect(component.editorDisabled()).toBe(false);
+    });
+
+    it('should load seat configuration when hall is selected', () => {
+      mockSeatConfigService.getSeatConfiguration.and.returnValue(of(mockSeats));
+      mockSeatConfigService.getShiftConfiguration.and.returnValue(of({} as OpeningHours));
+      mockSeatConfigService.getDefaultShifts.and.returnValue(mockShifts);
+
+      component.onHallSelectionChange('1');
+
+      expect(mockSeatConfigService.getSeatConfiguration).toHaveBeenCalledWith('1');
+      expect(component.seats().length).toBe(2);
+    });
+
+    it('should clear canvas when switching halls', () => {
+      component.seats.set(mockSeats);
+      component.selectedSeat.set(mockSeats[0]);
+      component.hasUnsavedChanges.set(true);
+
+      mockSeatConfigService.getSeatConfiguration.and.returnValue(of([]));
+      mockSeatConfigService.getShiftConfiguration.and.returnValue(of({} as OpeningHours));
+      mockSeatConfigService.getDefaultShifts.and.returnValue([]);
+
+      component.onHallSelectionChange('2');
+
+      expect(component.seats().length).toBe(0);
+      expect(component.selectedSeat()).toBeNull();
+      expect(component.hasUnsavedChanges()).toBe(false);
+    });
+
+    it('should not allow adding seats without hall selection', () => {
+      component.selectedHallId.set(null);
+      component.newSeatNumber.set('A1');
+
+      component.addSeat();
+
+      expect(component.errorMessage()).toBe('Please select a hall first');
+    });
+  });
+
+  describe('Space Type Support (AC3)', () => {
+    it('should add seat with default space type Cabin', () => {
+      component.selectedHallId.set('1');
+      component.newSeatNumber.set('A3');
+      mockSeatConfigService.validateSeatNumberUnique.and.returnValue(true);
+
+      component.addSeat();
+
+      const newSeat = component.seats()[component.seats().length - 1];
+      expect(newSeat.spaceType).toBe('Cabin');
+    });
+
+    it('should get space type configuration', () => {
+      const config = component.getSpaceTypeConfig('Study Pod');
+
+      expect(config).toBeDefined();
+      expect(config.icon).toBeDefined();
+      expect(config.bgColor).toBeDefined();
+      expect(config.label).toBe('Study Pod');
+    });
+
+    it('should handle undefined space type with default', () => {
+      const config = component.getSpaceTypeConfig(undefined);
+
+      expect(config.label).toBe('Cabin'); // Default
+    });
+  });
+
+  describe('Properties Panel Integration (AC3)', () => {
+    beforeEach(() => {
+      component.selectedHallId.set('1');
+      component.seats.set(mockSeats);
+    });
+
+    it('should handle save properties from panel', () => {
+      const updatedSeat: Seat = {
+        ...mockSeats[0],
+        spaceType: 'Meeting Room',
+        customPrice: 800,
+      };
+
+      component.onSaveProperties(updatedSeat);
+
+      expect(component.seats()[0].spaceType).toBe('Meeting Room');
+      expect(component.seats()[0].customPrice).toBe(800);
+      expect(component.hasUnsavedChanges()).toBe(true);
+      expect(component.selectedSeat()).toBeNull();
+    });
+
+    it('should handle cancel from properties panel', () => {
+      component.selectedSeat.set(mockSeats[0]);
+
+      component.onCancelProperties();
+
+      expect(component.selectedSeat()).toBeNull();
+    });
+  });
+
+  describe('Save Configuration with Hall ID (AC5, AC6)', () => {
+    it('should use selected hall ID when saving', () => {
+      mockSeatConfigService.saveSeatConfiguration.and.returnValue(of({
+        success: true,
+        message: 'Saved',
+        seats: mockSeats,
+        seatCount: 2
+      }));
+      mockSeatConfigService.getSeatConfiguration.and.returnValue(of(mockSeats));
+
+      component.selectedHallId.set('5');
+      component.seats.set(mockSeats);
+
+      component.saveSeatConfiguration();
+
+      expect(mockSeatConfigService.saveSeatConfiguration).toHaveBeenCalledWith('5', mockSeats);
+    });
+
+    it('should not save without hall selection', () => {
+      component.selectedHallId.set(null);
+      component.seats.set(mockSeats);
+
+      component.saveSeatConfiguration();
+
+      expect(component.errorMessage()).toBe('Please select a hall first');
+      expect(mockSeatConfigService.saveSeatConfiguration).not.toHaveBeenCalled();
+    });
+
+    it('should reload configuration after successful save', () => {
+      mockSeatConfigService.saveSeatConfiguration.and.returnValue(of({
+        success: true,
+        message: 'Saved',
+        seats: mockSeats,
+        seatCount: 2
+      }));
+      mockSeatConfigService.getSeatConfiguration.and.returnValue(of(mockSeats));
+
+      component.selectedHallId.set('1');
+      component.seats.set(mockSeats);
+
+      component.saveSeatConfiguration();
+
+      expect(mockSeatConfigService.getSeatConfiguration).toHaveBeenCalledWith('1');
     });
   });
 });

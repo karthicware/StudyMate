@@ -214,6 +214,7 @@ export class SeatMapConfigComponent implements OnInit {
       yCoord: 100,
       spaceType: 'Cabin', // Default space type
       status: 'available',
+      isLadiesOnly: false, // Default to not ladies-only
     };
 
     this.seats.update((seats) => [...seats, newSeat]);

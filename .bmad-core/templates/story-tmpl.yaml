@@ -88,6 +88,11 @@ sections:
           - Test standards
           - Testing frameworks and patterns to use
           - Any specific testing requirements for this story
+
+          For UI/Full-Stack stories with E2E tests:
+          - MANDATORY: Read docs/guidelines/ui-testing-locators-mandatory.md (all UI elements need data-testid)
+          - MANDATORY: Read docs/guidelines/e2e-quality-gates-mandatory.md (6 critical quality gates)
+          - MANDATORY: Follow docs/architecture/coding-standards.md E2E section
         elicit: true
         owner: scrum-master
         editors: [scrum-master]
@@ -97,6 +102,12 @@ sections:
         instruction: |
           For UI/Full-Stack stories only. Specify E2E integration tests that validate backend + frontend together.
           Use Story 0.25 test infrastructure (backend test server on port 8081, test database studymate_test).
+
+          MANDATORY REQUIREMENTS:
+          - ALL UI elements MUST have data-testid locators (see docs/guidelines/ui-testing-locators-mandatory.md)
+          - ALL E2E tests MUST follow the 6 Quality Gates (see docs/guidelines/e2e-quality-gates-mandatory.md)
+          - Dev Agent: Read both mandatory guideline files BEFORE writing E2E tests
+          - QA Agent: Validate against .bmad-core/checklists/e2e-quality-gate-checklist.md
 
           Required Information:
           - Critical user workflows to test end-to-end (e.g., "User registers and receives confirmation email")

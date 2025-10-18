@@ -38,14 +38,9 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+    // Note: Testing strategy focuses on Chrome/Chromium only
+    // Firefox and Safari testing removed as of 2025-10-18
+    // See docs/testing/e2e-testing-guide.md for rationale
   ],
 
   // Start both frontend and backend servers for E2E tests

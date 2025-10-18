@@ -3,6 +3,65 @@
 ## Overview
 This guide provides comprehensive patterns and best practices for writing end-to-end (E2E) tests for StudyMate using Playwright with backend integration.
 
+---
+
+## 🚨 CRITICAL: E2E Test Execution Requirement
+
+**MANDATORY RULE**: E2E tests MUST be executed before marking any story "Done"
+
+### Execution Mandate
+
+**Writing tests is NOT sufficient.** You must:
+
+1. ✅ Write E2E tests using Playwright
+2. ✅ **EXECUTE tests locally** using `npx playwright test`
+3. ✅ **Verify all tests PASS** (100% pass rate required)
+4. ✅ **Capture evidence** (screenshot or Playwright HTML report)
+5. ✅ **Document results** in story with test count and pass rate
+6. ✅ **Validate zero console errors** (via E2E test checks)
+
+### Execution Commands
+
+```bash
+# Execute all E2E tests
+npx playwright test
+
+# Execute specific test file
+npx playwright test e2e/owner-seat-map-config.spec.ts
+
+# Execute with UI mode (see browser)
+npx playwright test --ui
+
+# Generate HTML report after execution
+npx playwright show-report
+```
+
+### Evidence Requirements
+
+After execution, document in story:
+```
+### E2E Test Results
+- **Test Count**: 12 tests written
+- **Execution Date**: 2025-10-18
+- **Pass Rate**: 12/12 PASSING (100%)
+- **Console Errors**: 0 (validated)
+- **Evidence**: [Attach Playwright HTML report or screenshot]
+```
+
+### What If Tests Fail?
+
+**If any E2E test fails:**
+1. ❌ Story CANNOT be marked "Done"
+2. 🔧 Fix the failing test or the code causing failure
+3. 🔁 Re-run tests until 100% pass rate achieved
+4. ✅ Only then proceed with "Done" status
+
+**No exceptions.** Unexecuted or failing E2E tests = Incomplete story.
+
+**Reference**: See [Definition of Done](../process/definition-of-done.md) for full quality gates.
+
+---
+
 ## Table of Contents
 1. [Getting Started](#getting-started)
 2. [Test Environment](#test-environment)
@@ -37,9 +96,36 @@ npx playwright test --headed
 # Run in debug mode
 npx playwright test --debug
 
-# Run specific browser
+# Run with chromium (default and only configured browser)
 npx playwright test --project=chromium
 ```
+
+### Browser Testing Strategy
+
+**StudyMate E2E Testing Policy (as of 2025-10-18):**
+
+This project uses a **Chrome/Chromium-only testing strategy** for E2E tests.
+
+**Rationale:**
+- **Focus**: Concentrate testing resources on single browser platform
+- **Efficiency**: Reduce test execution time and CI/CD complexity
+- **Coverage**: Chrome/Chromium represents majority browser market share
+- **Simplicity**: Simpler debugging and maintenance
+
+**Browsers Tested:**
+- ✅ **Chromium** (Desktop Chrome) - Primary and only E2E browser
+
+**Browsers NOT Tested:**
+- ❌ Firefox - Not in scope
+- ❌ Safari/Webkit - Not in scope
+
+**Business Justification:**
+- No regulatory or business requirement for multi-browser testing
+- Chrome-based browsers dominate target user base
+- Resources optimized for feature development vs. browser compatibility
+
+**Future Considerations:**
+If multi-browser testing becomes necessary (e.g., regulatory compliance, user base changes), this strategy can be revisited by updating `playwright.config.ts` and restoring the `firefox` and `webkit` project configurations.
 
 ### Test Environment Setup
 
@@ -299,6 +385,36 @@ test.describe('User Management', () => {
 
 ## Best Practices
 
+### ⭐ Key Lessons Learned (Prevention Guide)
+
+**This section contains critical lessons from E2E test failures. Following these patterns will prevent common issues.**
+
+#### Quick Prevention Checklist
+
+Before writing E2E tests, ensure:
+
+- [ ] **Selector Specificity**: Use `.component-class button:has-text("Text")` not just `button:has-text("Text")`
+- [ ] **Assertion Accuracy**: Assert on structural elements (`.panel`, `[data-testid]`) not text content
+- [ ] **Default Field Values**: All new objects have ALL fields defined, including optional booleans
+- [ ] **Timing Waits**: Add `await page.waitForTimeout(300)` after state-changing actions
+- [ ] **Route Mock Coverage**: Mock ALL HTTP methods (GET, POST, PUT, DELETE) for each endpoint
+- [ ] **API Path Consistency**: Use `/api/v1/...` everywhere (environment.ts, mocks, backend)
+
+#### Common Failure Patterns
+
+| Symptom | Root Cause | Prevention |
+|---------|-----------|------------|
+| Test clicks button but nothing happens | Ambiguous selector clicked wrong button | Use `.parent-class button:has-text()` |
+| Assertion fails but UI looks correct | Text appears in multiple states | Assert on structural elements not text |
+| API payload has `undefined` fields | Object created without default values | Set explicit defaults for all fields |
+| Panel doesn't close after save | No wait for signal propagation | Add `await page.waitForTimeout(300)` |
+| 403 Forbidden errors | Route mock doesn't cover all HTTP methods | Mock GET, POST, PUT, DELETE |
+| Tests fail after endpoint changes | API paths inconsistent across codebase | Use single source of truth (environment.ts) |
+
+**For detailed examples and fixes, see sections 9-12 below.**
+
+---
+
 ### 1. Use data-testid Attributes
 
 Always use `data-testid` for test selectors:
@@ -387,6 +503,286 @@ await Promise.all([
 const response = await waitForApiResponse(page, '/api/v1/auth/login', 'POST');
 ```
 
+### 7. API Configuration - CRITICAL
+
+⚠️ **API configuration mismatches are a major cause of E2E test failures**
+
+**MANDATORY**: All API paths MUST include the `/v1` version prefix and use the correct port.
+
+```typescript
+// ✅ CORRECT - Includes /v1 and correct test port
+environment.apiBaseUrl: 'http://localhost:8081/api/v1'
+await page.route('/api/v1/owner/seats/config/1', ...)
+
+// ❌ WRONG - Missing /v1
+environment.apiBaseUrl: 'http://localhost:8081/api'
+await page.route('/api/owner/seats/config/1', ...)
+
+// ❌ WRONG - Wrong port (test server is 8081, not 8080)
+environment.apiBaseUrl: 'http://localhost:8080/api/v1'
+```
+
+**⭐ MUST READ**: [API Endpoints Configuration Guide](../configuration/api-endpoints.md) - Single source of truth for all API paths
+
+**Common symptoms of API configuration issues**:
+- Tests fail with 403 Forbidden errors (route mocks don't intercept)
+- Tests fail with 404 Not Found errors (endpoint doesn't exist)
+- Frontend calls wrong port or missing `/v1` prefix
+- E2E mocks use different paths than actual API calls
+
+**Quick validation**:
+```bash
+# Verify environment.ts has correct config
+grep "apiBaseUrl" src/environments/environment.ts
+# Should show: apiBaseUrl: 'http://localhost:8081/api/v1'
+
+# Verify E2E mocks use /v1 prefix
+grep -r "page.route" e2e/*.spec.ts | grep "/api/owner/"
+# All should include /v1 like: /api/v1/owner/...
+```
+
+### 8. Route Mocking - CRITICAL
+
+⚠️ **Route mocking is the #1 cause of E2E test infrastructure failures**
+
+When using `page.route()` to mock API calls, follow these CRITICAL rules:
+
+```typescript
+// ❌ BAD - Only mocks POST, breaks GET calls
+await page.route(`/api/owner/seats/config/${hallId}`, async (route) => {
+  if (route.request().method() === 'POST') {
+    // Handle POST
+  }
+  // Missing: No handler for GET - will cause 403 errors!
+});
+
+// ✅ GOOD - Mock ALL HTTP methods for the endpoint
+await page.route(`/api/owner/seats/config/${hallId}`, async (route) => {
+  const method = route.request().method();
+
+  if (method === 'GET') {
+    await route.fulfill({ status: 200, body: JSON.stringify([]) });
+  } else if (method === 'POST') {
+    await route.fulfill({ status: 201, body: JSON.stringify({ message: 'Success' }) });
+  } else {
+    await route.continue(); // Fallback for other methods
+  }
+});
+```
+
+**⭐ MUST READ**: [E2E Route Mocking Best Practices](./e2e-route-mocking-best-practices.md) - Contains critical patterns to prevent route mock failures
+
+**Common symptoms of route mock failures**:
+- "Configuration saved successfully" message never appears
+- Tests fail with 403 Forbidden errors
+- Console shows "Error loading seats: HttpErrorResponse"
+- Mocked data doesn't render in the UI
+
+### 9. Selector Specificity - CRITICAL
+
+⚠️ **Generic selectors can click the wrong elements, causing silent test failures**
+
+**Problem**: When using text-based selectors like `button:has-text("Save")`, Playwright may click the FIRST matching button on the page, which might not be the one you intend to test.
+
+**Example Failure** (from Story 1.4.1):
+- Properties panel had a "Save" button
+- Parent component had a "Save Configuration" button
+- Test used `await page.click('button:has-text("Save")')`
+- Result: Playwright clicked "Save Configuration" instead of properties panel "Save"
+- Symptom: Properties panel never closed, test failed silently
+
+```typescript
+// ❌ BAD - Ambiguous selector can match multiple buttons
+await page.click('button:has-text("Save")');
+
+// ✅ GOOD - Use CSS class or component selector for specificity
+await page.locator('.seat-properties-panel button:has-text("Save")').click();
+
+// ✅ GOOD - Use data-testid (even better)
+await page.locator('[data-testid="seat-properties-save-button"]').click();
+
+// ✅ GOOD - Use structural relationship
+await page.locator('.properties-panel').locator('button:has-text("Save")').click();
+```
+
+**Best Practices**:
+1. **Always scope text-based selectors** with a parent class or component
+2. **Prefer data-testid attributes** over text/class selectors
+3. **Test your selectors** - use `page.locator().count()` to verify only one match
+4. **Watch for multiple instances** - modals, panels, and forms often have duplicate text
+
+**Quick validation**:
+```typescript
+// Before clicking, verify selector matches exactly one element
+const saveButtons = await page.locator('button:has-text("Save")').count();
+if (saveButtons > 1) {
+  throw new Error(`Found ${saveButtons} Save buttons - selector is ambiguous!`);
+}
+```
+
+### 10. Assertion Accuracy - CRITICAL
+
+⚠️ **Checking for text content can fail when the same text appears in multiple UI states**
+
+**Problem**: Text-based assertions can match elements in different UI states (active form vs. empty placeholder), leading to false positives/negatives.
+
+**Example Failure** (from Story 1.4.1):
+- Properties panel (active form) has heading "Seat Properties"
+- Properties placeholder (empty state) ALSO has heading "Seat Properties"
+- Test checked `await expect(page.locator('text=Seat Properties')).not.toBeVisible()`
+- Result: Test failed because placeholder heading was visible after form closed
+- Real issue: Test was checking wrong element
+
+```typescript
+// ❌ BAD - Text appears in both active form and placeholder
+await expect(page.locator('text=Seat Properties')).not.toBeVisible();
+
+// ✅ GOOD - Check for structural element that only exists in one state
+await expect(page.locator('.seat-properties-panel')).not.toBeVisible();
+
+// ✅ GOOD - Check for form-specific element
+await expect(page.locator('form[data-testid="seat-properties-form"]')).not.toBeVisible();
+
+// ✅ GOOD - Check for unique child element
+await expect(page.locator('.seat-properties-panel input[formControlName="customPrice"]')).not.toBeVisible();
+```
+
+**Best Practices**:
+1. **Assert on structural elements** (CSS classes, data-testid) not text content
+2. **Check for unique children** - elements that only exist in the target state
+3. **Verify state transitions** - check what appears AND what disappears
+4. **Use computed styles** - check if element truly hidden vs. just covered
+
+**Example - Verifying panel closure**:
+```typescript
+// ✅ BEST - Check both state transitions
+// 1. Save button should be clicked (panel should close)
+await page.locator('.seat-properties-panel button:has-text("Save")').click();
+
+// 2. Wait for async state update
+await page.waitForTimeout(300);
+
+// 3. Verify panel FORM is gone (not just heading text)
+await expect(page.locator('.seat-properties-panel')).not.toBeVisible();
+
+// 4. Verify placeholder state appears (if applicable)
+await expect(page.locator('.seat-properties-placeholder')).toBeVisible();
+```
+
+### 11. Default Field Values - IMPORTANT
+
+⚠️ **New objects must include ALL fields to prevent undefined values in API payloads**
+
+**Problem**: When creating new objects (seats, users, etc.), forgetting to set optional boolean/enum fields to default values can result in `undefined` being sent to the backend.
+
+**Example Failure** (from Story 1.4.1):
+- New seats created without `isLadiesOnly` field
+- Backend expected `isLadiesOnly: boolean` but received `undefined`
+- Test assertion expected `isLadiesOnly: false` but got `undefined`
+
+```typescript
+// ❌ BAD - Missing optional boolean field
+const newSeat: Seat = {
+  seatNumber,
+  xCoord: 100,
+  yCoord: 100,
+  spaceType: 'Cabin',
+  status: 'available',
+  // Missing: isLadiesOnly (will be undefined)
+};
+
+// ✅ GOOD - Explicitly set all fields with defaults
+const newSeat: Seat = {
+  seatNumber,
+  xCoord: 100,
+  yCoord: 100,
+  spaceType: 'Cabin',
+  status: 'available',
+  isLadiesOnly: false, // Explicit default
+};
+```
+
+**Best Practices**:
+1. **Define all fields** in object creation, even optional ones
+2. **Use explicit defaults** for boolean fields (`false`, not `undefined`)
+3. **Type definitions should require fields** - avoid `field?: boolean`, prefer `field: boolean`
+4. **Validate API payloads** in E2E tests to catch missing fields
+
+**Example - E2E validation for complete payloads**:
+```typescript
+test('should include all required fields in API payload', async ({ page }) => {
+  let savedPayload: any = null;
+
+  await page.route('/api/v1/owner/seats/config/1', async (route) => {
+    if (route.request().method() === 'POST') {
+      savedPayload = JSON.parse(route.request().postData() || '{}');
+      await route.fulfill({ status: 201, body: JSON.stringify({ message: 'Success' }) });
+    }
+  });
+
+  // ... perform actions to save seat ...
+
+  // Verify ALL fields are present and not undefined
+  expect(savedPayload.seats[0].seatNumber).toBeDefined();
+  expect(savedPayload.seats[0].isLadiesOnly).toBeDefined(); // Not undefined!
+  expect(typeof savedPayload.seats[0].isLadiesOnly).toBe('boolean'); // Correct type
+});
+```
+
+### 12. Timing and Asynchronous State - IMPORTANT
+
+⚠️ **State updates in reactive frameworks (Angular signals, React state) are not instantaneous**
+
+**Problem**: After clicking a button that updates component state, the DOM may not reflect changes immediately. Tests must wait for state propagation and re-rendering.
+
+**Example Failure** (from Story 1.4.1):
+- Clicked "Save" button to close properties panel
+- Panel closure is triggered by `selectedSeat.set(null)` (Angular signal)
+- Test immediately checked `await expect(panel).not.toBeVisible()`
+- Result: Test checked before signal propagated, panel still visible
+
+```typescript
+// ❌ BAD - No wait, checks too early
+await page.locator('.seat-properties-panel button:has-text("Save")').click();
+await expect(page.locator('.seat-properties-panel')).not.toBeVisible(); // Fails!
+
+// ✅ GOOD - Wait for state propagation before asserting
+await page.locator('.seat-properties-panel button:has-text("Save")').click();
+await page.waitForTimeout(300); // Allow signal to propagate and re-render
+await expect(page.locator('.seat-properties-panel')).not.toBeVisible(); // Success!
+
+// ✅ BETTER - Wait for specific state change
+await page.locator('.seat-properties-panel button:has-text("Save")').click();
+await expect(page.locator('.seat-properties-panel')).not.toBeVisible({ timeout: 3000 });
+
+// ✅ BEST - Wait for element that should appear after state change
+await page.locator('.seat-properties-panel button:has-text("Save")').click();
+await expect(page.locator('.save-configuration-button')).toBeEnabled(); // Wait for downstream effect
+```
+
+**When to use waits**:
+1. **After form submissions** - wait for success message or navigation
+2. **After state-changing clicks** - wait for panel close, modal open, etc.
+3. **After drag-and-drop** - wait for position update in DOM
+4. **After API calls** - wait for data to render
+
+**Recommended wait durations**:
+- **100-300ms**: Signal/state propagation in reactive frameworks
+- **500-1000ms**: API call completion + re-render
+- **1000-3000ms**: Navigation or complex page transitions
+
+**⚠️ Note**: `page.waitForTimeout()` should be a last resort. Prefer explicit waits:
+```typescript
+// ✅ BEST - Explicit wait with auto-retry
+await expect(element).toBeVisible({ timeout: 3000 });
+
+// ⚠️ OK - Fixed timeout as fallback
+await page.waitForTimeout(300);
+
+// ❌ AVOID - No wait at all
+// (immediate check after state-changing action)
+```
+
 ---
 
 ## Common Scenarios
@@ -462,6 +858,42 @@ test.describe('Mobile view', () => {
 
 ## Troubleshooting
 
+### API Configuration Issues (403/404 Errors)
+
+**Problem**: Tests fail with 403 Forbidden or 404 Not Found errors.
+
+**Root Causes**:
+1. **Port mismatch**: Frontend calling port 8080, backend test server on 8081
+2. **Missing /v1 prefix**: Frontend/mocks missing `/api/v1/...` version prefix
+3. **Route mocks don't match**: E2E mocks use different paths than actual calls
+
+**Diagnosis Steps**:
+```bash
+# 1. Check backend test server is running on correct port
+lsof -i :8081
+# Should show Java process
+
+# 2. Verify environment.ts configuration
+cat src/environments/environment.ts | grep apiBaseUrl
+# Should be: apiBaseUrl: 'http://localhost:8081/api/v1'
+
+# 3. Check E2E mocks use /v1 prefix
+grep -r "page.route.*'/api/owner/" e2e/*.spec.ts
+# All should show /api/v1/owner/... not /api/owner/...
+
+# 4. Test backend endpoint directly
+curl http://localhost:8081/api/v1/owner/seats/config/1 \
+  -H "Authorization: Bearer YOUR_TOKEN"
+# Should NOT return 404
+```
+
+**Solutions**:
+- ✅ Fix `environment.ts` to use `http://localhost:8081/api/v1`
+- ✅ Update ALL E2E route mocks to include `/v1` prefix
+- ✅ Ensure backend `@RequestMapping` uses `/api/v1/...`
+
+**⭐ See**: [API Configuration Drift Incident](../lessons-learned/api-configuration-drift-incident.md) for detailed post-mortem
+
 ### Tests Timing Out
 
 **Problem**: Tests fail with timeout errors.
@@ -531,8 +963,11 @@ test.describe('Mobile view', () => {
 ## Additional Resources
 
 - [Playwright Documentation](https://playwright.dev)
+- [API Endpoints Configuration Guide](../configuration/api-endpoints.md) ⭐ **MANDATORY** - Single source of truth for API paths
+- [API Configuration Drift Incident](../lessons-learned/api-configuration-drift-incident.md) ⭐ **CRITICAL** - Learn from past mistakes
 - [Backend Test Environment Setup](./backend-test-environment.md)
 - [Schema Drift Prevention Guide](./schema-drift-prevention.md) ⭐ **IMPORTANT**
+- [E2E Route Mocking Best Practices](./e2e-route-mocking-best-practices.md) ⭐ **CRITICAL** - Prevent route mock failures
 - [Coding Standards - Playwright Rules](../architecture/coding-standards.md#playwright)
 - [Test Fixtures](../../studymate-frontend/e2e/fixtures/)
 - [Test Utilities](../../studymate-frontend/e2e/utils/)

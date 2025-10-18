@@ -51,3 +51,26 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+// Ladies-Only Seat Styling (Story 1.4.1 AC5)
+.seat-item.seat-ladies-only {
+  .seat-visual {
+    position: relative;
+    background-color: #FFC0CB !important; // Pink background
+    border-color: #FF69B4 !important; // Dark pink border
+    border-width: 2px;
+
+    // Female symbol in top-right corner
+    &::after {
+      content: '♀';
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      font-size: 12px;
+      color: #FF1493; // Deep pink
+      font-weight: bold;
+      line-height: 1;
+      pointer-events: none;
+    }
+  }
+}

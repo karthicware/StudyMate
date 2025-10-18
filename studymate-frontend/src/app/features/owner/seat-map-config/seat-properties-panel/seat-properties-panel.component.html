@@ -40,7 +40,7 @@
     </div>
 
     <!-- Custom Price (Optional) -->
-    <div class="mb-6">
+    <div class="mb-4">
       <label class="block text-sm font-medium text-gray-700 mb-1">
         Custom Price (₹)
       </label>
@@ -56,6 +56,24 @@
       } @else {
         <p class="mt-1 text-xs text-gray-500">Range: ₹50 - ₹1000. Optional.</p>
       }
+    </div>
+
+    <!-- Ladies Only Checkbox (NEW - Story 1.4.1 AC4) -->
+    <div class="mb-6 p-3 bg-pink-50 border border-pink-200 rounded-md">
+      <div class="flex items-start">
+        <input
+          type="checkbox"
+          id="ladiesOnly"
+          formControlName="isLadiesOnly"
+          class="mt-1 h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300 rounded cursor-pointer"
+        />
+        <div class="ml-3 flex-1">
+          <label for="ladiesOnly" class="block text-sm font-medium text-gray-700 cursor-pointer">
+            Ladies Only Seat
+          </label>
+          <p class="mt-1 text-xs text-gray-600">Only female users can book this seat</p>
+        </div>
+      </div>
     </div>
 
     <!-- Action Buttons -->
