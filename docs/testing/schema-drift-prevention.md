@@ -228,11 +228,11 @@ cd studymate-backend
 **Step 4**: Verify in database
 ```bash
 # Check migration ran
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test -c \
+PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c \
   "SELECT version, description, success FROM flyway_schema_history ORDER BY installed_rank;"
 
 # Check column exists
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test -c \
+PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c \
   "\d users"
 ```
 
@@ -394,8 +394,8 @@ FlywayException: Validate failed: Migration checksum mismatch for migration vers
 ```bash
 # Reset test database and re-run all migrations
 PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d postgres <<EOF
-DROP DATABASE IF EXISTS studymate_test;
-CREATE DATABASE studymate_test;
+DROP DATABASE IF EXISTS studymate;
+CREATE DATABASE studymate;
 EOF
 
 ./scripts/start-test-server.sh
@@ -450,7 +450,7 @@ PSQLException: ERROR: relation "users" already exists
    ./scripts/start-test-server.sh
 
    # Verify migration applied
-   PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test -c \
+   PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c \
      "SELECT * FROM flyway_schema_history ORDER BY installed_rank DESC LIMIT 1;"
    ```
 
@@ -562,13 +562,13 @@ ALTER TABLE users RENAME COLUMN old_name TO new_name;
 
 **Check migration status**:
 ```bash
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test -c \
+PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c \
   "SELECT version, description, installed_on, success FROM flyway_schema_history ORDER BY installed_rank;"
 ```
 
 **View table structure**:
 ```bash
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test -c "\d users"
+PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c "\d users"
 ```
 
 **Reset test database**:

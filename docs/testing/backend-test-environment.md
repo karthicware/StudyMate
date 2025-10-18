@@ -6,7 +6,7 @@ This document describes the configuration and setup of the Spring Boot backend f
 ## Test Environment Configuration
 
 ### Database Configuration
-- **Database Name**: `studymate_test`
+- **Database Name**: `studymate`
 - **Host**: `localhost:5432`
 - **Username**: `studymate_user`
 - **Password**: `studymate_user`
@@ -39,15 +39,15 @@ PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d postgres -c "SE
 ```
 
 ### 2. Create Test Database
-Create the `studymate_test` database if it doesn't exist:
+Create the `studymate` database if it doesn't exist:
 ```bash
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d postgres -c "CREATE DATABASE studymate_test;"
+PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d postgres -c "CREATE DATABASE studymate;"
 ```
 
 ### 3. Verify Database Access
 Confirm you can connect to the test database:
 ```bash
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test -c "SELECT 1;"
+PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c "SELECT 1;"
 ```
 
 ## Starting the Test Server
@@ -132,12 +132,12 @@ curl -X POST http://localhost:8081/api/v1/auth/register \
 
 ### Viewing Schema
 ```bash
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test -c "\dt"
+PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c "\dt"
 ```
 
 ### Checking Migrations
 ```bash
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test -c \
+PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c \
   "SELECT version, description, installed_on, success FROM flyway_schema_history ORDER BY installed_rank;"
 ```
 
@@ -145,8 +145,8 @@ PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test 
 ```bash
 # Drop and recreate database
 PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d postgres << EOF
-DROP DATABASE IF EXISTS studymate_test;
-CREATE DATABASE studymate_test;
+DROP DATABASE IF EXISTS studymate;
+CREATE DATABASE studymate;
 EOF
 
 # Restart server to run migrations
@@ -160,7 +160,7 @@ Location: `studymate-backend/src/main/resources/application-test.properties`
 
 Key settings:
 - Server port: 8081
-- Database: studymate_test
+- Database: studymate
 - **Flyway: enabled** (prevents schema drift)
 - **Hibernate: ddl-auto=validate** (validates entity-schema match)
 - Logging: DEBUG level for com.studymate.backend
@@ -199,7 +199,7 @@ lsof -ti:8081 | xargs kill
 
 2. Verify credentials:
    ```bash
-   PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test
+   PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate
    ```
 
 3. Check database exists:
@@ -210,12 +210,12 @@ lsof -ti:8081 | xargs kill
 ### Flyway Migration Errors
 ```bash
 # Check migration history
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test -c \
+PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c \
   "SELECT * FROM flyway_schema_history WHERE success = false;"
 
 # If needed, reset and retry
 PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d postgres -c \
-  "DROP DATABASE studymate_test; CREATE DATABASE studymate_test;"
+  "DROP DATABASE studymate; CREATE DATABASE studymate;"
 ```
 
 ### Schema Validation Errors (Hibernate)

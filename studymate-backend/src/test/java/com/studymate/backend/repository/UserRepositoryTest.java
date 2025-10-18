@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestPropertySource(properties = {
-    "spring.datasource.url=jdbc:postgresql://localhost:5432/studymate_test",
+    "spring.datasource.url=jdbc:postgresql://localhost:5432/studymate",
     "spring.datasource.username=studymate_user",
     "spring.datasource.password=studymate_user",
     "spring.jpa.hibernate.ddl-auto=validate",

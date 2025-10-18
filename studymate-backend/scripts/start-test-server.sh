@@ -25,10 +25,10 @@ cd "$BACKEND_DIR"
 
 # Check if test database exists
 echo -e "${YELLOW}Checking test database connection...${NC}"
-if ! PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test -c "SELECT 1" > /dev/null 2>&1; then
-    echo -e "${RED}ERROR: Test database 'studymate_test' not accessible${NC}"
+if ! PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c "SELECT 1" > /dev/null 2>&1; then
+    echo -e "${RED}ERROR: Test database 'studymate' not accessible${NC}"
     echo -e "${YELLOW}Please ensure PostgreSQL is running and database is created${NC}"
-    echo -e "${YELLOW}Run: PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d postgres -c 'CREATE DATABASE studymate_test;'${NC}"
+    echo -e "${YELLOW}Run: PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d postgres -c 'CREATE DATABASE studymate;'${NC}"
     exit 1
 fi
 
@@ -36,7 +36,7 @@ echo -e "${GREEN}✓ Test database connection successful${NC}"
 
 # Clean test database schema for fresh Flyway migrations
 echo -e "${YELLOW}Cleaning test database schema for Flyway migrations...${NC}"
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test > /dev/null 2>&1 <<EOF
+PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate > /dev/null 2>&1 <<EOF
     -- Drop all tables, sequences, and constraints
     DROP SCHEMA IF EXISTS public CASCADE;
     CREATE SCHEMA public;
@@ -60,7 +60,7 @@ export JWT_EXPIRATION_MS=${JWT_EXPIRATION_MS:-3600000}
 echo -e "${YELLOW}Configuration:${NC}"
 echo -e "  Profile: ${SPRING_PROFILES_ACTIVE}"
 echo -e "  Port: ${TEST_SERVER_PORT}"
-echo -e "  Database: studymate_test"
+echo -e "  Database: studymate"
 echo -e "  User: studymate_user"
 
 # Start the backend server

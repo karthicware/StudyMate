@@ -78,7 +78,7 @@ After execution, document in story:
 ### Prerequisites
 - Node.js and npm installed
 - PostgreSQL running locally
-- Test database `studymate_test` created
+- Test database `studymate` created
 - Backend server configured for test mode
 
 ### Running E2E Tests
@@ -132,7 +132,7 @@ If multi-browser testing becomes necessary (e.g., regulatory compliance, user ba
 The test environment consists of:
 - **Frontend**: Angular dev server on `http://localhost:4200`
 - **Backend**: Spring Boot test server on `http://localhost:8081`
-- **Database**: PostgreSQL test database `studymate_test`
+- **Database**: PostgreSQL test database `studymate`
 
 Playwright automatically starts both servers when tests run (configured in `playwright.config.ts`).
 
@@ -141,7 +141,7 @@ Playwright automatically starts both servers when tests run (configured in `play
 ## Test Environment
 
 ### Test Database
-- Database: `studymate_test`
+- Database: `studymate`
 - Port: `5432`
 - User: `studymate_user`
 - Password: `studymate_user`

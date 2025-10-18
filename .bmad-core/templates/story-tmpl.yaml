@@ -108,7 +108,7 @@ sections:
         title: E2E Integration Testing Requirements
         instruction: |
           For UI/Full-Stack stories only. Specify E2E integration tests that validate backend + frontend together.
-          Use E2E test infrastructure (backend test server on port 8081, test database studymate_test).
+          Use E2E test infrastructure (backend test server on port 8081, database studymate - shared with development).
 
           MANDATORY PRE-IMPLEMENTATION CHECKLIST (5 minutes - saves 60+ minutes):
           - [ ] Read docs/guidelines/e2e-authentication-mandatory.md (CRITICAL - Real auth required, NO mocks)
@@ -119,6 +119,11 @@ sections:
           - [ ] Read existing E2E tests in feature area (e2e/*.spec.ts)
           - [ ] Read component template and SCSS files
           - [ ] Verify API configuration in environment.ts
+
+          MANDATORY BEFORE EXECUTING E2E TESTS:
+          - [ ] **STOP all backend servers** (ports 8080, 8081) to avoid conflicts
+          - [ ] **STOP frontend dev server** (port 4200) - Playwright will start it automatically
+          - [ ] Verify no processes on ports: lsof -ti:4200,8080,8081
 
           CRITICAL: 6 ANTI-PATTERNS TO AVOID:
           1. ❌ Ambiguous Selectors (use scoped selectors with parent class)
@@ -140,8 +145,9 @@ sections:
           🔐 **E2E Authentication Requirements** (docs/guidelines/e2e-authentication-mandatory.md):
           - ⚠️ ALL E2E tests MUST use REAL authentication (NO mocked tokens, NO bypassing login)
           - ⚠️ Use `loginAsOwnerAPI(page)` or `loginAsStudentAPI(page)` from auth-helpers.ts
-          - ⚠️ Test credentials: test.owner@studymate.test / Test@123 (seeded in test database)
-          - ⚠️ Backend test server MUST be running on port 8081 with test database studymate_test
+          - ⚠️ Test credentials: test.owner@studymate.test / Test@123 (seeded in studymate database)
+          - ⚠️ Database: studymate (shared with development - no separate test database)
+          - ⚠️ Backend test server MUST be running on port 8081
           - ⚠️ NO EXCEPTIONS - Mocked authentication = Story REJECTED
 
           🧪 **E2E Test Requirements**:

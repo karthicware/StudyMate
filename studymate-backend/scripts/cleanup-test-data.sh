@@ -30,14 +30,14 @@ if [ ! -f "$TEST_DATA_DIR/cleanup.sql" ]; then
 fi
 
 # Run cleanup
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test \
+PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate \
     -f "$TEST_DATA_DIR/cleanup.sql" > /dev/null 2>&1
 
 echo -e "${GREEN}✓ Test database cleaned up successfully${NC}"
 
 # Verify cleanup
 echo -e "${YELLOW}Verifying data cleanup...${NC}"
-ROW_COUNT=$(PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test \
+ROW_COUNT=$(PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate \
     -t -c "SELECT COUNT(*) FROM users;" 2>/dev/null || echo "-1")
 
 if [ "$ROW_COUNT" -eq 0 ]; then

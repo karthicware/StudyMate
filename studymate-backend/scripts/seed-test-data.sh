@@ -3,7 +3,7 @@
 # ========================================
 # Seed Test Database with Test Data
 # ========================================
-# Seeds the studymate_test database with test users and halls
+# Seeds the studymate database with test users and halls
 # IMPORTANT: This script should run AFTER Flyway migrations complete
 # to ensure the schema exists before inserting test data
 
@@ -32,7 +32,7 @@ fi
 
 # Verify Flyway migrations have run (check for tables)
 echo -e "${YELLOW}Verifying database schema exists (Flyway migrations)...${NC}"
-TABLE_COUNT=$(PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test \
+TABLE_COUNT=$(PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate \
     -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public';" 2>/dev/null || echo "0")
 
 if [ "$TABLE_COUNT" -lt 1 ]; then
@@ -46,23 +46,23 @@ echo -e "${GREEN}✓ Database schema verified ($TABLE_COUNT tables found)${NC}"
 
 # Seed users
 echo -e "${YELLOW}Seeding test users...${NC}"
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test \
+PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate \
     -f "$TEST_DATA_DIR/seed-users.sql" > /dev/null
 
 echo -e "${GREEN}✓ Test users seeded${NC}"
 
 # Seed study halls
 echo -e "${YELLOW}Seeding test study halls...${NC}"
-PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test \
+PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate \
     -f "$TEST_DATA_DIR/seed-halls.sql" > /dev/null
 
 echo -e "${GREEN}✓ Test study halls seeded${NC}"
 
 # Verify seeded data
 echo -e "${YELLOW}Verifying seeded data...${NC}"
-USER_COUNT=$(PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test \
+USER_COUNT=$(PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate \
     -t -c "SELECT COUNT(*) FROM users;")
-HALL_COUNT=$(PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate_test \
+HALL_COUNT=$(PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate \
     -t -c "SELECT COUNT(*) FROM study_halls;")
 
 echo -e "${GREEN}✓ Test data seeded successfully${NC}"

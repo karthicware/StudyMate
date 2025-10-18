@@ -452,7 +452,7 @@ public enum SpaceType {
 **Tasks:**
 1. **Database Migration** (1 SP)
    - Create V{next} migration for amenities field
-   - Run migration on `studymate_test` database
+   - Run migration on `studymate` database
    - Validate schema with PostgreSQL MCP
 
 2. **Backend - Amenities** (4 SP)
@@ -555,7 +555,7 @@ public enum SpaceType {
 
 ### Backend E2E Tests (Real API Integration)
 
-**Database:** `studymate_test`
+**Database:** `studymate`
 **Framework:** RestAssured + JUnit 5
 **Profile:** `application-e2e.yml`
 
@@ -689,7 +689,7 @@ DELETE FROM users WHERE email LIKE '%@test.com';
 | Space type enum extension | Medium | Low | Enum designed for extensibility |
 | Performance impact on filtering | Low | Low | Indexed amenities field (GIN index); indexed space_type |
 | Frontend visual complexity (6 space types) | Medium | Medium | Use icon library; consistent color palette |
-| E2E test flakiness | Medium | Medium | Use `studymate_test` DB; data cleanup between tests |
+| E2E test flakiness | Medium | Medium | Use `studymate` DB; data cleanup between tests |
 
 ---
 

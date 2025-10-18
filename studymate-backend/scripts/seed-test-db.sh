@@ -1,10 +1,10 @@
 #!/bin/bash
 # Seed Test Database Script
-# Seeds the studymate_test database with test users for E2E testing
+# Seeds the studymate database with test users for E2E testing
 
 set -e  # Exit on error
 
-DB_NAME="studymate_test"
+DB_NAME="studymate"
 DB_USER="studymate_user"
 DB_PASSWORD="studymate_user"
 DB_HOST="localhost"

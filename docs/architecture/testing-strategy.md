@@ -412,7 +412,7 @@ Every UI/Full-Stack story MUST include the "E2E Integration Testing Requirements
 
 #### Definition of Done for UI/Full-Stack Stories
 - ✅ E2E integration tests written (validating backend + frontend together)
-- ✅ E2E tests use Story 0.25 test infrastructure (backend test server port 8081, test database `studymate_test`)
+- ✅ E2E tests use Story 0.25 test infrastructure (backend test server port 8081, test database `studymate`)
 - ✅ E2E tests validate API payloads and responses
 - ✅ E2E tests cover critical user workflows from story acceptance criteria
 - ✅ All E2E integration tests passing

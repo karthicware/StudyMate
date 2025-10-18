@@ -19,7 +19,7 @@
 
 ### Test Database Setup
 
-**Database Name**: `studymate_test`
+**Database Name**: `studymate` (shared with development environment)
 **Port**: 5432 (PostgreSQL default)
 **Host**: localhost
 
@@ -27,16 +27,14 @@
 - ✅ Seeded with test users (owner, student)
 - ✅ Running on localhost:5432
 - ✅ Accessible to backend test server
-- ✅ Cleaned and re-seeded between test runs (optional but recommended)
+- ✅ Same database used for both development and E2E testing (no separate test database)
 
 **Setup Commands**:
 ```bash
-# Create test database (if not exists)
-createdb studymate_test
-
+# Database already exists from development setup
 # Seed test users (run backend migration)
 cd studymate-backend
-./mvnw flyway:migrate -Dflyway.url=jdbc:postgresql://localhost:5432/studymate_test
+./mvnw flyway:migrate
 ```
 
 ---
@@ -205,20 +203,22 @@ test.describe('Feature Name', () => {
 ### Test Server Requirements
 
 **Port**: 8081 (NOT 8080 - avoids conflict with dev server)
-**Database**: `studymate_test`
+**Database**: `studymate` (shared with development)
 **Profile**: `test` (Spring profile)
+
+**IMPORTANT**: Before running E2E tests, STOP all running backend and frontend servers to avoid port conflicts.
 
 **Environment Variables**:
 ```bash
 SERVER_PORT=8081
-SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/studymate_test
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/studymate
 SPRING_PROFILES_ACTIVE=test
 ```
 
 **Start Backend Test Server**:
 ```bash
 cd studymate-backend
-./mvnw spring-boot:run -Dspring-boot.run.arguments="--server.port=8081 --spring.datasource.url=jdbc:postgresql://localhost:5432/studymate_test"
+./mvnw spring-boot:run -Dspring-boot.run.arguments="--server.port=8081 --spring.datasource.url=jdbc:postgresql://localhost:5432/studymate"
 ```
 
 **Verify Backend Running**:
@@ -233,11 +233,10 @@ curl http://localhost:8081/api/health
 
 **BEFORE running E2E tests:**
 
+- [ ] **STOP all running backend servers** (dev on port 8080, test on port 8081)
+- [ ] **STOP frontend dev server** (port 4200) - Playwright will start it
 - [ ] PostgreSQL is running (`pg_isready`)
-- [ ] Test database `studymate_test` exists
-- [ ] Test database is seeded with test users
-- [ ] Backend test server running on port 8081
-- [ ] Frontend dev server running on port 4200
+- [ ] Database `studymate` exists and is seeded with test users
 - [ ] Test users can login (verify with curl or Postman)
 
 **Verification Commands**:
@@ -245,16 +244,21 @@ curl http://localhost:8081/api/health
 # 1. Check PostgreSQL
 pg_isready
 
-# 2. Check test database exists
-psql -l | grep studymate_test
+# 2. Check database exists
+psql -l | grep studymate
 
 # 3. Check test users exist
-psql -d studymate_test -c "SELECT email, user_type FROM users WHERE email LIKE '%@studymate.test';"
+psql -d studymate -c "SELECT email, role FROM users WHERE email LIKE '%@studymate.test';"
 
-# 4. Verify backend test server
+# 4. Stop all servers before E2E tests
+lsof -ti:4200 | xargs kill -9  # Stop frontend
+lsof -ti:8080 | xargs kill -9  # Stop dev backend
+lsof -ti:8081 | xargs kill -9  # Stop test backend
+
+# 5. Verify backend test server (after Playwright starts it)
 curl http://localhost:8081/api/health
 
-# 5. Test authentication manually
+# 6. Test authentication manually
 curl -X POST http://localhost:8081/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test.owner@studymate.test","password":"Test@123"}'
@@ -279,12 +283,12 @@ Add this section to **Dev Notes > Testing**:
 **Authentication Method**:
 - Use `loginAsOwnerAPI(page)` for owner tests
 - Use `loginAsStudentAPI(page)` for student tests
-- Real authentication against test database `studymate_test`
+- Real authentication against database `studymate`
 
 **Backend Test Server**:
 - Port: 8081
-- Database: studymate_test (PostgreSQL)
-- Must be running before E2E tests
+- Database: studymate (PostgreSQL - shared with development)
+- Playwright will start it automatically (or start manually before tests)
 
 **Execution Commands**:
 ```bash
@@ -349,7 +353,7 @@ npx playwright test
 1. Verify backend test server is running on port 8081
 2. Verify test user exists in database:
    ```bash
-   psql -d studymate_test -c "SELECT * FROM users WHERE email='test.owner@studymate.test';"
+   psql -d studymate -c "SELECT * FROM users WHERE email='test.owner@studymate.test';"
    ```
 3. Test authentication manually with curl
 4. Check backend logs for errors
