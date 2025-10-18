@@ -1,8 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { SeatMapConfigComponent } from './seat-map-config.component';
 import { SeatConfigService } from '../../../core/services/seat-config.service';
+import { HallAmenitiesService } from '../../../core/services/hall-amenities.service';
 import { of, throwError } from 'rxjs';
 import { Seat, Shift, OpeningHours } from '../../../core/models/seat-config.model';
+import { HallAmenities } from '../../../core/models/hall-amenities.model';
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
@@ -11,6 +13,7 @@ describe('SeatMapConfigComponent', () => {
   let component: SeatMapConfigComponent;
   let fixture: ComponentFixture<SeatMapConfigComponent>;
   let mockSeatConfigService: jasmine.SpyObj<SeatConfigService>;
+  let mockHallAmenitiesService: jasmine.SpyObj<HallAmenitiesService>;
 
   const mockSeats: Seat[] = [
     { id: '1', seatNumber: 'A1', xCoord: 100, yCoord: 150, status: 'available', spaceType: 'Cabin' },
@@ -34,16 +37,23 @@ describe('SeatMapConfigComponent', () => {
       'getDefaultShifts'
     ]);
 
+    const hallAmenitiesServiceSpy = jasmine.createSpyObj('HallAmenitiesService', [
+      'getHallAmenities',
+      'updateHallAmenities'
+    ]);
+
     await TestBed.configureTestingModule({
       imports: [SeatMapConfigComponent],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: SeatConfigService, useValue: seatConfigServiceSpy }
+        { provide: SeatConfigService, useValue: seatConfigServiceSpy },
+        { provide: HallAmenitiesService, useValue: hallAmenitiesServiceSpy }
       ]
     }).compileComponents();
 
     mockSeatConfigService = TestBed.inject(SeatConfigService) as jasmine.SpyObj<SeatConfigService>;
+    mockHallAmenitiesService = TestBed.inject(HallAmenitiesService) as jasmine.SpyObj<HallAmenitiesService>;
     fixture = TestBed.createComponent(SeatMapConfigComponent);
     component = fixture.componentInstance;
   });
@@ -342,12 +352,19 @@ describe('SeatMapConfigComponent', () => {
   });
 
   describe('Hall Selection (AC1)', () => {
+    const mockAmenitiesResponse: HallAmenities = {
+      hallId: '1',
+      hallName: 'Test Hall',
+      amenities: []
+    };
+
     it('should enable editor after hall selection', () => {
       expect(component.editorDisabled()).toBe(true);
 
       mockSeatConfigService.getSeatConfiguration.and.returnValue(of(mockSeats));
       mockSeatConfigService.getShiftConfiguration.and.returnValue(of({} as OpeningHours));
       mockSeatConfigService.getDefaultShifts.and.returnValue(mockShifts);
+      mockHallAmenitiesService.getHallAmenities.and.returnValue(of(mockAmenitiesResponse));
 
       component.onHallSelectionChange('1');
 
@@ -359,6 +376,7 @@ describe('SeatMapConfigComponent', () => {
       mockSeatConfigService.getSeatConfiguration.and.returnValue(of(mockSeats));
       mockSeatConfigService.getShiftConfiguration.and.returnValue(of({} as OpeningHours));
       mockSeatConfigService.getDefaultShifts.and.returnValue(mockShifts);
+      mockHallAmenitiesService.getHallAmenities.and.returnValue(of(mockAmenitiesResponse));
 
       component.onHallSelectionChange('1');
 
@@ -374,6 +392,7 @@ describe('SeatMapConfigComponent', () => {
       mockSeatConfigService.getSeatConfiguration.and.returnValue(of([]));
       mockSeatConfigService.getShiftConfiguration.and.returnValue(of({} as OpeningHours));
       mockSeatConfigService.getDefaultShifts.and.returnValue([]);
+      mockHallAmenitiesService.getHallAmenities.and.returnValue(of({ ...mockAmenitiesResponse, hallId: '2' }));
 
       component.onHallSelectionChange('2');
 
@@ -494,5 +513,177 @@ describe('SeatMapConfigComponent', () => {
 
       expect(mockSeatConfigService.getSeatConfiguration).toHaveBeenCalledWith('1');
     });
+  });
+
+  describe('Hall Amenities Configuration (Story 1.22)', () => {
+    const mockAmenities: HallAmenities = {
+      hallId: 'test-hall-1',
+      hallName: 'Test Hall',
+      amenities: ['AC', 'WiFi']
+    };
+
+    beforeEach(() => {
+      component.ngOnInit(); // Initialize component including amenities form
+      component.selectedHallId.set('test-hall-1');
+    });
+
+    it('should initialize amenities form on component init', () => {
+      expect(component.amenitiesForm).toBeDefined();
+      expect(component.amenitiesForm.get('amenityAC')).toBeDefined();
+      expect(component.amenitiesForm.get('amenityWiFi')).toBeDefined();
+    });
+
+    it('should load amenities when hall is selected', () => {
+      mockHallAmenitiesService.getHallAmenities.and.returnValue(of(mockAmenities));
+      mockSeatConfigService.getSeatConfiguration.and.returnValue(of([]));
+      mockSeatConfigService.getShiftConfiguration.and.returnValue(of({} as OpeningHours));
+      mockSeatConfigService.getDefaultShifts.and.returnValue([]);
+
+      component.onHallSelectionChange('test-hall-1');
+
+      expect(mockHallAmenitiesService.getHallAmenities).toHaveBeenCalledWith('test-hall-1');
+    });
+
+    it('should populate form with amenities from API response', fakeAsync(() => {
+      mockHallAmenitiesService.getHallAmenities.and.returnValue(of(mockAmenities));
+
+      component['loadAmenities']('test-hall-1');
+      tick();
+
+      expect(component.amenitiesForm.value.amenityAC).toBe(true);
+      expect(component.amenitiesForm.value.amenityWiFi).toBe(true);
+      expect(component.amenitiesLoading()).toBe(false);
+    }));
+
+    it('should handle amenities load with only AC', fakeAsync(() => {
+      const onlyAC: HallAmenities = {
+        hallId: 'test-hall-1',
+        hallName: 'Test Hall',
+        amenities: ['AC']
+      };
+      mockHallAmenitiesService.getHallAmenities.and.returnValue(of(onlyAC));
+
+      component['loadAmenities']('test-hall-1');
+      tick();
+
+      expect(component.amenitiesForm.value.amenityAC).toBe(true);
+      expect(component.amenitiesForm.value.amenityWiFi).toBe(false);
+    }));
+
+    it('should handle amenities load error gracefully', fakeAsync(() => {
+      mockHallAmenitiesService.getHallAmenities.and.returnValue(
+        throwError(() => new Error('Load failed'))
+      );
+
+      component['loadAmenities']('test-hall-1');
+      tick();
+
+      expect(component.amenitiesLoading()).toBe(false);
+      // Form should remain with default values
+      expect(component.amenitiesForm.value.amenityAC).toBe(false);
+      expect(component.amenitiesForm.value.amenityWiFi).toBe(false);
+    }));
+
+    it('should trigger auto-save on checkbox change after debounce', fakeAsync(() => {
+      mockHallAmenitiesService.updateHallAmenities.and.returnValue(of(mockAmenities));
+
+      component.amenitiesForm.patchValue({ amenityAC: true });
+      tick(500); // Debounce time
+
+      expect(mockHallAmenitiesService.updateHallAmenities).toHaveBeenCalledWith(
+        'test-hall-1',
+        ['AC']
+      );
+    }));
+
+    it('should not trigger auto-save before debounce time', fakeAsync(() => {
+      mockHallAmenitiesService.updateHallAmenities.and.returnValue(of(mockAmenities));
+
+      component.amenitiesForm.patchValue({ amenityAC: true });
+      tick(300); // Less than debounce time
+
+      expect(mockHallAmenitiesService.updateHallAmenities).not.toHaveBeenCalled();
+    }));
+
+    it('should save both amenities when both checkboxes checked', fakeAsync(() => {
+      mockHallAmenitiesService.updateHallAmenities.and.returnValue(of(mockAmenities));
+
+      component.amenitiesForm.patchValue({ amenityAC: true, amenityWiFi: true });
+      tick(500);
+
+      expect(mockHallAmenitiesService.updateHallAmenities).toHaveBeenCalledWith(
+        'test-hall-1',
+        ['AC', 'WiFi']
+      );
+    }));
+
+    it('should save empty array when all checkboxes unchecked', fakeAsync(() => {
+      const emptyAmenities: HallAmenities = { ...mockAmenities, amenities: [] };
+      mockHallAmenitiesService.updateHallAmenities.and.returnValue(of(emptyAmenities));
+
+      component.amenitiesForm.patchValue({ amenityAC: false, amenityWiFi: false });
+      tick(500);
+
+      expect(mockHallAmenitiesService.updateHallAmenities).toHaveBeenCalledWith(
+        'test-hall-1',
+        []
+      );
+    }));
+
+    it('should show saving indicator during save', fakeAsync(() => {
+      mockHallAmenitiesService.updateHallAmenities.and.returnValue(of(mockAmenities));
+
+      component['saveAmenities']();
+
+      expect(component.amenitiesSaving()).toBe(true);
+
+      tick();
+
+      expect(component.amenitiesSaving()).toBe(false);
+    }));
+
+    it('should show success indicator after successful save', fakeAsync(() => {
+      mockHallAmenitiesService.updateHallAmenities.and.returnValue(of(mockAmenities));
+
+      component['saveAmenities']();
+      tick();
+
+      expect(component.amenitiesSaveSuccess()).toBe(true);
+
+      tick(2000); // Success indicator timeout
+
+      expect(component.amenitiesSaveSuccess()).toBe(false);
+    }));
+
+    it('should handle save error and display error message', fakeAsync(() => {
+      mockHallAmenitiesService.updateHallAmenities.and.returnValue(
+        throwError(() => new Error('Save failed'))
+      );
+
+      component['saveAmenities']();
+      tick();
+
+      expect(component.amenitiesSaving()).toBe(false);
+      expect(component.errorMessage()).toBe('Failed to save hall amenities');
+    }));
+
+    it('should not save amenities when no hall is selected', () => {
+      component.selectedHallId.set(null);
+
+      component['saveAmenities']();
+
+      expect(mockHallAmenitiesService.updateHallAmenities).not.toHaveBeenCalled();
+    });
+
+    it('should not trigger auto-save on initial form load (emitEvent: false)', fakeAsync(() => {
+      mockHallAmenitiesService.getHallAmenities.and.returnValue(of(mockAmenities));
+      mockHallAmenitiesService.updateHallAmenities.and.returnValue(of(mockAmenities));
+
+      component['loadAmenities']('test-hall-1');
+      tick(1000); // Wait longer than debounce
+
+      // Should not call update because emitEvent: false on load
+      expect(mockHallAmenitiesService.updateHallAmenities).not.toHaveBeenCalled();
+    }));
   });
 });

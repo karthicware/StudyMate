@@ -14,6 +14,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -49,6 +50,10 @@ public class StudyHall {
     @Type(JsonBinaryType.class)
     @Column(name = "opening_hours", columnDefinition = "jsonb")
     private Map<String, DayHoursDTO> openingHours;
+
+    @Type(JsonBinaryType.class)
+    @Column(name = "amenities", columnDefinition = "jsonb")
+    private List<String> amenities;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

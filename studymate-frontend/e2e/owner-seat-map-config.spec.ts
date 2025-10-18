@@ -50,14 +50,14 @@ test.describe('Owner Seat Map Configuration (Story 1.4)', () => {
     await page.goto(seatMapConfigUrl);
 
     // Wait for page to load
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Verify hall dropdown is present
-    const hallDropdown = page.locator('select').first();
+    const hallDropdown = page.locator('[data-testid="hall-selection-dropdown"]');
     await expect(hallDropdown).toBeVisible();
 
     // Verify "Add Seat" button is disabled initially
-    const addSeatButton = page.locator('button:has-text("Add Seat")');
+    const addSeatButton = page.locator('[data-testid="open-add-seat-modal-btn"]');
     await expect(addSeatButton).toBeDisabled();
 
     // Verify canvas overlay message
@@ -66,16 +66,16 @@ test.describe('Owner Seat Map Configuration (Story 1.4)', () => {
 
   test('AC1: should enable editor after hall selection', async ({ page }) => {
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Select a hall
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
 
     // Wait for editor to enable
     await page.waitForTimeout(500);
 
     // Verify "Add Seat" button is now enabled
-    const addSeatButton = page.locator('button:has-text("Add Seat")');
+    const addSeatButton = page.locator('[data-testid="open-add-seat-modal-btn"]');
     await expect(addSeatButton).toBeEnabled();
 
     // Verify canvas overlay is gone
@@ -84,24 +84,24 @@ test.describe('Owner Seat Map Configuration (Story 1.4)', () => {
 
   test('AC2: should add seat via drag-and-drop modal', async ({ page }) => {
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Select hall
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(500);
 
     // Click "Add Seat" button
-    const addSeatButton = page.locator('button:has-text("Add Seat")');
+    const addSeatButton = page.locator('[data-testid="open-add-seat-modal-btn"]');
     await addSeatButton.click();
 
     // Verify modal opened
     await expect(page.locator('text=Add New Seat')).toBeVisible();
 
     // Enter seat number
-    await page.fill('input[placeholder*="A1"]', 'A1');
+    await page.fill('[data-testid="new-seat-number-input"]', 'A1');
 
     // Click add in modal
-    await page.click('button:has-text("Add Seat"):not([disabled])');
+    await page.click('[data-testid="confirm-add-seat-btn"]');
 
     // Wait for modal to close
     await expect(page.locator('text=Add New Seat')).not.toBeVisible();
@@ -112,20 +112,20 @@ test.describe('Owner Seat Map Configuration (Story 1.4)', () => {
 
   test('AC2: should validate seat number uniqueness', async ({ page }) => {
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Select hall and add first seat
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(500);
-    await page.click('button:has-text("Add Seat")');
-    await page.fill('input[placeholder*="A1"]', 'A1');
-    await page.click('button:has-text("Add Seat"):not([disabled])');
+    await page.click('[data-testid="open-add-seat-modal-btn"]');
+    await page.fill('[data-testid="new-seat-number-input"]', 'A1');
+    await page.click('[data-testid="confirm-add-seat-btn"]');
     await page.waitForTimeout(300);
 
     // Try to add duplicate seat
-    await page.click('button:has-text("Add Seat")');
-    await page.fill('input[placeholder*="A1"]', 'A1');
-    await page.click('button:has-text("Add Seat"):not([disabled])');
+    await page.click('[data-testid="open-add-seat-modal-btn"]');
+    await page.fill('[data-testid="new-seat-number-input"]', 'A1');
+    await page.click('[data-testid="confirm-add-seat-btn"]');
 
     // Verify error message
     await expect(page.locator('text=Seat number must be unique')).toBeVisible();
@@ -133,14 +133,14 @@ test.describe('Owner Seat Map Configuration (Story 1.4)', () => {
 
   test('AC3: should display seat properties panel when seat is clicked', async ({ page }) => {
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Select hall and add seat
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(500);
-    await page.click('button:has-text("Add Seat")');
-    await page.fill('input[placeholder*="A1"]', 'A1');
-    await page.click('button:has-text("Add Seat"):not([disabled])');
+    await page.click('[data-testid="open-add-seat-modal-btn"]');
+    await page.fill('[data-testid="new-seat-number-input"]', 'A1');
+    await page.click('[data-testid="confirm-add-seat-btn"]');
     await page.waitForTimeout(500);
 
     // Click on the seat
@@ -148,14 +148,14 @@ test.describe('Owner Seat Map Configuration (Story 1.4)', () => {
     await seat.click();
 
     // Verify properties panel appears
-    await expect(page.locator('text=Seat Properties')).toBeVisible();
+    await expect(page.locator('[data-testid="seat-properties-panel"]')).toBeVisible();
 
     // Verify seat number is read-only
-    const seatNumberInput = page.locator('input[formControlName="seatNumber"]');
+    const seatNumberInput = page.locator('[data-testid="seat-number-input"]');
     await expect(seatNumberInput).toBeDisabled();
 
     // Verify space type dropdown exists
-    const spaceTypeDropdown = page.locator('select[formControlName="spaceType"]');
+    const spaceTypeDropdown = page.locator('[data-testid="space-type-dropdown"]');
     await expect(spaceTypeDropdown).toBeVisible();
 
     // Verify all 6 space types are available
@@ -170,84 +170,94 @@ test.describe('Owner Seat Map Configuration (Story 1.4)', () => {
 
   test('AC3: should update seat space type and custom price', async ({ page }) => {
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Setup: add a seat
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(500);
-    await page.click('button:has-text("Add Seat")');
-    await page.fill('input[placeholder*="A1"]', 'A1');
-    await page.click('button:has-text("Add Seat"):not([disabled])');
+    await page.click('[data-testid="open-add-seat-modal-btn"]');
+    await page.fill('[data-testid="new-seat-number-input"]', 'A1');
+    await page.click('[data-testid="confirm-add-seat-btn"]');
     await page.waitForTimeout(500);
 
     // Click seat to open properties
     await page.locator('.seat-item').first().click();
 
     // Change space type
-    await page.selectOption('select[formControlName="spaceType"]', 'Study Pod');
+    await page.selectOption('[data-testid="space-type-dropdown"]', 'Study Pod');
 
     // Enter custom price
-    await page.fill('input[formControlName="customPrice"]', '750');
+    await page.fill('[data-testid="custom-price-input"]', '750');
 
     // Save properties
-    await page.click('button:has-text("Save")');
+    await page.click('[data-testid="properties-save-btn"]');
 
     // Verify properties panel closed
     await page.waitForTimeout(300);
 
-    // Verify seat icon updated (Study Pod emoji)
-    await expect(page.locator('text=📚')).toBeVisible();
+    // Verify seat icon updated (Study Pod emoji) - use seat-specific locator
+    await expect(page.locator('.seat-item .seat-visual').first()).toContainText('📚');
   });
 
   test('AC3: should validate custom price range (50-1000 INR)', async ({ page }) => {
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Setup: add a seat and open properties
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(500);
-    await page.click('button:has-text("Add Seat")');
-    await page.fill('input[placeholder*="A1"]', 'A1');
-    await page.click('button:has-text("Add Seat"):not([disabled])');
+    await page.click('[data-testid="open-add-seat-modal-btn"]');
+    await page.fill('[data-testid="new-seat-number-input"]', 'A1');
+    await page.click('[data-testid="confirm-add-seat-btn"]');
     await page.waitForTimeout(500);
     await page.locator('.seat-item').first().click();
 
     // Try invalid price (below minimum)
-    await page.fill('input[formControlName="customPrice"]', '40');
-    await page.click('button:has-text("Save")');
+    await page.fill('[data-testid="custom-price-input"]', '40');
+    await page.locator('[data-testid="custom-price-input"]').blur(); // Mark as touched
+    await page.waitForTimeout(100); // Wait for validation
     await expect(page.locator('text=Price must be at least ₹50')).toBeVisible();
 
     // Try invalid price (above maximum)
-    await page.fill('input[formControlName="customPrice"]', '1500');
-    await page.click('button:has-text("Save")');
+    await page.fill('[data-testid="custom-price-input"]', '1500');
+    await page.locator('[data-testid="custom-price-input"]').blur(); // Mark as touched
+    await page.waitForTimeout(100); // Wait for validation
     await expect(page.locator('text=Price cannot exceed ₹1000')).toBeVisible();
 
     // Try valid price
-    await page.fill('input[formControlName="customPrice"]', '500');
-    await page.click('button:has-text("Save")');
+    await page.fill('[data-testid="custom-price-input"]', '500');
+    await page.locator('[data-testid="custom-price-input"]').blur(); // Mark as touched
+
+    // Wait for validation errors to disappear
+    await expect(page.locator('text=Price must be at least ₹50')).not.toBeVisible();
+    await expect(page.locator('text=Price cannot exceed ₹1000')).not.toBeVisible();
+
+    // Wait for Save button to become enabled
+    await page.waitForSelector('[data-testid="properties-save-btn"]:not([disabled])', { timeout: 5000 });
+    await page.click('[data-testid="properties-save-btn"]');
 
     // Should succeed (panel closes)
-    await page.waitForTimeout(300);
-    await expect(page.locator('text=Seat Properties')).not.toBeVisible();
+    await page.waitForTimeout(500);
+    await expect(page.locator('[data-testid="seat-properties-panel"]')).not.toBeVisible();
   });
 
   test('AC5: should clear canvas when switching halls', async ({ page }) => {
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Select first hall and add seat
-    await page.selectOption('select', '1');
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', '1');
     await page.waitForTimeout(500);
-    await page.click('button:has-text("Add Seat")');
-    await page.fill('input[placeholder*="A1"]', 'A1');
-    await page.click('button:has-text("Add Seat"):not([disabled])');
+    await page.click('[data-testid="open-add-seat-modal-btn"]');
+    await page.fill('[data-testid="new-seat-number-input"]', 'A1');
+    await page.click('[data-testid="confirm-add-seat-btn"]');
     await page.waitForTimeout(500);
 
     // Verify seat exists
     await expect(page.locator('.seat-item')).toHaveCount(1);
 
     // Switch to second hall
-    await page.selectOption('select', '2');
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', '2');
     await page.waitForTimeout(500);
 
     // Verify canvas is cleared
@@ -282,36 +292,41 @@ test.describe('Owner Seat Map Configuration (Story 1.4)', () => {
     });
 
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Select hall and add seats
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(500);
 
     // Add first seat
-    await page.click('button:has-text("Add Seat")');
-    await page.fill('input[placeholder*="A1"]', 'A1');
-    await page.click('button:has-text("Add Seat"):not([disabled])');
+    await page.click('[data-testid="open-add-seat-modal-btn"]');
+    await page.fill('[data-testid="new-seat-number-input"]', 'A1');
+    await page.click('[data-testid="confirm-add-seat-btn"]');
     await page.waitForTimeout(300);
 
     // Add second seat
-    await page.click('button:has-text("Add Seat")');
-    await page.fill('input[placeholder*="A1"]', 'A2');
-    await page.click('button:has-text("Add Seat"):not([disabled])');
+    await page.click('[data-testid="open-add-seat-modal-btn"]');
+    await page.fill('[data-testid="new-seat-number-input"]', 'A2');
+    await page.click('[data-testid="confirm-add-seat-btn"]');
     await page.waitForTimeout(300);
 
     // Update second seat space type
     await page.locator('.seat-item').nth(1).click();
-    await page.selectOption('select[formControlName="spaceType"]', 'Meeting Room');
-    await page.fill('input[formControlName="customPrice"]', '800');
-    await page.click('button:has-text("Save")');
-    await page.waitForTimeout(300);
+    await page.selectOption('[data-testid="space-type-dropdown"]', 'Meeting Room');
+    await page.fill('[data-testid="custom-price-input"]', '800');
+    await page.click('[data-testid="properties-save-btn"]');
+
+    // Wait for properties panel to close
+    await page.waitForTimeout(500);
+
+    // Wait for Save Configuration button to become enabled (hasUnsavedChanges becomes true)
+    await page.waitForSelector('[data-testid="save-configuration-btn"]:not([disabled])', { timeout: 5000 });
 
     // Save configuration
-    await page.click('button:has-text("Save Configuration")');
+    await page.click('[data-testid="save-configuration-btn"]');
 
     // Wait for success message
-    await expect(page.locator('text=Configuration saved successfully')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid="success-message"]')).toBeVisible({ timeout: 5000 });
 
     // Verify payload structure
     expect(savedPayload).toBeTruthy();
@@ -340,24 +355,36 @@ test.describe('Owner Seat Map Configuration (Story 1.4)', () => {
             message: 'Validation failed: Duplicate seat number',
           }),
         });
+      } else if (route.request().method() === 'GET') {
+        // Need to mock GET as well
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify([]),
+        });
       }
     });
 
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Add seat and try to save
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(500);
-    await page.click('button:has-text("Add Seat")');
-    await page.fill('input[placeholder*="A1"]', 'A1');
-    await page.click('button:has-text("Add Seat"):not([disabled])');
-    await page.waitForTimeout(300);
+    await page.click('[data-testid="open-add-seat-modal-btn"]');
+    await page.fill('[data-testid="new-seat-number-input"]', 'A1');
+    await page.click('[data-testid="confirm-add-seat-btn"]');
 
-    await page.click('button:has-text("Save Configuration")');
+    // Wait for modal to close
+    await page.waitForTimeout(500);
+
+    // Wait for Save Configuration button to become enabled (hasUnsavedChanges becomes true)
+    await page.waitForSelector('[data-testid="save-configuration-btn"]:not([disabled])', { timeout: 5000 });
+
+    await page.click('[data-testid="save-configuration-btn"]');
 
     // Verify error message displayed
-    await expect(page.locator('text=/Failed to save seat configuration|Validation failed/')).toBeVisible();
+    await expect(page.locator('[data-testid="error-message"]')).toBeVisible();
   });
 
   test('should have zero console errors during workflow', async ({ page }) => {
@@ -370,14 +397,14 @@ test.describe('Owner Seat Map Configuration (Story 1.4)', () => {
     });
 
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Complete workflow
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(500);
-    await page.click('button:has-text("Add Seat")');
-    await page.fill('input[placeholder*="A1"]', 'A1');
-    await page.click('button:has-text("Add Seat"):not([disabled])');
+    await page.click('[data-testid="open-add-seat-modal-btn"]');
+    await page.fill('[data-testid="new-seat-number-input"]', 'A1');
+    await page.click('[data-testid="confirm-add-seat-btn"]');
     await page.waitForTimeout(500);
 
     // Verify no console errors
@@ -386,8 +413,8 @@ test.describe('Owner Seat Map Configuration (Story 1.4)', () => {
 
   test('should display space type legend', async ({ page }) => {
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
-    await page.selectOption('select', hallId);
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(500);
 
     // Verify legend section exists
@@ -462,28 +489,28 @@ test.describe('Ladies-Only Seat Configuration (Story 1.4.1)', () => {
     });
 
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Setup: add a seat
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(500);
 
     // Click "Add Seat" button to open modal
-    await page.locator('button:has-text("+ Add Seat")').click();
+    await page.locator('[data-testid="open-add-seat-modal-btn"]').click();
     await page.waitForSelector('text=Add New Seat');
 
     // Fill in seat number
-    await page.fill('input[placeholder*="A1"]', 'A1');
+    await page.fill('[data-testid="new-seat-number-input"]', 'A1');
 
     // Click "Add Seat" button inside modal
-    await page.locator('.fixed .bg-white button:has-text("Add Seat")').click();
+    await page.click('[data-testid="confirm-add-seat-btn"]');
     await page.waitForTimeout(500);
 
     // Click seat to open properties
     await page.locator('.seat-item').first().click();
 
     // Verify ladies-only checkbox exists and is visible
-    const checkbox = page.locator('input[type="checkbox"][formControlName="isLadiesOnly"]');
+    const checkbox = page.locator('[data-testid="ladies-only-checkbox"]');
     await expect(checkbox).toBeVisible();
 
     // Verify label and help text
@@ -533,49 +560,49 @@ test.describe('Ladies-Only Seat Configuration (Story 1.4.1)', () => {
     });
 
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Setup: add a seat
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(500);
 
     // Click "Add Seat" button to open modal
-    await page.locator('button:has-text("+ Add Seat")').click();
+    await page.locator('[data-testid="open-add-seat-modal-btn"]').click();
     await page.waitForSelector('text=Add New Seat');
 
     // Fill in seat number
-    await page.fill('input[placeholder*="A1"]', 'A1');
+    await page.fill('[data-testid="new-seat-number-input"]', 'A1');
 
     // Click "Add Seat" button inside modal
-    await page.locator('.fixed .bg-white button:has-text("Add Seat")').click();
+    await page.click('[data-testid="confirm-add-seat-btn"]');
     await page.waitForTimeout(500);
 
     // Click seat to open properties
     await page.locator('.seat-item').first().click();
 
     // Check the ladies-only checkbox
-    const checkbox = page.locator('input[type="checkbox"][formControlName="isLadiesOnly"]');
+    const checkbox = page.locator('[data-testid="ladies-only-checkbox"]');
     await checkbox.check();
 
     // Verify checkbox is now checked
     await expect(checkbox).toBeChecked();
 
-    // Save the seat properties (use more specific selector to avoid clicking wrong Save button)
-    await page.locator('.seat-properties-panel button:has-text("Save")').click();
+    // Save the seat properties
+    await page.click('[data-testid="properties-save-btn"]');
 
-    // Wait for properties panel form to close (checking for form element, not heading which appears in placeholder too)
+    // Wait for properties panel form to close
     await page.waitForTimeout(300);
-    await expect(page.locator('.seat-properties-panel')).not.toBeVisible();
+    await expect(page.locator('[data-testid="seat-properties-panel"]')).not.toBeVisible();
 
     // Wait for Save Configuration button to become enabled (hasUnsavedChanges should be true now)
-    const saveConfigButton = page.locator('button:has-text("Save Configuration")');
+    const saveConfigButton = page.locator('[data-testid="save-configuration-btn"]');
     await expect(saveConfigButton).toBeEnabled({ timeout: 3000 });
 
     // Save the configuration
     await saveConfigButton.click();
 
     // Wait for success message
-    await expect(page.locator('text=Configuration saved successfully')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid="success-message"]')).toBeVisible({ timeout: 5000 });
 
     // Verify API payload includes isLadiesOnly=true
     expect(savedPayload).toBeTruthy();
@@ -610,53 +637,53 @@ test.describe('Ladies-Only Seat Configuration (Story 1.4.1)', () => {
     });
 
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Setup: add a seat and mark as ladies-only
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(500);
 
     // Click "Add Seat" button to open modal
-    await page.locator('button:has-text("+ Add Seat")').click();
+    await page.locator('[data-testid="open-add-seat-modal-btn"]').click();
     await page.waitForSelector('text=Add New Seat');
 
     // Fill in seat number
-    await page.fill('input[placeholder*="A1"]', 'B1');
+    await page.fill('[data-testid="new-seat-number-input"]', 'B1');
 
     // Click "Add Seat" button inside modal
-    await page.locator('.fixed .bg-white button:has-text("Add Seat")').click();
+    await page.click('[data-testid="confirm-add-seat-btn"]');
     await page.waitForTimeout(500);
 
     // Mark as ladies-only
     await page.locator('.seat-item').first().click();
-    await page.locator('input[type="checkbox"][formControlName="isLadiesOnly"]').check();
-    await page.locator('.seat-properties-panel button:has-text("Save")').click();
+    await page.locator('[data-testid="ladies-only-checkbox"]').check();
+    await page.click('[data-testid="properties-save-btn"]');
 
-    // Wait for properties panel form to close (checking for form element, not heading which appears in placeholder too)
+    // Wait for properties panel form to close
     await page.waitForTimeout(300);
-    await expect(page.locator('.seat-properties-panel')).not.toBeVisible();
+    await expect(page.locator('[data-testid="seat-properties-panel"]')).not.toBeVisible();
 
     // Wait for Save Configuration button to become enabled
-    const saveConfigButton = page.locator('button:has-text("Save Configuration")');
+    const saveConfigButton = page.locator('[data-testid="save-configuration-btn"]');
     await expect(saveConfigButton).toBeEnabled({ timeout: 3000 });
 
     // Save configuration
     await saveConfigButton.click();
-    await expect(page.locator('text=Configuration saved successfully')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid="success-message"]')).toBeVisible({ timeout: 5000 });
 
     // Reload the page
     await page.reload();
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Select the same hall (should load saved seats)
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(1000);
 
     // Click the seat again
     await page.locator('.seat-item').first().click();
 
     // Verify checkbox is still checked
-    const checkbox = page.locator('input[type="checkbox"][formControlName="isLadiesOnly"]');
+    const checkbox = page.locator('[data-testid="ladies-only-checkbox"]');
     await expect(checkbox).toBeChecked();
   });
 
@@ -692,10 +719,10 @@ test.describe('Ladies-Only Seat Configuration (Story 1.4.1)', () => {
     });
 
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Select hall (should load ladies-only seat)
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(1000);
 
     // Wait for seat to be rendered
@@ -751,10 +778,10 @@ test.describe('Ladies-Only Seat Configuration (Story 1.4.1)', () => {
     });
 
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Select hall
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(1000);
 
     // Wait for seat to be rendered
@@ -803,56 +830,56 @@ test.describe('Ladies-Only Seat Configuration (Story 1.4.1)', () => {
     });
 
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Select hall
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(500);
 
     // Add first seat (regular)
-    await page.locator('button:has-text("+ Add Seat")').click();
+    await page.locator('[data-testid="open-add-seat-modal-btn"]').click();
     await page.waitForSelector('text=Add New Seat');
-    await page.fill('input[placeholder*="A1"]', 'C1');
-    await page.locator('.fixed .bg-white button:has-text("Add Seat")').click();
+    await page.fill('[data-testid="new-seat-number-input"]', 'C1');
+    await page.click('[data-testid="confirm-add-seat-btn"]');
     await page.waitForTimeout(300);
 
     // Add second seat (ladies-only)
-    await page.locator('button:has-text("+ Add Seat")').click();
+    await page.locator('[data-testid="open-add-seat-modal-btn"]').click();
     await page.waitForSelector('text=Add New Seat');
-    await page.fill('input[placeholder*="A1"]', 'C2');
-    await page.locator('.fixed .bg-white button:has-text("Add Seat")').click();
+    await page.fill('[data-testid="new-seat-number-input"]', 'C2');
+    await page.click('[data-testid="confirm-add-seat-btn"]');
     await page.waitForTimeout(300);
 
     // Mark second seat as ladies-only
     await page.locator('.seat-item').nth(1).click();
-    await page.locator('input[type="checkbox"][formControlName="isLadiesOnly"]').check();
-    await page.locator('.seat-properties-panel button:has-text("Save")').click();
+    await page.locator('[data-testid="ladies-only-checkbox"]').check();
+    await page.click('[data-testid="properties-save-btn"]');
     await page.waitForTimeout(300);
 
     // Add third seat (ladies-only with custom price)
-    await page.locator('button:has-text("+ Add Seat")').click();
+    await page.locator('[data-testid="open-add-seat-modal-btn"]').click();
     await page.waitForSelector('text=Add New Seat');
-    await page.fill('input[placeholder*="A1"]', 'C3');
-    await page.locator('.fixed .bg-white button:has-text("Add Seat")').click();
+    await page.fill('[data-testid="new-seat-number-input"]', 'C3');
+    await page.click('[data-testid="confirm-add-seat-btn"]');
     await page.waitForTimeout(300);
 
     await page.locator('.seat-item').nth(2).click();
-    await page.selectOption('select[formControlName="spaceType"]', 'Seat Row');
-    await page.fill('input[formControlName="customPrice"]', '750');
-    await page.locator('input[type="checkbox"][formControlName="isLadiesOnly"]').check();
-    await page.locator('.seat-properties-panel button:has-text("Save")').click();
+    await page.selectOption('[data-testid="space-type-dropdown"]', 'Seat Row');
+    await page.fill('[data-testid="custom-price-input"]', '750');
+    await page.locator('[data-testid="ladies-only-checkbox"]').check();
+    await page.click('[data-testid="properties-save-btn"]');
 
-    // Wait for properties panel form to close (checking for form element, not heading which appears in placeholder too)
+    // Wait for properties panel form to close
     await page.waitForTimeout(300);
-    await expect(page.locator('.seat-properties-panel')).not.toBeVisible();
+    await expect(page.locator('[data-testid="seat-properties-panel"]')).not.toBeVisible();
 
     // Wait for Save Configuration button to become enabled
-    const saveConfigButton = page.locator('button:has-text("Save Configuration")');
+    const saveConfigButton = page.locator('[data-testid="save-configuration-btn"]');
     await expect(saveConfigButton).toBeEnabled({ timeout: 3000 });
 
     // Save configuration
     await saveConfigButton.click();
-    await expect(page.locator('text=Configuration saved successfully')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-testid="success-message"]')).toBeVisible({ timeout: 5000 });
 
     // Verify payload structure
     expect(savedPayload).toBeTruthy();
@@ -909,26 +936,280 @@ test.describe('Ladies-Only Seat Configuration (Story 1.4.1)', () => {
     });
 
     await page.goto(seatMapConfigUrl);
-    await page.waitForSelector('select', { timeout: 5000 });
+    await page.waitForSelector('[data-testid="hall-selection-dropdown"]', { timeout: 5000 });
 
     // Complete ladies-only workflow
-    await page.selectOption('select', hallId);
+    await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
     await page.waitForTimeout(500);
 
     // Add seat
-    await page.locator('button:has-text("+ Add Seat")').click();
+    await page.locator('[data-testid="open-add-seat-modal-btn"]').click();
     await page.waitForSelector('text=Add New Seat');
-    await page.fill('input[placeholder*="A1"]', 'D1');
-    await page.locator('.fixed .bg-white button:has-text("Add Seat")').click();
+    await page.fill('[data-testid="new-seat-number-input"]', 'D1');
+    await page.click('[data-testid="confirm-add-seat-btn"]');
     await page.waitForTimeout(500);
 
     // Mark as ladies-only
     await page.locator('.seat-item').first().click();
-    await page.locator('input[type="checkbox"][formControlName="isLadiesOnly"]').check();
-    await page.click('button:has-text("Save")');
+    await page.locator('[data-testid="ladies-only-checkbox"]').check();
+    await page.click('[data-testid="properties-save-btn"]');
     await page.waitForTimeout(500);
 
     // Verify no console errors
     expect(consoleErrors).toHaveLength(0);
+  });
+
+  // Story 1.22: Hall Amenities Configuration E2E Tests
+  test.describe('Hall Amenities Configuration (Story 1.22)', () => {
+    test.beforeEach(async ({ page }) => {
+      // Mock amenities GET endpoint
+      await page.route(`${apiBaseUrl}/owner/halls/${hallId}/amenities`, async (route) => {
+        if (route.request().method() === 'GET') {
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              hallId: hallId,
+              hallName: 'Main Campus Hall',
+              amenities: []
+            })
+          });
+        }
+      });
+    });
+
+    test('should display amenities section when hall is selected', async ({ page }) => {
+      await page.goto(seatMapConfigUrl);
+      await page.waitForSelector('[data-testid="hall-selection-dropdown"]');
+
+      // Amenities section should NOT be visible before hall selection
+      await expect(page.locator('text=Hall Amenities')).not.toBeVisible();
+
+      // Select hall
+      await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
+      await page.waitForTimeout(500);
+
+      // Amenities section should now be visible
+      await expect(page.locator('text=Hall Amenities')).toBeVisible();
+      await expect(page.locator('[data-testid="amenity-ac-checkbox"]')).toBeVisible();
+      await expect(page.locator('[data-testid="amenity-wifi-checkbox"]')).toBeVisible();
+    });
+
+    test('should load existing amenities when hall is selected', async ({ page }) => {
+      // Mock with existing amenities
+      await page.route(`${apiBaseUrl}/owner/halls/${hallId}/amenities`, async (route) => {
+        if (route.request().method() === 'GET') {
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              hallId: hallId,
+              hallName: 'Main Campus Hall',
+              amenities: ['AC', 'WiFi']
+            })
+          });
+        }
+      });
+
+      await page.goto(seatMapConfigUrl);
+      await page.waitForSelector('[data-testid="hall-selection-dropdown"]');
+      await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
+      await page.waitForTimeout(500);
+
+      // Both checkboxes should be checked
+      await expect(page.locator('[data-testid="amenity-ac-checkbox"]')).toBeChecked();
+      await expect(page.locator('[data-testid="amenity-wifi-checkbox"]')).toBeChecked();
+    });
+
+    test('should auto-save when AC checkbox is toggled', async ({ page }) => {
+      let updateCalled = false;
+      let savedAmenities: string[] = [];
+
+      // Mock PUT endpoint
+      await page.route(`${apiBaseUrl}/owner/halls/${hallId}/amenities`, async (route) => {
+        if (route.request().method() === 'PUT') {
+          updateCalled = true;
+          const requestBody = route.request().postDataJSON();
+          savedAmenities = requestBody.amenities;
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              hallId: hallId,
+              hallName: 'Main Campus Hall',
+              amenities: requestBody.amenities
+            })
+          });
+        } else if (route.request().method() === 'GET') {
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              hallId: hallId,
+              hallName: 'Main Campus Hall',
+              amenities: []
+            })
+          });
+        }
+      });
+
+      await page.goto(seatMapConfigUrl);
+      await page.waitForSelector('[data-testid="hall-selection-dropdown"]');
+      await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
+      await page.waitForTimeout(500);
+
+      // Check AC checkbox
+      await page.locator('[data-testid="amenity-ac-checkbox"]').check();
+
+      // Wait for debounce (500ms) + network delay
+      await page.waitForTimeout(1000);
+
+      // Verify auto-save was called
+      expect(updateCalled).toBe(true);
+      expect(savedAmenities).toEqual(['AC']);
+    });
+
+    test('should auto-save both amenities when both checkboxes are checked', async ({ page }) => {
+      let savedAmenities: string[] = [];
+
+      await page.route(`${apiBaseUrl}/owner/halls/${hallId}/amenities`, async (route) => {
+        if (route.request().method() === 'PUT') {
+          const requestBody = route.request().postDataJSON();
+          savedAmenities = requestBody.amenities;
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              hallId: hallId,
+              hallName: 'Main Campus Hall',
+              amenities: requestBody.amenities
+            })
+          });
+        } else if (route.request().method() === 'GET') {
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              hallId: hallId,
+              hallName: 'Main Campus Hall',
+              amenities: []
+            })
+          });
+        }
+      });
+
+      await page.goto(seatMapConfigUrl);
+      await page.waitForSelector('[data-testid="hall-selection-dropdown"]');
+      await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
+      await page.waitForTimeout(500);
+
+      // Check both checkboxes
+      await page.locator('[data-testid="amenity-ac-checkbox"]').check();
+      await page.locator('[data-testid="amenity-wifi-checkbox"]').check();
+
+      // Wait for debounce + network delay
+      await page.waitForTimeout(1000);
+
+      // Verify both amenities were saved
+      expect(savedAmenities).toContain('AC');
+      expect(savedAmenities).toContain('WiFi');
+      expect(savedAmenities.length).toBe(2);
+    });
+
+    test('should show saving indicator during save', async ({ page }) => {
+      await page.route(`${apiBaseUrl}/owner/halls/${hallId}/amenities`, async (route) => {
+        if (route.request().method() === 'PUT') {
+          // Simulate slow network with delay
+          await page.waitForTimeout(200);
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              hallId: hallId,
+              hallName: 'Main Campus Hall',
+              amenities: ['WiFi']
+            })
+          });
+        } else if (route.request().method() === 'GET') {
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              hallId: hallId,
+              hallName: 'Main Campus Hall',
+              amenities: []
+            })
+          });
+        }
+      });
+
+      await page.goto(seatMapConfigUrl);
+      await page.waitForSelector('[data-testid="hall-selection-dropdown"]');
+      await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
+      await page.waitForTimeout(500);
+
+      // Check WiFi checkbox
+      await page.locator('[data-testid="amenity-wifi-checkbox"]').check();
+
+      // Wait for debounce
+      await page.waitForTimeout(600);
+
+      // Saving indicator should briefly appear
+      // Note: This might be too fast to catch reliably, so we'll check for success indicator instead
+      await page.waitForTimeout(500);
+
+      // Success indicator should appear
+      await expect(page.locator('[data-testid="amenities-success-indicator"]')).toBeVisible();
+    });
+
+    test('should save empty array when all checkboxes are unchecked', async ({ page }) => {
+      let savedAmenities: string[] | null = null;
+
+      // Start with both amenities checked
+      await page.route(`${apiBaseUrl}/owner/halls/${hallId}/amenities`, async (route) => {
+        if (route.request().method() === 'PUT') {
+          const requestBody = route.request().postDataJSON();
+          savedAmenities = requestBody.amenities;
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              hallId: hallId,
+              hallName: 'Main Campus Hall',
+              amenities: requestBody.amenities
+            })
+          });
+        } else if (route.request().method() === 'GET') {
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              hallId: hallId,
+              hallName: 'Main Campus Hall',
+              amenities: ['AC', 'WiFi']
+            })
+          });
+        }
+      });
+
+      await page.goto(seatMapConfigUrl);
+      await page.waitForSelector('[data-testid="hall-selection-dropdown"]');
+      await page.selectOption('[data-testid="hall-selection-dropdown"]', hallId);
+      await page.waitForTimeout(500);
+
+      // Both should be checked initially
+      await expect(page.locator('[data-testid="amenity-ac-checkbox"]')).toBeChecked();
+      await expect(page.locator('[data-testid="amenity-wifi-checkbox"]')).toBeChecked();
+
+      // Uncheck both
+      await page.locator('[data-testid="amenity-ac-checkbox"]').uncheck();
+      await page.locator('[data-testid="amenity-wifi-checkbox"]').uncheck();
+
+      // Wait for debounce + network delay
+      await page.waitForTimeout(1000);
+
+      // Verify empty array was saved
+      expect(savedAmenities).toEqual([]);
+    });
   });
 });

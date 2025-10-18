@@ -57,6 +57,13 @@ sections:
     instruction: |
       Break down the story into specific tasks and subtasks needed for implementation.
       Reference applicable acceptance criteria numbers where relevant.
+
+      FOR UI/FULL-STACK STORIES - MANDATORY FIRST TASK:
+      Add as the FIRST task before any implementation tasks:
+      - [ ] **MANDATORY PRE-IMPLEMENTATION**: Read docs/guidelines/ui-testing-locators-mandatory.md
+        - [ ] Review complete checklist of 40+ testable element types
+        - [ ] Review naming conventions for data-testid attributes
+        - [ ] Review 14 validation commands to run before commit
     template: |
       - [ ] Task 1 (AC: # if applicable)
         - [ ] Subtask1.1...
@@ -101,13 +108,72 @@ sections:
         title: E2E Integration Testing Requirements
         instruction: |
           For UI/Full-Stack stories only. Specify E2E integration tests that validate backend + frontend together.
-          Use Story 0.25 test infrastructure (backend test server on port 8081, test database studymate_test).
+          Use E2E test infrastructure (backend test server on port 8081, test database studymate_test).
 
-          MANDATORY REQUIREMENTS:
-          - ALL UI elements MUST have data-testid locators (see docs/guidelines/ui-testing-locators-mandatory.md)
+          MANDATORY PRE-IMPLEMENTATION CHECKLIST (5 minutes - saves 60+ minutes):
+          - [ ] Read docs/guidelines/e2e-authentication-mandatory.md (CRITICAL - Real auth required, NO mocks)
+          - [ ] Read docs/lessons-learned/e2e-testing-anti-patterns-story-1.4.1.md (MANDATORY - Original 5 anti-patterns)
+          - [ ] Read docs/lessons-learned/e2e-testing-anti-patterns-story-1.4-remediation.md (CRITICAL - Anti-Pattern #6)
+          - [ ] Read docs/guidelines/ui-testing-locators-mandatory.md (MANDATORY - data-testid requirements)
+          - [ ] Read docs/testing/e2e-quality-gates-quick-reference.md (Quick Reference Card)
+          - [ ] Read existing E2E tests in feature area (e2e/*.spec.ts)
+          - [ ] Read component template and SCSS files
+          - [ ] Verify API configuration in environment.ts
+
+          CRITICAL: 6 ANTI-PATTERNS TO AVOID:
+          1. ❌ Ambiguous Selectors (use scoped selectors with parent class)
+          2. ❌ Selector Ambiguity (multiple matches cause strict mode violations)
+          3. ❌ Path-Only Route Mocking (always use full URL: http://localhost:8081/api/v1/...)
+          4. ❌ CSS Targeting Wrong Element (read SCSS to identify actual styled element)
+          5. ❌ Not Reading Existing Tests (ALWAYS read existing tests FIRST)
+          6. ⭐ Missing data-testid Attributes (ADD DURING COMPONENT DEVELOPMENT, NOT E2E TESTING) ⭐
+
+          MANDATORY REQUIREMENTS (NON-NEGOTIABLE):
+
+          📋 **UI Testing Locators** (docs/guidelines/ui-testing-locators-mandatory.md):
+          - ⚠️ ALL interactive UI elements MUST have data-testid attributes (40+ element types - see guideline)
+          - ⚠️ Add data-testid DURING component development (NOT during E2E testing)
+          - ⚠️ Follow naming convention: {component}-{element-type}-{action/purpose}
+          - ⚠️ Run 14 validation commands before commit (must return ZERO violations)
+          - ⚠️ NO EXCEPTIONS - Any missing data-testid = Story REJECTED
+
+          🔐 **E2E Authentication Requirements** (docs/guidelines/e2e-authentication-mandatory.md):
+          - ⚠️ ALL E2E tests MUST use REAL authentication (NO mocked tokens, NO bypassing login)
+          - ⚠️ Use `loginAsOwnerAPI(page)` or `loginAsStudentAPI(page)` from auth-helpers.ts
+          - ⚠️ Test credentials: test.owner@studymate.test / Test@123 (seeded in test database)
+          - ⚠️ Backend test server MUST be running on port 8081 with test database studymate_test
+          - ⚠️ NO EXCEPTIONS - Mocked authentication = Story REJECTED
+
+          🧪 **E2E Test Requirements**:
+          - ALL E2E tests MUST use ONLY data-testid selectors (NO text-based, NO CSS selectors)
           - ALL E2E tests MUST follow the 6 Quality Gates (see docs/guidelines/e2e-quality-gates-mandatory.md)
-          - Dev Agent: Read both mandatory guideline files BEFORE writing E2E tests
+          - Dev Agent: Read ALL 4 mandatory guideline documents BEFORE implementation
+          - Dev Agent: Use the copy-paste E2E test template from lessons-learned document
+          - Dev Agent: Run validation commands before marking story "Done"
           - QA Agent: Validate against .bmad-core/checklists/e2e-quality-gate-checklist.md
+
+          PRE-COMMIT VALIDATION COMMANDS (must return ZERO violations):
+          ```bash
+          # === FORM ELEMENTS (must return ZERO) ===
+          grep -r "<button" src/app/features --include="*.html" | grep -v "data-testid"
+          grep -r "<input" src/app/features --include="*.html" | grep -v "data-testid"
+          grep -r "<select" src/app/features --include="*.html" | grep -v "data-testid"
+          grep -r "<textarea" src/app/features --include="*.html" | grep -v "data-testid"
+
+          # === INTERACTIVE ELEMENTS (must return ZERO) ===
+          grep -r "(click)=" src/app/features --include="*.html" | grep "<div" | grep -v "data-testid"
+          grep -r "(submit)=" src/app/features --include="*.html" | grep -v "data-testid"
+
+          # === E2E TEST FRAGILE SELECTORS (must return ZERO) ===
+          grep -n "has-text" e2e/*.spec.ts | grep -v "data-testid"
+          grep -n "formControlName" e2e/*.spec.ts
+          grep -n "placeholder" e2e/*.spec.ts
+
+          # === RUN E2E TESTS (must achieve 100% pass rate) ===
+          npx playwright test e2e/your-test.spec.ts
+          ```
+
+          See docs/guidelines/ui-testing-locators-mandatory.md for complete validation command list (14 checks).
 
           Required Information:
           - Critical user workflows to test end-to-end (e.g., "User registers and receives confirmation email")

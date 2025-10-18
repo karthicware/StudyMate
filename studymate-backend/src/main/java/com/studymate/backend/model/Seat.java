@@ -50,6 +50,15 @@ public class Seat {
     @Column(name = "is_ladies_only")
     private Boolean isLadiesOnly = false;
 
+    @Column(name = "maintenance_reason", length = 255)
+    private String maintenanceReason;
+
+    @Column(name = "maintenance_started")
+    private LocalDateTime maintenanceStarted;
+
+    @Column(name = "maintenance_until")
+    private LocalDateTime maintenanceUntil;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -68,5 +77,30 @@ public class Seat {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    /**
+     * Sets the seat status to maintenance with given reason and until timestamp.
+     * Automatically sets maintenanceStarted to current timestamp.
+     *
+     * @param reason Maintenance reason (Cleaning, Repair, Inspection, Other)
+     * @param until Estimated completion time (optional)
+     */
+    public void setStatusToMaintenance(String reason, LocalDateTime until) {
+        this.status = "MAINTENANCE";
+        this.maintenanceReason = reason;
+        this.maintenanceStarted = LocalDateTime.now();
+        this.maintenanceUntil = until;
+    }
+
+    /**
+     * Clears maintenance status and sets seat back to available.
+     * Clears all maintenance-related fields.
+     */
+    public void clearMaintenanceStatus() {
+        this.status = "AVAILABLE";
+        this.maintenanceReason = null;
+        this.maintenanceStarted = null;
+        this.maintenanceUntil = null;
     }
 }

@@ -21,17 +21,24 @@
 
 - [ ] Read the entire story file before marking as complete.
 - [ ] Identify all **MANDATORY** and **CRITICAL** sections.
+- [ ] **UI/FULL-STACK STORIES - MANDATORY PRE-IMPLEMENTATION:**
+  - [ ] Read `docs/guidelines/ui-testing-locators-mandatory.md` BEFORE writing ANY component code
+  - [ ] Review the complete checklist of 40+ testable element types
+  - [ ] Understand naming convention: `{component}-{element-type}-{action/purpose}`
+  - [ ] Add `data-testid` to ALL interactive elements DURING component development
 - [ ] Validate that every acceptance criterion is individually implemented.
 - [ ] Ensure all tasks and subtasks are checked off (`[x]`).
 - [ ] Verify all testing requirements are completed (including Playwright MCP if required).
-- [ ] **UI STORIES:**  
+- [ ] **UI STORIES - data-testid VALIDATION (MANDATORY):**
+  Run ALL 14 validation commands from `docs/guidelines/ui-testing-locators-mandatory.md`. ALL must return ZERO violations.
+- [ ] **UI STORIES - E2E TESTS:**
   Run all Playwright MCP browser tests with screenshot evidence (use `fullPage=false`). Code review cannot substitute for this.
-- [ ] **FUNCTIONALITY FIX STORIES:**  
+- [ ] **FUNCTIONALITY FIX STORIES:**
   Ensure there are no errors in backend (Spring Boot) or frontend (Next.js) logs during all functionality checks.
 - [ ] Confirm DOD checklist is complete.
-- [ ] **COMPILATION CHECK:**  
+- [ ] **COMPILATION CHECK:**
   Ensure there are no compilation or build errors—fix any before proceeding.
-- [ ] **ERROR LOG CHECK:**  
+- [ ] **ERROR LOG CHECK:**
   Both backend and frontend logs must be error-free during functionality testing.
 - [ ] Run the full test suite and linting—all must pass.
 - [ ] Avoid duplicate documentation—update the story file directly.

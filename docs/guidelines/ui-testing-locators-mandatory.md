@@ -15,22 +15,62 @@
 
 ---
 
-## ✅ ALL Interactive Elements Require data-testid
+## ✅ ALL Interactive & Testable Elements Require data-testid
 
-### Checklist
+### Mandatory Checklist (Complete List)
 
-- [ ] **Buttons**: All clickable buttons (submit, cancel, save, delete, edit, add, etc.)
-- [ ] **Form Inputs**: Text fields, email, password, number, date inputs
+#### Form Elements (MANDATORY)
+- [ ] **Buttons**: All `<button>` elements (submit, cancel, save, delete, edit, add, close, confirm, etc.)
+- [ ] **Text Inputs**: All `<input type="text">`, `<input type="email">`, `<input type="password">`, `<input type="tel">`
+- [ ] **Number Inputs**: All `<input type="number">`, `<input type="range">`
+- [ ] **Date/Time Inputs**: All `<input type="date">`, `<input type="time">`, `<input type="datetime-local">`
+- [ ] **Textareas**: All `<textarea>` elements
 - [ ] **Dropdowns/Selects**: All `<select>` elements
 - [ ] **Checkboxes**: All `<input type="checkbox">`
 - [ ] **Radio Buttons**: All `<input type="radio">`
-- [ ] **Links**: Navigation links, action links
-- [ ] **Modals/Dialogs**: Modal containers AND all buttons inside modals
-- [ ] **Panels/Sections**: Collapsible panels, property panels, sidebars
-- [ ] **List Items**: Cards, table rows, list entries
-- [ ] **Status Indicators**: Success messages, error messages, warning toasts
-- [ ] **Loading Spinners**: Any element showing loading state
-- [ ] **Dynamic Elements**: Elements that appear/disappear based on state
+- [ ] **File Uploads**: All `<input type="file">`
+
+#### Navigation & Links (MANDATORY)
+- [ ] **Navigation Links**: All `<a>` elements for routing/navigation
+- [ ] **Action Links**: Clickable links that trigger actions
+- [ ] **Tabs**: Tab headers/buttons for switching content
+- [ ] **Breadcrumbs**: Navigation breadcrumb links
+
+#### Containers & Panels (MANDATORY)
+- [ ] **Modals/Dialogs**: Modal containers AND all interactive elements inside
+- [ ] **Panels/Sidebars**: Property panels, sidebars, drawers, collapsible sections
+- [ ] **Accordions**: Accordion headers and content sections
+- [ ] **Cards**: Interactive cards that can be clicked/selected
+- [ ] **Tables**: Table containers, sortable headers, filterable columns
+
+#### Status & Feedback Elements (MANDATORY)
+- [ ] **Success Messages**: All success/confirmation toasts, banners, alerts
+- [ ] **Error Messages**: All error/validation messages
+- [ ] **Warning Messages**: All warning/caution messages
+- [ ] **Info Messages**: All informational messages
+- [ ] **Loading Spinners**: All loading indicators, progress bars
+- [ ] **Badges/Tags**: Status badges, count indicators
+
+#### Dynamic & List Elements (MANDATORY)
+- [ ] **List Items**: Individual items in lists (use `[attr.data-testid]="'item-' + id"`)
+- [ ] **Table Rows**: Individual rows in tables (use `[attr.data-testid]="'row-' + id"`)
+- [ ] **Grid Items**: Items in grids/galleries
+- [ ] **Draggable Elements**: Any draggable components
+- [ ] **Sortable Items**: Elements that can be sorted/reordered
+
+#### Interactive Visualizations (MANDATORY)
+- [ ] **Clickable Icons**: Icons with click handlers (edit, delete, info icons)
+- [ ] **Toggles/Switches**: Toggle buttons, switches
+- [ ] **Tooltips**: Tooltip containers (if testable)
+- [ ] **Popovers**: Popover containers and triggers
+- [ ] **Context Menus**: Right-click menus, dropdown menus
+
+#### Custom Components (MANDATORY)
+- [ ] **Any element with `(click)` handler**: If it's clickable in code, it needs `data-testid`
+- [ ] **Any element with `(change)` handler**: If it triggers change detection, it needs `data-testid`
+- [ ] **Any element with `(submit)` handler**: If it submits forms, it needs `data-testid`
+- [ ] **Any element with `*ngIf` condition**: If it appears/disappears, it needs `data-testid`
+- [ ] **Any element validated in tests**: If E2E tests check it, it needs `data-testid`
 
 ---
 
@@ -108,17 +148,42 @@
 
 | Element Type | Suffix | Example |
 |--------------|--------|---------|
+| **Form Elements** |||
 | Button | `-btn` | `submit-btn`, `cancel-btn`, `add-seat-btn` |
-| Text Input | `-input` | `email-input`, `seat-number-input` |
+| Text Input | `-input` | `email-input`, `seat-number-input`, `password-input` |
+| Number Input | `-input` | `price-input`, `quantity-input` |
+| Textarea | `-textarea` | `description-textarea`, `notes-textarea` |
 | Dropdown/Select | `-dropdown` | `hall-dropdown`, `space-type-dropdown` |
 | Checkbox | `-checkbox` | `ladies-only-checkbox`, `terms-checkbox` |
-| Radio Button | `-radio` | `payment-method-radio` |
-| Modal | `-modal` | `add-seat-modal`, `confirm-delete-modal` |
+| Radio Button | `-radio` | `payment-method-radio`, `gender-radio` |
+| File Upload | `-file-upload` | `profile-picture-file-upload` |
+| **Navigation** |||
+| Link | `-link` | `dashboard-link`, `profile-link`, `nav-home-link` |
+| Tab | `-tab` | `overview-tab`, `settings-tab` |
+| Breadcrumb | `-breadcrumb` | `home-breadcrumb`, `hall-breadcrumb` |
+| **Containers** |||
+| Modal/Dialog | `-modal` | `add-seat-modal`, `confirm-delete-modal` |
 | Panel/Section | `-panel` | `properties-panel`, `filters-panel` |
-| Link | `-link` | `dashboard-link`, `profile-link` |
-| Success Message | `success-message` or `-success-msg` | `save-success-message` |
-| Error Message | `error-message` or `-error-msg` | `validation-error-message` |
-| Loading Spinner | `loading-spinner` or `-loading` | `data-loading-spinner` |
+| Card | `-card` | `seat-card`, `hall-card` |
+| Accordion | `-accordion` | `faq-accordion`, `settings-accordion` |
+| Table | `-table` | `seats-table`, `bookings-table` |
+| **Status & Feedback** |||
+| Success Message | `-success-message` | `save-success-message` |
+| Error Message | `-error-message` | `validation-error-message` |
+| Warning Message | `-warning-message` | `unsaved-warning-message` |
+| Info Message | `-info-message` | `tips-info-message` |
+| Loading Spinner | `-loading-spinner` | `data-loading-spinner` |
+| Badge/Tag | `-badge` | `status-badge`, `count-badge` |
+| **Interactive Elements** |||
+| Toggle/Switch | `-toggle` | `notifications-toggle`, `dark-mode-toggle` |
+| Clickable Icon | `-icon` | `edit-icon`, `delete-icon`, `info-icon` |
+| Tooltip | `-tooltip` | `help-tooltip`, `info-tooltip` |
+| Popover | `-popover` | `actions-popover`, `filters-popover` |
+| Context Menu | `-menu` | `context-menu`, `actions-menu` |
+| **Dynamic Elements** |||
+| List Item | `-item-{id}` | `seat-item-A1`, `user-item-123` |
+| Table Row | `-row-{id}` | `booking-row-456`, `seat-row-A1` |
+| Grid Item | `-grid-item-{id}` | `hall-grid-item-1` |
 
 ---
 
@@ -235,25 +300,73 @@
 
 ---
 
-## 🚨 Pre-Commit Validation
+## 🚨 Pre-Commit Validation (MANDATORY)
 
 **BEFORE committing UI code**, run these commands to detect missing locators:
 
 ```bash
-# 1. Find buttons without data-testid (should return ZERO)
+# ========================================
+# FORM ELEMENTS (MUST return ZERO results)
+# ========================================
+
+# 1. Find buttons without data-testid
 grep -r "<button" src/app/features --include="*.html" | grep -v "data-testid"
 
-# 2. Find inputs without data-testid (should return ZERO)
+# 2. Find all input elements without data-testid
 grep -r "<input" src/app/features --include="*.html" | grep -v "data-testid"
 
-# 3. Find selects without data-testid (should return ZERO)
+# 3. Find select dropdowns without data-testid
 grep -r "<select" src/app/features --include="*.html" | grep -v "data-testid"
 
-# 4. Find divs with click handlers without data-testid (manual review)
+# 4. Find textarea elements without data-testid
+grep -r "<textarea" src/app/features --include="*.html" | grep -v "data-testid"
+
+# ========================================
+# NAVIGATION & LINKS (MUST return ZERO results)
+# ========================================
+
+# 5. Find clickable links without data-testid (with click handlers)
+grep -r "<a" src/app/features --include="*.html" | grep "(click)" | grep -v "data-testid"
+
+# 6. Find router links without data-testid
+grep -r "routerLink" src/app/features --include="*.html" | grep -v "data-testid"
+
+# ========================================
+# INTERACTIVE ELEMENTS (MUST return ZERO results)
+# ========================================
+
+# 7. Find divs with click handlers without data-testid
 grep -r "(click)=" src/app/features --include="*.html" | grep "<div" | grep -v "data-testid"
+
+# 8. Find spans with click handlers without data-testid
+grep -r "(click)=" src/app/features --include="*.html" | grep "<span" | grep -v "data-testid"
+
+# 9. Find any element with submit handler without data-testid
+grep -r "(submit)=" src/app/features --include="*.html" | grep -v "data-testid"
+
+# 10. Find any element with change handler without data-testid
+grep -r "(change)=" src/app/features --include="*.html" | grep -v "data-testid"
+
+# ========================================
+# E2E TEST VALIDATION (MUST return ZERO results)
+# ========================================
+
+# 11. Find fragile text-based selectors in E2E tests
+grep -n "has-text" e2e/*.spec.ts | grep -v "data-testid"
+
+# 12. Find CSS selectors based on formControlName (fragile)
+grep -n "formControlName" e2e/*.spec.ts
+
+# 13. Find placeholder-based selectors (fragile)
+grep -n "placeholder" e2e/*.spec.ts
+
+# 14. Find class-based selectors in E2E tests (fragile)
+grep -n "locator('\\..*')" e2e/*.spec.ts | grep -v "data-testid"
 ```
 
 **Expected Result**: ALL commands should return **ZERO results** (no violations).
+
+**Enforcement**: If ANY validation command returns results, you MUST fix violations before committing.
 
 ---
 
@@ -323,6 +436,15 @@ This is not optional. This is not negotiable. This is MANDATORY.
 
 ---
 
-**Last Updated**: 2025-10-18
+## 📋 Change Log
+
+| Date | Change | Author |
+|------|--------|--------|
+| 2025-10-18 | Enhanced with comprehensive element checklist (40+ element types), 14 validation commands, expanded naming guide | Bob (Scrum Master) |
+| 2025-10-18 | Initial creation with basic data-testid requirements | Bob (Scrum Master) |
+
+---
+
+**Last Updated**: 2025-10-18 (Enhanced)
 **Status**: ✅ ACTIVE - MANDATORY
 **Owner**: Scrum Master (Bob)

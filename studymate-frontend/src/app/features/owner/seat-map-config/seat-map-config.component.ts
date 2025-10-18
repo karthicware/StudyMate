@@ -1,26 +1,32 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CdkDrag, CdkDragEnd } from '@angular/cdk/drag-drop';
 import { SeatConfigService } from '../../../core/services/seat-config.service';
+import { HallAmenitiesService } from '../../../core/services/hall-amenities.service';
 import { Seat, Shift, SpaceType } from '../../../core/models/seat-config.model';
 import { StudyHall } from '../../../core/models/study-hall.model';
 import { getSpaceTypeConfig } from '../../../core/utils/space-type-icons';
 import { SeatPropertiesPanelComponent } from './seat-properties-panel/seat-properties-panel.component';
+import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 
 /**
  * Seat Map Configuration Component
- * Allows owners to configure seat layout and shift timings
+ * Allows owners to configure seat layout, shift timings, and hall amenities
+ * Story 1.22: Added hall amenities configuration (AC, Wi-Fi)
  */
 @Component({
   selector: 'app-seat-map-config',
   standalone: true,
-  imports: [CommonModule, FormsModule, CdkDrag, SeatPropertiesPanelComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, CdkDrag, SeatPropertiesPanelComponent],
   templateUrl: './seat-map-config.component.html',
   styleUrls: ['./seat-map-config.component.scss'],
 })
-export class SeatMapConfigComponent implements OnInit {
+export class SeatMapConfigComponent implements OnInit, OnDestroy {
   private seatConfigService = inject(SeatConfigService);
+  private hallAmenitiesService = inject(HallAmenitiesService);
+  private fb = inject(FormBuilder);
+  private destroy$ = new Subject<void>();
 
   // Signals for reactive state management
   studyHalls = signal<StudyHall[]>([]);
@@ -54,8 +60,48 @@ export class SeatMapConfigComponent implements OnInit {
   seatCount = computed(() => this.seats().length);
   hasUnsavedChanges = signal(false);
 
+  // Amenities-related signals (Story 1.22)
+  amenitiesForm!: FormGroup;
+  amenitiesLoading = signal(false);
+  amenitiesSaving = signal(false);
+  amenitiesSaveSuccess = signal(false);
+
   ngOnInit(): void {
     this.loadStudyHalls();
+    this.initAmenitiesForm();
+    this.setupAmenitiesAutoSave();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  /**
+   * Initialize amenities form with default values
+   * Story 1.22: Hall Amenities Configuration UI
+   */
+  private initAmenitiesForm(): void {
+    this.amenitiesForm = this.fb.group({
+      amenityAC: [false],
+      amenityWiFi: [false]
+    });
+  }
+
+  /**
+   * Setup auto-save for amenities form changes
+   * Story 1.22: Auto-save with 500ms debounce
+   */
+  private setupAmenitiesAutoSave(): void {
+    this.amenitiesForm.valueChanges
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.saveAmenities();
+      });
   }
 
   /**
@@ -73,12 +119,14 @@ export class SeatMapConfigComponent implements OnInit {
 
   /**
    * Handle hall selection change
+   * Story 1.22: Also load amenities when hall changes
    */
   onHallSelectionChange(hallId: string): void {
     this.selectedHallId.set(hallId);
     this.clearCanvas();
     this.loadSeatConfiguration(hallId);
     this.loadShiftConfiguration(hallId);
+    this.loadAmenities(hallId);
   }
 
   /**
@@ -404,5 +452,67 @@ export class SeatMapConfigComponent implements OnInit {
         this.isLoading.set(false);
       },
     });
+  }
+
+  /**
+   * Load hall amenities configuration
+   * Story 1.22: AC4 - Load amenities on page load / hall change
+   */
+  private loadAmenities(hallId: string): void {
+    this.amenitiesLoading.set(true);
+
+    this.hallAmenitiesService.getHallAmenities(hallId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          // Update form with amenities from API
+          this.amenitiesForm.patchValue({
+            amenityAC: response.amenities.includes('AC'),
+            amenityWiFi: response.amenities.includes('WiFi')
+          }, { emitEvent: false });  // Prevent auto-save trigger on load
+          this.amenitiesLoading.set(false);
+        },
+        error: (err) => {
+          console.error('Error loading amenities:', err);
+          this.amenitiesLoading.set(false);
+          // On error, keep default unchecked state
+        }
+      });
+  }
+
+  /**
+   * Save hall amenities configuration
+   * Story 1.22: AC2 - Auto-save amenities after debounce
+   */
+  private saveAmenities(): void {
+    const hallId = this.selectedHallId();
+    if (!hallId) {
+      return;
+    }
+
+    this.amenitiesSaving.set(true);
+    this.amenitiesSaveSuccess.set(false);
+
+    // Convert checkbox states to amenities array
+    const formValue = this.amenitiesForm.value;
+    const amenities: string[] = [];
+    if (formValue.amenityAC) amenities.push('AC');
+    if (formValue.amenityWiFi) amenities.push('WiFi');
+
+    this.hallAmenitiesService.updateHallAmenities(hallId, amenities)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.amenitiesSaving.set(false);
+          this.amenitiesSaveSuccess.set(true);
+          // Hide success indicator after 2 seconds
+          setTimeout(() => this.amenitiesSaveSuccess.set(false), 2000);
+        },
+        error: (err) => {
+          console.error('Error saving amenities:', err);
+          this.errorMessage.set('Failed to save hall amenities');
+          this.amenitiesSaving.set(false);
+        }
+      });
   }
 }

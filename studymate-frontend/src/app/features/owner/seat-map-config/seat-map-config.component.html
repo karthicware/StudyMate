@@ -11,6 +11,7 @@
       Select Study Hall <span class="text-red-500">*</span>
     </label>
     <select
+      data-testid="hall-selection-dropdown"
       [value]="selectedHallId()"
       (change)="onHallSelectionChange($any($event.target).value)"
       class="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -25,9 +26,81 @@
     }
   </div>
 
+  <!-- Hall Amenities Section (Story 1.22) -->
+  @if (selectedHallId()) {
+    <div class="mb-6 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+      <!-- Section Header with Saving Indicator -->
+      <div class="mb-4 flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            Hall Amenities
+            @if (amenitiesSaving()) {
+              <span data-testid="amenities-saving-indicator" class="text-blue-600 text-sm animate-pulse">⏳ Saving...</span>
+            }
+            @if (amenitiesSaveSuccess()) {
+              <span data-testid="amenities-success-indicator" class="text-green-600 text-sm">✓ Saved</span>
+            }
+          </h2>
+          <p class="text-sm text-gray-600 mt-1">
+            Configure available amenities for students to discover your hall
+          </p>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      @if (amenitiesLoading()) {
+        <div class="flex items-center gap-2 text-gray-500">
+          <span class="animate-spin">⏳</span>
+          <span class="text-sm">Loading amenities...</span>
+        </div>
+      }
+
+      <!-- Amenities Form -->
+      @if (!amenitiesLoading()) {
+        <form [formGroup]="amenitiesForm" class="space-y-3">
+          <!-- Air Conditioning Checkbox -->
+          <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <input
+              type="checkbox"
+              id="amenityAC"
+              data-testid="amenity-ac-checkbox"
+              formControlName="amenityAC"
+              class="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+            />
+            <label for="amenityAC" class="flex items-center gap-2 cursor-pointer flex-1">
+              <span class="text-xl">❄️</span>
+              <div class="flex-1">
+                <div class="font-medium text-gray-900">Air Conditioning (AC)</div>
+                <div class="text-xs text-gray-600">Climate-controlled environment</div>
+              </div>
+            </label>
+          </div>
+
+          <!-- Wi-Fi Checkbox -->
+          <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+            <input
+              type="checkbox"
+              id="amenityWiFi"
+              data-testid="amenity-wifi-checkbox"
+              formControlName="amenityWiFi"
+              class="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+            />
+            <label for="amenityWiFi" class="flex items-center gap-2 cursor-pointer flex-1">
+              <span class="text-xl">📶</span>
+              <div class="flex-1">
+                <div class="font-medium text-gray-900">Wi-Fi</div>
+                <div class="text-xs text-gray-600">High-speed internet access</div>
+              </div>
+            </label>
+          </div>
+        </form>
+      }
+    </div>
+  }
+
   <!-- Success Message -->
   @if (saveSuccess()) {
-    <div class="mb-4 rounded-lg bg-green-50 border border-green-200 p-4">
+    <div data-testid="success-message" class="mb-4 rounded-lg bg-green-50 border border-green-200 p-4">
       <div class="flex">
         <svg class="h-5 w-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -41,7 +114,7 @@
 
   <!-- Error Message -->
   @if (errorMessage()) {
-    <div class="mb-6 rounded-xl bg-red-50 border border-red-100 p-4 shadow-sm">
+    <div data-testid="error-message" class="mb-6 rounded-xl bg-red-50 border border-red-100 p-4 shadow-sm">
       <div class="flex items-start">
         <svg class="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
@@ -66,6 +139,7 @@
           </div>
           <div class="flex gap-2">
             <button
+              data-testid="open-add-seat-modal-btn"
               (click)="openAddSeatModal()"
               [disabled]="editorDisabled()"
               class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
@@ -73,6 +147,7 @@
               + Add Seat
             </button>
             <button
+              data-testid="save-configuration-btn"
               (click)="saveSeatConfiguration()"
               [disabled]="editorDisabled() || isLoading() || !hasUnsavedChanges()"
               class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
@@ -196,6 +271,7 @@
       <div class="mb-4">
         <label class="block text-sm font-medium text-gray-700 mb-2">Seat Number</label>
         <input
+          data-testid="new-seat-number-input"
           type="text"
           [value]="newSeatNumber()"
           (input)="newSeatNumber.set($any($event.target).value)"
@@ -208,12 +284,14 @@
       </div>
       <div class="flex gap-2">
         <button
+          data-testid="confirm-add-seat-btn"
           (click)="addSeat()"
           class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
         >
           Add Seat
         </button>
         <button
+          data-testid="modal-cancel-btn"
           (click)="showSeatModal.set(false)"
           class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
         >

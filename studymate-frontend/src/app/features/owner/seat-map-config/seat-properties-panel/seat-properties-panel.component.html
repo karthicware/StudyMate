@@ -1,9 +1,9 @@
-<div class="seat-properties-panel bg-white rounded-lg shadow-lg p-6 w-80">
+<div data-testid="seat-properties-panel" class="seat-properties-panel bg-white rounded-lg shadow-lg p-6 w-80">
   <h3 class="text-xl font-semibold mb-4 text-gray-800">Seat Properties</h3>
 
   <!-- Error Message -->
   @if (errorMessage()) {
-    <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+    <div data-testid="properties-error-message" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
       <p class="text-sm text-red-600">{{ errorMessage() }}</p>
     </div>
   }
@@ -15,6 +15,7 @@
         Seat Number
       </label>
       <input
+        data-testid="seat-number-input"
         type="text"
         formControlName="seatNumber"
         class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-600 cursor-not-allowed"
@@ -29,6 +30,7 @@
         Space Type <span class="text-red-500">*</span>
       </label>
       <select
+        data-testid="space-type-dropdown"
         formControlName="spaceType"
         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
       >
@@ -45,6 +47,7 @@
         Custom Price (₹)
       </label>
       <input
+        data-testid="custom-price-input"
         type="number"
         formControlName="customPrice"
         placeholder="Leave empty for default hall price"
@@ -62,6 +65,7 @@
     <div class="mb-6 p-3 bg-pink-50 border border-pink-200 rounded-md">
       <div class="flex items-start">
         <input
+          data-testid="ladies-only-checkbox"
           type="checkbox"
           id="ladiesOnly"
           formControlName="isLadiesOnly"
@@ -79,6 +83,7 @@
     <!-- Action Buttons -->
     <div class="flex gap-3">
       <button
+        data-testid="properties-save-btn"
         type="submit"
         [disabled]="propertiesForm.invalid"
         class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
@@ -86,6 +91,7 @@
         Save
       </button>
       <button
+        data-testid="properties-cancel-btn"
         type="button"
         (click)="onCancel()"
         class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors"
