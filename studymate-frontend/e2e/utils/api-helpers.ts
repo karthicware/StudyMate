@@ -1,6 +1,12 @@
 /**
  * API Helper Utilities for E2E Tests
  * Provides functions to interact with the backend API during tests
+ *
+ * IMPORTANT: Backend API Endpoint Patterns
+ * See docs/api/backend-endpoint-reference.md for complete endpoint reference
+ * - Pattern A (No Prefix): Auth endpoints use /auth/* (NOT /api/v1/auth/*)
+ * - Pattern B (/api): Some owner endpoints use /api/owner/*
+ * - Pattern C (/api/v1): Most owner endpoints use /api/v1/owner/*
  */
 
 import { Page, APIResponse } from '@playwright/test';
@@ -140,7 +146,7 @@ export async function waitForApiResponse(
  */
 export async function isBackendReady(page: Page): Promise<boolean> {
   try {
-    const response = await apiRequest(page, '/api/v1/auth/register', {
+    const response = await apiRequest(page, '/auth/register', {
       method: 'OPTIONS',
     });
     return response.status() !== 0;

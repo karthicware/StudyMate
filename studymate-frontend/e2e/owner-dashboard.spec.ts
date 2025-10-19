@@ -3,15 +3,15 @@ import { loginAsOwnerAPI } from './utils/auth-helpers';
 
 test.describe('Owner Dashboard', () => {
   const hallId = 'test-hall-123';
-  const dashboardUrl = `/owner/dashboard/${hallId}`;
+  const dashboardUrl = `/api/v1/owner/dashboard/${hallId}`;
 
   test.beforeEach(async ({ page }) => {
     // Login as owner before each test
     const token = await loginAsOwnerAPI(page);
     expect(token).toBeTruthy();
 
-    // Mock API response
-    await page.route(`/api/owner/dashboard/${hallId}`, async (route) => {
+    // Mock API response (Pattern C - /api/v1 prefix)
+    await page.route(`http://localhost:8081/api/v1/owner/dashboard/${hallId}`, async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',

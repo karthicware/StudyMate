@@ -1,14 +1,19 @@
 /**
  * Test Data Utilities
  * Constants and helpers for test data management
+ *
+ * API Endpoint Patterns (see docs/api/backend-endpoint-reference.md):
+ * - AUTH endpoints use Pattern A (No Prefix): /auth/* (NOT /api/v1/auth/*)
+ * - Direct backend connection at http://localhost:8081 (no Angular proxy)
  */
 
 export const API_ENDPOINTS = {
   AUTH: {
-    REGISTER: '/api/v1/auth/register',
-    LOGIN: '/api/v1/auth/login',
-    LOGOUT: '/api/v1/auth/logout',
-    REFRESH: '/api/v1/auth/refresh',
+    // Pattern A - No prefix (e.g., /auth/login NOT /api/v1/auth/login)
+    REGISTER: '/auth/register',
+    LOGIN: '/auth/login',
+    LOGOUT: '/auth/logout',
+    REFRESH: '/auth/refresh',
   },
   USERS: {
     PROFILE: '/api/v1/users/profile',

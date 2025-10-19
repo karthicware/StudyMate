@@ -507,38 +507,66 @@ const response = await waitForApiResponse(page, '/api/v1/auth/login', 'POST');
 
 ⚠️ **API configuration mismatches are a major cause of E2E test failures**
 
-**MANDATORY**: All API paths MUST include the `/v1` version prefix and use the correct port.
+**CRITICAL**: Backend API endpoints use **three different path patterns**. E2E tests must match the actual backend controller paths, NOT assume a single `/api/v1` prefix for everything.
 
+**⭐ MUST READ**: [Backend API Endpoint Reference](../api/backend-endpoint-reference.md) - Definitive reference for all backend endpoints and their URL patterns
+
+#### Backend API Path Patterns
+
+| Pattern | Prefix | Example | Controllers Using This Pattern |
+|---------|--------|---------|--------------------------------|
+| **Pattern A** | None | `/auth/login`, `/owner/halls/1/amenities` | AuthController, HallAmenitiesController, SeatStatusController, UserManagementController, OwnerProfileController (5 controllers) |
+| **Pattern B** | `/api` | `/api/owner/settings` | OwnerSettingsController, UsersController (2 controllers) |
+| **Pattern C** | `/api/v1` | `/api/v1/owner/dashboard/1` | OwnerDashboardController, SeatConfigurationController, ShiftConfigurationController, ReportController (4 controllers) |
+
+#### E2E Test Examples by Pattern
+
+**Authentication Endpoints** (Pattern A - NO prefix):
 ```typescript
-// ✅ CORRECT - Includes /v1 and correct test port
-environment.apiBaseUrl: 'http://localhost:8081/api/v1'
-await page.route('/api/v1/owner/seats/config/1', ...)
+// ✅ CORRECT - Auth endpoints have NO /api or /v1 prefix
+const API_BASE_URL = 'http://localhost:8081'; // No prefix!
+await apiRequest(page, '/auth/login', { method: 'POST', body: {...} });
+// Results in: http://localhost:8081/auth/login
 
-// ❌ WRONG - Missing /v1
-environment.apiBaseUrl: 'http://localhost:8081/api'
-await page.route('/api/owner/seats/config/1', ...)
-
-// ❌ WRONG - Wrong port (test server is 8081, not 8080)
-environment.apiBaseUrl: 'http://localhost:8080/api/v1'
+// ❌ WRONG - Adding /api/v1 to auth endpoints
+const API_BASE_URL = 'http://localhost:8081/api/v1';
+await apiRequest(page, '/auth/login', {...}); // → 404 Not Found!
 ```
 
-**⭐ MUST READ**: [API Endpoints Configuration Guide](../configuration/api-endpoints.md) - Single source of truth for all API paths
+**Hall Amenities** (Pattern A - NO prefix):
+```typescript
+// ✅ CORRECT - Hall amenities use Pattern A
+await page.route('/owner/halls/1/amenities', async (route) => {...});
+
+// ❌ WRONG - Adding /api/v1 prefix
+await page.route('/api/v1/owner/halls/1/amenities', {...}); // Won't intercept!
+```
+
+**Seat Configuration** (Pattern C - `/api/v1` prefix):
+```typescript
+// ✅ CORRECT - Seat config uses Pattern C
+await page.route('/api/v1/owner/seats/config/1', async (route) => {...});
+
+// ❌ WRONG - Missing /api/v1 prefix
+await page.route('/owner/seats/config/1', {...}); // Won't intercept!
+```
 
 **Common symptoms of API configuration issues**:
 - Tests fail with 403 Forbidden errors (route mocks don't intercept)
 - Tests fail with 404 Not Found errors (endpoint doesn't exist)
-- Frontend calls wrong port or missing `/v1` prefix
+- Authentication works but other endpoints fail (mixed up patterns)
 - E2E mocks use different paths than actual API calls
 
 **Quick validation**:
 ```bash
-# Verify environment.ts has correct config
-grep "apiBaseUrl" src/environments/environment.ts
-# Should show: apiBaseUrl: 'http://localhost:8081/api/v1'
+# Check which pattern a controller uses
+grep -A 2 "@RequestMapping" studymate-backend/src/main/java/.../ControllerName.java
 
-# Verify E2E mocks use /v1 prefix
-grep -r "page.route" e2e/*.spec.ts | grep "/api/owner/"
-# All should include /v1 like: /api/v1/owner/...
+# Verify E2E tests use correct patterns
+grep -r "page.route" e2e/*.spec.ts
+
+# Validate endpoints with automated script
+npm run validate:e2e-endpoints
 ```
 
 ### 8. Route Mocking - CRITICAL

@@ -334,8 +334,8 @@ test.describe('API Contract Summary', () => {
     }
   });
 
-  test('All critical auth endpoints exist with /v1 prefix', async ({ request }) => {
-    const authEndpoints = ['/api/v1/auth/register', '/api/v1/auth/login'];
+  test('All critical auth endpoints exist (Pattern A - no prefix)', async ({ request }) => {
+    const authEndpoints = ['/auth/register', '/auth/login'];
 
     for (const endpoint of authEndpoints) {
       const url = `http://localhost:8081${endpoint}`;

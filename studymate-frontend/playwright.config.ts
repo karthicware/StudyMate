@@ -46,17 +46,17 @@ export default defineConfig({
   // Start both frontend and backend servers for E2E tests
   webServer: [
     {
-      command: 'npm start',
+      command: 'npx ng serve --configuration=test',
       url: 'http://localhost:4200',
       reuseExistingServer: !process.env.CI,
       timeout: 120000,
     },
     {
       command: 'cd ../studymate-backend && ./scripts/start-test-server.sh',
-      url: 'http://localhost:8081/api/v1/auth/register',
+      url: 'http://localhost:8081/auth/register',
       reuseExistingServer: !process.env.CI,
       timeout: 120000,
-      // Check if backend is ready by testing the register endpoint
+      // Check if backend is ready by testing the register endpoint (Pattern A - no prefix)
       // We don't care if it returns error, just that it responds
       ignoreHTTPSErrors: true,
     },
