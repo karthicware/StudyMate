@@ -70,12 +70,16 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "studymate-frontend:build:production"
             },
             "development": {
-              "buildTarget": "studymate-frontend:build:development"
+              "buildTarget": "studymate-frontend:build:development",
+              "proxyConfig": "proxy.conf.json"
             },
             "test": {
               "buildTarget": "studymate-frontend:build:test"

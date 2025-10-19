@@ -4,13 +4,28 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 ## Development server
 
-To start a local development server, run:
+**IMPORTANT**: Always use `npm start` (not `ng serve` directly) to ensure the proxy configuration is active.
 
 ```bash
-ng serve
+# Start frontend with proxy configuration (connects to backend on port 8080)
+npm start
 ```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+**Before starting the frontend**, ensure the backend is running:
+
+```bash
+# In a separate terminal, start the backend
+cd ../studymate-backend
+./mvnw spring-boot:run
+```
+
+### Why use `npm start` instead of `ng serve`?
+
+The `npm start` command includes the proxy configuration (`--proxy-config proxy.conf.json`) which routes API requests from the frontend (port 4200) to the backend (port 8080). Without the proxy, API calls will fail with connection errors.
+
+For more details about environment configuration, see [Frontend Environment Configuration](../docs/architecture/frontend-environment-config.md).
 
 ## Code scaffolding
 
