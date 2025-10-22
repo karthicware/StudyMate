@@ -20,7 +20,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -45,9 +44,6 @@ class SeatConfigurationServiceTest {
 
     @Mock
     private UserRepository userRepository;
-
-    @Mock
-    private UserDetails userDetails;
 
     @InjectMocks
     private SeatConfigurationService seatConfigurationService;
@@ -74,8 +70,6 @@ class SeatConfigurationServiceTest {
                 createSeatDTO("A2", 200, 150, "available", BigDecimal.valueOf(150.00)),
                 createSeatDTO("B1", 100, 250, "available", null)
         );
-
-        when(userDetails.getUsername()).thenReturn("owner@test.com");
     }
 
     @Test
@@ -84,7 +78,6 @@ class SeatConfigurationServiceTest {
         SeatConfigRequest request = new SeatConfigRequest(seatDTOs);
 
         when(studyHallRepository.findById(1L)).thenReturn(Optional.of(hall));
-        when(userRepository.findByEmail("owner@test.com")).thenReturn(Optional.of(owner));
 
         List<Seat> savedSeats = Arrays.asList(
                 createSeat(1L, hall, "A1", 100, 150, "available", null),
@@ -95,7 +88,7 @@ class SeatConfigurationServiceTest {
         when(seatRepository.saveAll(anyList())).thenReturn(savedSeats);
 
         // Act
-        SeatConfigResponse response = seatConfigurationService.saveSeatConfiguration(1L, request, userDetails);
+        SeatConfigResponse response = seatConfigurationService.saveSeatConfiguration(1L, request, owner);
 
         // Assert
         assertTrue(response.isSuccess());
@@ -117,7 +110,7 @@ class SeatConfigurationServiceTest {
 
         // Act & Assert
         assertThrows(ResourceNotFoundException.class, () ->
-                seatConfigurationService.saveSeatConfiguration(1L, request, userDetails)
+                seatConfigurationService.saveSeatConfiguration(1L, request, owner)
         );
 
         verify(seatRepository, never()).saveAll(anyList());
@@ -137,7 +130,7 @@ class SeatConfigurationServiceTest {
 
         // Act & Assert
         assertThrows(ForbiddenException.class, () ->
-                seatConfigurationService.saveSeatConfiguration(1L, request, userDetails)
+                seatConfigurationService.saveSeatConfiguration(1L, request, owner)
         );
 
         verify(seatRepository, never()).saveAll(anyList());
@@ -158,7 +151,7 @@ class SeatConfigurationServiceTest {
 
         // Act & Assert
         InvalidRequestException exception = assertThrows(InvalidRequestException.class, () ->
-                seatConfigurationService.saveSeatConfiguration(1L, request, userDetails)
+                seatConfigurationService.saveSeatConfiguration(1L, request, owner)
         );
 
         assertTrue(exception.getMessage().contains("Duplicate seat numbers found"));
@@ -176,7 +169,7 @@ class SeatConfigurationServiceTest {
 
         // Act & Assert
         assertThrows(InvalidRequestException.class, () ->
-                seatConfigurationService.saveSeatConfiguration(1L, request, userDetails)
+                seatConfigurationService.saveSeatConfiguration(1L, request, owner)
         );
     }
 
@@ -193,7 +186,7 @@ class SeatConfigurationServiceTest {
         when(seatRepository.findByHallId(1L)).thenReturn(seats);
 
         // Act
-        List<SeatDTO> result = seatConfigurationService.getSeatConfiguration(1L, userDetails);
+        List<SeatDTO> result = seatConfigurationService.getSeatConfiguration(1L, owner);
 
         // Assert
         assertNotNull(result);
@@ -210,7 +203,7 @@ class SeatConfigurationServiceTest {
         when(seatRepository.countByHallId(1L)).thenReturn(9);
 
         // Act
-        SeatConfigResponse response = seatConfigurationService.deleteSeat(1L, 5L, userDetails);
+        SeatConfigResponse response = seatConfigurationService.deleteSeat(1L, 5L, owner);
 
         // Assert
         assertTrue(response.isSuccess());
@@ -227,7 +220,7 @@ class SeatConfigurationServiceTest {
 
         // Act & Assert
         assertThrows(ResourceNotFoundException.class, () ->
-                seatConfigurationService.deleteSeat(1L, 5L, userDetails)
+                seatConfigurationService.deleteSeat(1L, 5L, owner)
         );
 
         verify(seatRepository, never()).deleteByIdAndHallId(anyLong(), anyLong());

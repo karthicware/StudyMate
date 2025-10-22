@@ -94,7 +94,7 @@ describe('HallManagementService', () => {
         },
       });
 
-      const req = httpMock.expectOne('/api/v1/owner/halls');
+      const req = httpMock.expectOne('/api/owner/halls');
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(mockHallCreateRequest);
       req.flush(mockHall);
@@ -118,7 +118,7 @@ describe('HallManagementService', () => {
         },
       });
 
-      const req = httpMock.expectOne('/api/v1/owner/halls');
+      const req = httpMock.expectOne('/api/owner/halls');
       req.flush(errorResponse.error, {
         status: errorResponse.status,
         statusText: errorResponse.statusText,
@@ -142,7 +142,7 @@ describe('HallManagementService', () => {
         },
       });
 
-      const req = httpMock.expectOne('/api/v1/owner/halls');
+      const req = httpMock.expectOne('/api/owner/halls');
       req.flush(null, {
         status: errorResponse.status,
         statusText: errorResponse.statusText,
@@ -167,7 +167,7 @@ describe('HallManagementService', () => {
         },
       });
 
-      const req = httpMock.expectOne('/api/v1/owner/halls');
+      const req = httpMock.expectOne('/api/owner/halls');
       req.flush(errorResponse.error, {
         status: errorResponse.status,
         statusText: errorResponse.statusText,
@@ -192,7 +192,7 @@ describe('HallManagementService', () => {
         },
       });
 
-      const req = httpMock.expectOne('/api/v1/owner/halls');
+      const req = httpMock.expectOne('/api/owner/halls');
       expect(req.request.method).toBe('GET');
       req.flush(mockHallListResponse);
     });
@@ -207,7 +207,7 @@ describe('HallManagementService', () => {
         },
       });
 
-      const req = httpMock.expectOne('/api/v1/owner/halls');
+      const req = httpMock.expectOne('/api/owner/halls');
       req.flush(emptyResponse);
     });
 
@@ -228,7 +228,7 @@ describe('HallManagementService', () => {
         },
       });
 
-      const req = httpMock.expectOne('/api/v1/owner/halls');
+      const req = httpMock.expectOne('/api/owner/halls');
       req.flush(null, {
         status: errorResponse.status,
         statusText: errorResponse.statusText,
@@ -250,7 +250,7 @@ describe('HallManagementService', () => {
         },
       });
 
-      const req = httpMock.expectOne(`/api/v1/owner/halls/${hallId}`);
+      const req = httpMock.expectOne(`/api/owner/halls/${hallId}`);
       expect(req.request.method).toBe('GET');
       req.flush(mockHall);
     });
@@ -273,7 +273,7 @@ describe('HallManagementService', () => {
         },
       });
 
-      const req = httpMock.expectOne(`/api/v1/owner/halls/${hallId}`);
+      const req = httpMock.expectOne(`/api/owner/halls/${hallId}`);
       req.flush(null, {
         status: errorResponse.status,
         statusText: errorResponse.statusText,
@@ -305,7 +305,7 @@ describe('HallManagementService', () => {
         },
       });
 
-      const req = httpMock.expectOne(`/api/v1/owner/halls/${hallId}`);
+      const req = httpMock.expectOne(`/api/owner/halls/${hallId}`);
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(updateData);
       req.flush(updatedHall);
@@ -323,7 +323,7 @@ describe('HallManagementService', () => {
         },
       });
 
-      const req = httpMock.expectOne(`/api/v1/owner/halls/${hallId}`);
+      const req = httpMock.expectOne(`/api/owner/halls/${hallId}`);
       expect(req.request.method).toBe('DELETE');
       req.flush(null);
     });
@@ -346,7 +346,7 @@ describe('HallManagementService', () => {
         },
       });
 
-      const req = httpMock.expectOne(`/api/v1/owner/halls/${hallId}`);
+      const req = httpMock.expectOne(`/api/owner/halls/${hallId}`);
       req.flush(null, {
         status: errorResponse.status,
         statusText: errorResponse.statusText,
@@ -371,7 +371,7 @@ describe('HallManagementService', () => {
         },
       });
 
-      const req = httpMock.expectOne('/api/v1/owner/halls');
+      const req = httpMock.expectOne('/api/owner/halls');
       req.error(errorEvent);
     });
 
@@ -392,7 +392,7 @@ describe('HallManagementService', () => {
         },
       });
 
-      const req = httpMock.expectOne('/api/v1/owner/halls');
+      const req = httpMock.expectOne('/api/owner/halls');
       req.flush(null, {
         status: errorResponse.status,
         statusText: errorResponse.statusText,

@@ -17,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -72,16 +71,14 @@ class DashboardServiceTest {
     @Test
     void getDashboardMetrics_Success() {
         // Arrange
-        when(userDetails.getUsername()).thenReturn("owner@test.com");
         when(hallRepository.findById(1L)).thenReturn(Optional.of(hall));
-        when(userRepository.findByEmail("owner@test.com")).thenReturn(Optional.of(owner));
         when(seatRepository.countByHallId(1L)).thenReturn(50);
         when(bookingRepository.countActiveBookingsByHallId(1L)).thenReturn(37);
         when(bookingRepository.sumRevenueByHallId(1L)).thenReturn(new BigDecimal("15000.00"));
         when(seatRepository.findSeatMapByHallId(1L)).thenReturn(seatMap);
 
         // Act
-        DashboardResponse response = dashboardService.getDashboardMetrics(1L, userDetails);
+        DashboardResponse response = dashboardService.getDashboardMetrics(1L, owner);
 
         // Assert
         assertNotNull(response);
@@ -91,7 +88,6 @@ class DashboardServiceTest {
         assertEquals(2, response.getSeatMap().size());
 
         verify(hallRepository).findById(1L);
-        verify(userRepository).findByEmail("owner@test.com");
         verify(seatRepository).countByHallId(1L);
         verify(bookingRepository).countActiveBookingsByHallId(1L);
         verify(bookingRepository).sumRevenueByHallId(1L);
@@ -101,30 +97,13 @@ class DashboardServiceTest {
     @Test
     void getDashboardMetrics_HallNotFound_ThrowsException() {
         // Arrange
-        when(userDetails.getUsername()).thenReturn("owner@test.com");
         when(hallRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(ResourceNotFoundException.class,
-            () -> dashboardService.getDashboardMetrics(999L, userDetails));
+            () -> dashboardService.getDashboardMetrics(999L, owner));
 
         verify(hallRepository).findById(999L);
-        verify(userRepository, never()).findByEmail(anyString());
-    }
-
-    @Test
-    void getDashboardMetrics_UserNotFound_ThrowsException() {
-        // Arrange
-        when(userDetails.getUsername()).thenReturn("unknown@test.com");
-        when(hallRepository.findById(1L)).thenReturn(Optional.of(hall));
-        when(userRepository.findByEmail("unknown@test.com")).thenReturn(Optional.empty());
-
-        // Act & Assert
-        assertThrows(ResourceNotFoundException.class,
-            () -> dashboardService.getDashboardMetrics(1L, userDetails));
-
-        verify(hallRepository).findById(1L);
-        verify(userRepository).findByEmail("unknown@test.com");
     }
 
     @Test
@@ -135,32 +114,28 @@ class DashboardServiceTest {
         anotherUser.setEmail("other@test.com");
         anotherUser.setRole(UserRole.ROLE_OWNER);
 
-        when(userDetails.getUsername()).thenReturn("other@test.com");
         when(hallRepository.findById(1L)).thenReturn(Optional.of(hall));
-        when(userRepository.findByEmail("other@test.com")).thenReturn(Optional.of(anotherUser));
 
         // Act & Assert
         assertThrows(ForbiddenException.class,
-            () -> dashboardService.getDashboardMetrics(1L, userDetails));
+            () -> dashboardService.getDashboardMetrics(1L, anotherUser));
 
         verify(hallRepository).findById(1L);
-        verify(userRepository).findByEmail("other@test.com");
         verify(seatRepository, never()).countByHallId(anyLong());
     }
+
 
     @Test
     void getDashboardMetrics_NoSeats_ReturnsZeroOccupancy() {
         // Arrange
-        when(userDetails.getUsername()).thenReturn("owner@test.com");
         when(hallRepository.findById(1L)).thenReturn(Optional.of(hall));
-        when(userRepository.findByEmail("owner@test.com")).thenReturn(Optional.of(owner));
         when(seatRepository.countByHallId(1L)).thenReturn(0);
         when(bookingRepository.countActiveBookingsByHallId(1L)).thenReturn(0);
         when(bookingRepository.sumRevenueByHallId(1L)).thenReturn(BigDecimal.ZERO);
         when(seatRepository.findSeatMapByHallId(1L)).thenReturn(List.of());
 
         // Act
-        DashboardResponse response = dashboardService.getDashboardMetrics(1L, userDetails);
+        DashboardResponse response = dashboardService.getDashboardMetrics(1L, owner);
 
         // Assert
         assertNotNull(response);
@@ -173,16 +148,14 @@ class DashboardServiceTest {
     @Test
     void getDashboardMetrics_FullOccupancy_Returns100Percent() {
         // Arrange
-        when(userDetails.getUsername()).thenReturn("owner@test.com");
         when(hallRepository.findById(1L)).thenReturn(Optional.of(hall));
-        when(userRepository.findByEmail("owner@test.com")).thenReturn(Optional.of(owner));
         when(seatRepository.countByHallId(1L)).thenReturn(50);
         when(bookingRepository.countActiveBookingsByHallId(1L)).thenReturn(50);
         when(bookingRepository.sumRevenueByHallId(1L)).thenReturn(new BigDecimal("25000.00"));
         when(seatRepository.findSeatMapByHallId(1L)).thenReturn(seatMap);
 
         // Act
-        DashboardResponse response = dashboardService.getDashboardMetrics(1L, userDetails);
+        DashboardResponse response = dashboardService.getDashboardMetrics(1L, owner);
 
         // Assert
         assertNotNull(response);
@@ -194,16 +167,14 @@ class DashboardServiceTest {
     @Test
     void getDashboardMetrics_NoBookings_ReturnsZeroRevenue() {
         // Arrange
-        when(userDetails.getUsername()).thenReturn("owner@test.com");
         when(hallRepository.findById(1L)).thenReturn(Optional.of(hall));
-        when(userRepository.findByEmail("owner@test.com")).thenReturn(Optional.of(owner));
         when(seatRepository.countByHallId(1L)).thenReturn(50);
         when(bookingRepository.countActiveBookingsByHallId(1L)).thenReturn(0);
         when(bookingRepository.sumRevenueByHallId(1L)).thenReturn(BigDecimal.ZERO);
         when(seatRepository.findSeatMapByHallId(1L)).thenReturn(seatMap);
 
         // Act
-        DashboardResponse response = dashboardService.getDashboardMetrics(1L, userDetails);
+        DashboardResponse response = dashboardService.getDashboardMetrics(1L, owner);
 
         // Assert
         assertNotNull(response);

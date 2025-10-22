@@ -12,8 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +55,6 @@ class DashboardServicePerformanceTest {
 
     private com.studymate.backend.model.User testOwner;
     private StudyHall testHall;
-    private UserDetails userDetails;
 
     @BeforeEach
     @Transactional
@@ -79,12 +76,6 @@ class DashboardServicePerformanceTest {
         testHall.setSeatCount(100);
         testHall.setAddress("123 Test St");
         testHall = hallRepository.save(testHall);
-
-        // Create UserDetails for service call
-        userDetails = User.withUsername(testOwner.getEmail())
-            .password("")
-            .authorities("ROLE_OWNER")
-            .build();
 
         // Create realistic data: 100 seats, 70% occupied
         List<Seat> seats = new ArrayList<>();
@@ -139,11 +130,11 @@ class DashboardServicePerformanceTest {
     @Test
     void getDashboardMetrics_WithRealisticData_CompletesUnder500ms() {
         // Warmup query to avoid cold start effects
-        dashboardService.getDashboardMetrics(testHall.getId(), userDetails);
+        dashboardService.getDashboardMetrics(testHall.getId(), testOwner);
 
         // Measure performance
         long startTime = System.currentTimeMillis();
-        DashboardResponse response = dashboardService.getDashboardMetrics(testHall.getId(), userDetails);
+        DashboardResponse response = dashboardService.getDashboardMetrics(testHall.getId(), testOwner);
         long endTime = System.currentTimeMillis();
         long executionTime = endTime - startTime;
 
@@ -167,7 +158,7 @@ class DashboardServicePerformanceTest {
 
         for (int i = 0; i < 5; i++) {
             long startTime = System.currentTimeMillis();
-            dashboardService.getDashboardMetrics(testHall.getId(), userDetails);
+            dashboardService.getDashboardMetrics(testHall.getId(), testOwner);
             long endTime = System.currentTimeMillis();
             executionTimes.add(endTime - startTime);
         }

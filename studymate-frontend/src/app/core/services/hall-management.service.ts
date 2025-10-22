@@ -17,7 +17,10 @@ import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class HallManagementService {
   private http = inject(HttpClient);
-  private readonly API_URL = `${environment.apiBaseUrl}/owner/halls`;
+  // Use /api prefix for dev/unit tests (proxy handles routing), full URL for E2E tests
+  private readonly API_URL = environment.apiBaseUrl
+    ? `${environment.apiBaseUrl}/owner/halls`  // E2E: 'http://localhost:8081/owner/halls'
+    : '/api/owner/halls';                       // Dev/Unit: '/api/owner/halls' -> proxy rewrites to '/owner/halls'
 
   /**
    * Create a new study hall
