@@ -43,9 +43,6 @@ class DashboardServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    @Mock
-    private UserDetails userDetails;
-
     @InjectMocks
     private DashboardService dashboardService;
 

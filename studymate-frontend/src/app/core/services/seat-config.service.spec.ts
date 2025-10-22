@@ -12,7 +12,7 @@ describe('SeatConfigService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [SeatConfigService]
+      providers: [SeatConfigService],
     });
     service = TestBed.inject(SeatConfigService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -31,16 +31,16 @@ describe('SeatConfigService', () => {
       const hallId = 'hall-123';
       const seats: Seat[] = [
         { seatNumber: 'A1', xCoord: 100, yCoord: 150 },
-        { seatNumber: 'A2', xCoord: 200, yCoord: 150 }
+        { seatNumber: 'A2', xCoord: 200, yCoord: 150 },
       ];
       const mockResponse = {
         success: true,
         message: 'Seats saved successfully',
         seats,
-        seatCount: 2
+        seatCount: 2,
       };
 
-      service.saveSeatConfiguration(hallId, seats).subscribe(response => {
+      service.saveSeatConfiguration(hallId, seats).subscribe((response) => {
         expect(response).toEqual(mockResponse);
         expect(response.success).toBe(true);
         expect(response.seatCount).toBe(2);
@@ -57,10 +57,10 @@ describe('SeatConfigService', () => {
     it('should get seat configuration via GET request', () => {
       const hallId = 'hall-123';
       const mockSeats: Seat[] = [
-        { id: '1', hallId, seatNumber: 'A1', xCoord: 100, yCoord: 150, status: 'available' }
+        { id: '1', hallId, seatNumber: 'A1', xCoord: 100, yCoord: 150, status: 'available' },
       ];
 
-      service.getSeatConfiguration(hallId).subscribe(seats => {
+      service.getSeatConfiguration(hallId).subscribe((seats) => {
         expect(seats).toEqual(mockSeats);
         expect(seats.length).toBe(1);
       });
@@ -77,7 +77,7 @@ describe('SeatConfigService', () => {
       const seatId = 'seat-456';
       const mockResponse = { success: true, message: 'Seat deleted' };
 
-      service.deleteSeat(hallId, seatId).subscribe(response => {
+      service.deleteSeat(hallId, seatId).subscribe((response) => {
         expect(response.success).toBe(true);
       });
 
@@ -91,15 +91,15 @@ describe('SeatConfigService', () => {
     it('should save shift configuration via POST request', () => {
       const hallId = 'hall-123';
       const openingHours: OpeningHours = {
-        monday: { open: '09:00', close: '22:00' }
+        monday: { open: '09:00', close: '22:00' },
       };
       const mockResponse = {
         success: true,
         message: 'Shifts saved',
-        openingHours
+        openingHours,
       };
 
-      service.saveShiftConfiguration(hallId, openingHours).subscribe(response => {
+      service.saveShiftConfiguration(hallId, openingHours).subscribe((response) => {
         expect(response.success).toBe(true);
       });
 
@@ -113,10 +113,10 @@ describe('SeatConfigService', () => {
     it('should get shift configuration via GET request', () => {
       const hallId = 'hall-123';
       const mockHours: OpeningHours = {
-        monday: { open: '09:00', close: '22:00' }
+        monday: { open: '09:00', close: '22:00' },
       };
 
-      service.getShiftConfiguration(hallId).subscribe(hours => {
+      service.getShiftConfiguration(hallId).subscribe((hours) => {
         expect(hours).toEqual(mockHours);
       });
 
@@ -128,23 +128,17 @@ describe('SeatConfigService', () => {
 
   describe('validateSeatNumberUnique', () => {
     it('should return true for unique seat number', () => {
-      const existingSeats: Seat[] = [
-        { seatNumber: 'A1', xCoord: 100, yCoord: 150 }
-      ];
+      const existingSeats: Seat[] = [{ seatNumber: 'A1', xCoord: 100, yCoord: 150 }];
       expect(service.validateSeatNumberUnique('A2', existingSeats)).toBe(true);
     });
 
     it('should return false for duplicate seat number', () => {
-      const existingSeats: Seat[] = [
-        { seatNumber: 'A1', xCoord: 100, yCoord: 150 }
-      ];
+      const existingSeats: Seat[] = [{ seatNumber: 'A1', xCoord: 100, yCoord: 150 }];
       expect(service.validateSeatNumberUnique('A1', existingSeats)).toBe(false);
     });
 
     it('should exclude specific seat ID from validation', () => {
-      const existingSeats: Seat[] = [
-        { id: 'seat-1', seatNumber: 'A1', xCoord: 100, yCoord: 150 }
-      ];
+      const existingSeats: Seat[] = [{ id: 'seat-1', seatNumber: 'A1', xCoord: 100, yCoord: 150 }];
       expect(service.validateSeatNumberUnique('A1', existingSeats, 'seat-1')).toBe(true);
     });
   });
@@ -153,7 +147,7 @@ describe('SeatConfigService', () => {
     it('should return true for non-overlapping shifts', () => {
       const shifts = [
         { startTime: '06:00', endTime: '12:00' },
-        { startTime: '12:00', endTime: '18:00' }
+        { startTime: '12:00', endTime: '18:00' },
       ];
       expect(service.validateShiftTimesNoOverlap(shifts)).toBe(true);
     });
@@ -161,7 +155,7 @@ describe('SeatConfigService', () => {
     it('should return false for overlapping shifts', () => {
       const shifts = [
         { startTime: '06:00', endTime: '13:00' },
-        { startTime: '12:00', endTime: '18:00' }
+        { startTime: '12:00', endTime: '18:00' },
       ];
       expect(service.validateShiftTimesNoOverlap(shifts)).toBe(false);
     });

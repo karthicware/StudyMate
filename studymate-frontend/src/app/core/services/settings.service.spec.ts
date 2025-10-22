@@ -18,13 +18,13 @@ describe('SettingsService', () => {
     language: 'en',
     timezone: 'America/New_York',
     defaultView: 'dashboard',
-    profileVisibility: 'public'
+    profileVisibility: 'public',
   };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [SettingsService]
+      providers: [SettingsService],
     });
     service = TestBed.inject(SettingsService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -40,7 +40,7 @@ describe('SettingsService', () => {
 
   describe('getSettings', () => {
     it('should fetch settings data via GET request', () => {
-      service.getSettings().subscribe(settings => {
+      service.getSettings().subscribe((settings) => {
         expect(settings).toEqual(mockSettings);
       });
 
@@ -54,7 +54,7 @@ describe('SettingsService', () => {
         next: () => fail('should have failed'),
         error: (error) => {
           expect(error.status).toBe(500);
-        }
+        },
       });
 
       const req = httpMock.expectOne(apiUrl);
@@ -66,7 +66,7 @@ describe('SettingsService', () => {
         next: () => fail('should have failed'),
         error: (error) => {
           expect(error.status).toBe(401);
-        }
+        },
       });
 
       const req = httpMock.expectOne(apiUrl);
@@ -78,12 +78,12 @@ describe('SettingsService', () => {
     it('should update settings via PUT request', () => {
       const updateRequest: SettingsUpdateRequest = {
         emailNotifications: false,
-        language: 'es'
+        language: 'es',
       };
 
       const updatedSettings = { ...mockSettings, ...updateRequest };
 
-      service.updateSettings(updateRequest).subscribe(settings => {
+      service.updateSettings(updateRequest).subscribe((settings) => {
         expect(settings).toEqual(updatedSettings);
       });
 
@@ -95,10 +95,10 @@ describe('SettingsService', () => {
 
     it('should support partial updates', () => {
       const partialUpdate: SettingsUpdateRequest = {
-        timezone: 'America/Los_Angeles'
+        timezone: 'America/Los_Angeles',
       };
 
-      service.updateSettings(partialUpdate).subscribe(settings => {
+      service.updateSettings(partialUpdate).subscribe((settings) => {
         expect(settings.timezone).toBe('America/Los_Angeles');
       });
 
@@ -109,33 +109,30 @@ describe('SettingsService', () => {
 
     it('should handle validation error (400)', () => {
       const invalidUpdate: SettingsUpdateRequest = {
-        language: 'invalid-lang'
+        language: 'invalid-lang',
       };
 
       service.updateSettings(invalidUpdate).subscribe({
         next: () => fail('should have failed'),
         error: (error) => {
           expect(error.status).toBe(400);
-        }
+        },
       });
 
       const req = httpMock.expectOne(apiUrl);
-      req.flush(
-        { message: 'Invalid language' },
-        { status: 400, statusText: 'Bad Request' }
-      );
+      req.flush({ message: 'Invalid language' }, { status: 400, statusText: 'Bad Request' });
     });
 
     it('should handle unauthorized error (401)', () => {
       const updateRequest: SettingsUpdateRequest = {
-        emailNotifications: false
+        emailNotifications: false,
       };
 
       service.updateSettings(updateRequest).subscribe({
         next: () => fail('should have failed'),
         error: (error) => {
           expect(error.status).toBe(401);
-        }
+        },
       });
 
       const req = httpMock.expectOne(apiUrl);
@@ -144,14 +141,14 @@ describe('SettingsService', () => {
 
     it('should handle server error (500)', () => {
       const updateRequest: SettingsUpdateRequest = {
-        emailNotifications: false
+        emailNotifications: false,
       };
 
       service.updateSettings(updateRequest).subscribe({
         next: () => fail('should have failed'),
         error: (error) => {
           expect(error.status).toBe(500);
-        }
+        },
       });
 
       const req = httpMock.expectOne(apiUrl);
@@ -171,10 +168,10 @@ describe('SettingsService', () => {
         language: 'en',
         timezone: 'America/New_York',
         defaultView: 'dashboard',
-        profileVisibility: 'public'
+        profileVisibility: 'public',
       };
 
-      service.restoreDefaults().subscribe(settings => {
+      service.restoreDefaults().subscribe((settings) => {
         expect(settings).toEqual(defaultSettings);
       });
 
@@ -189,7 +186,7 @@ describe('SettingsService', () => {
         next: () => fail('should have failed'),
         error: (error) => {
           expect(error.status).toBe(500);
-        }
+        },
       });
 
       const req = httpMock.expectOne(`${apiUrl}/restore-defaults`);
@@ -201,7 +198,7 @@ describe('SettingsService', () => {
         next: () => fail('should have failed'),
         error: (error) => {
           expect(error.status).toBe(401);
-        }
+        },
       });
 
       const req = httpMock.expectOne(`${apiUrl}/restore-defaults`);

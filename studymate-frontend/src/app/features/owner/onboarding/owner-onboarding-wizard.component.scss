@@ -1,0 +1,58 @@
+/**
+ * Owner Onboarding Wizard Component Styles
+ *
+ * Styles for the multi-step onboarding wizard modal.
+ * Uses Tailwind CSS utility classes with custom overrides.
+ */
+
+// Component-specific styles (if needed beyond Tailwind utilities)
+// Most styling is done inline with Tailwind classes in the template
+
+// Animation for loading spinner (already using Tailwind's animate-spin)
+
+// Custom focus styles for accessibility
+:host {
+  ::ng-deep {
+    input:focus,
+    textarea:focus,
+    select:focus {
+      @apply ring-2 ring-blue-500 outline-none;
+    }
+  }
+}
+
+// Smooth transitions for modals
+.fixed {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Ensure modal content is scrollable on small screens
+.max-h-\[90vh\] {
+  @apply overflow-y-auto;
+}
+
+// Custom scrollbar styles for webkit browsers
+.max-h-\[90vh\]::-webkit-scrollbar {
+  width: 8px;
+}
+
+.max-h-\[90vh\]::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+.max-h-\[90vh\]::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded;
+}
+
+.max-h-\[90vh\]::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}

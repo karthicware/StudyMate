@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, interval, switchMap, startWith } from 'rxjs';
 import { Seat } from '../models/seat-config.model';
+import { environment } from '../../../environments/environment';
 
 /**
  * Response structure for seat map data
@@ -14,11 +15,11 @@ export interface SeatMapResponse {
  * Service for fetching and managing seat map visualization data
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SeatMapService {
   private http = inject(HttpClient);
-  private readonly apiUrl = '/api/owner/seats';
+  private readonly apiUrl = `${environment.apiBaseUrl}/owner/seats`;
 
   /**
    * Fetch all seats for a specific hall
@@ -35,10 +36,10 @@ export class SeatMapService {
    * @param pollingInterval - Interval in milliseconds (default: 10000ms = 10s)
    * @returns Observable that emits seat data at regular intervals
    */
-  getSeatsWithPolling(hallId: string, pollingInterval: number = 10000): Observable<SeatMapResponse> {
+  getSeatsWithPolling(hallId: string, pollingInterval = 10000): Observable<SeatMapResponse> {
     return interval(pollingInterval).pipe(
       startWith(0), // Emit immediately on subscription
-      switchMap(() => this.getSeats(hallId))
+      switchMap(() => this.getSeats(hallId)),
     );
   }
 }

@@ -10,7 +10,7 @@ import { OwnerSettings, SettingsUpdateRequest } from '../models/settings.model';
  * Integrates with backend API endpoints for fetching, updating, and restoring defaults.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SettingsService {
   private http = inject(HttpClient);

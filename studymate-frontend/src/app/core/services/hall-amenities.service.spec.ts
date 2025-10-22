@@ -16,7 +16,7 @@ describe('HallAmenitiesService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [HallAmenitiesService]
+      providers: [HallAmenitiesService],
     });
 
     service = TestBed.inject(HallAmenitiesService);
@@ -37,10 +37,10 @@ describe('HallAmenitiesService', () => {
       const mockResponse: HallAmenities = {
         hallId: 'test-hall-123',
         hallName: 'Test Hall',
-        amenities: ['AC', 'WiFi']
+        amenities: ['AC', 'WiFi'],
       };
 
-      service.getHallAmenities(hallId).subscribe(response => {
+      service.getHallAmenities(hallId).subscribe((response) => {
         expect(response).toEqual(mockResponse);
         expect(response.amenities.length).toBe(2);
         expect(response.amenities).toContain('AC');
@@ -57,10 +57,10 @@ describe('HallAmenitiesService', () => {
       const mockResponse: HallAmenities = {
         hallId: 'test-hall-456',
         hallName: 'AC Only Hall',
-        amenities: ['AC']
+        amenities: ['AC'],
       };
 
-      service.getHallAmenities(hallId).subscribe(response => {
+      service.getHallAmenities(hallId).subscribe((response) => {
         expect(response.amenities).toEqual(['AC']);
         expect(response.amenities.length).toBe(1);
       });
@@ -75,10 +75,10 @@ describe('HallAmenitiesService', () => {
       const mockResponse: HallAmenities = {
         hallId: 'test-hall-789',
         hallName: 'No Amenities Hall',
-        amenities: []
+        amenities: [],
       };
 
-      service.getHallAmenities(hallId).subscribe(response => {
+      service.getHallAmenities(hallId).subscribe((response) => {
         expect(response.amenities).toEqual([]);
         expect(response.amenities.length).toBe(0);
       });
@@ -95,7 +95,7 @@ describe('HallAmenitiesService', () => {
         next: () => fail('should have failed with 404 error'),
         error: (error) => {
           expect(error.status).toBe(404);
-        }
+        },
       });
 
       const req = httpMock.expectOne(`${apiUrl}/${hallId}/amenities`);
@@ -110,7 +110,7 @@ describe('HallAmenitiesService', () => {
         next: () => fail('should have failed with 500 error'),
         error: (error) => {
           expect(error.status).toBe(500);
-        }
+        },
       });
 
       const req = httpMock.expectOne(`${apiUrl}/${hallId}/amenities`);
@@ -126,10 +126,10 @@ describe('HallAmenitiesService', () => {
       const mockResponse: HallAmenities = {
         hallId: 'test-hall-123',
         hallName: 'Test Hall',
-        amenities: ['AC', 'WiFi']
+        amenities: ['AC', 'WiFi'],
       };
 
-      service.updateHallAmenities(hallId, amenities).subscribe(response => {
+      service.updateHallAmenities(hallId, amenities).subscribe((response) => {
         expect(response).toEqual(mockResponse);
         expect(response.amenities).toEqual(['AC', 'WiFi']);
       });
@@ -146,10 +146,10 @@ describe('HallAmenitiesService', () => {
       const mockResponse: HallAmenities = {
         hallId: 'test-hall-123',
         hallName: 'Test Hall',
-        amenities: ['AC']
+        amenities: ['AC'],
       };
 
-      service.updateHallAmenities(hallId, amenities).subscribe(response => {
+      service.updateHallAmenities(hallId, amenities).subscribe((response) => {
         expect(response.amenities).toEqual(['AC']);
       });
 
@@ -165,10 +165,10 @@ describe('HallAmenitiesService', () => {
       const mockResponse: HallAmenities = {
         hallId: 'test-hall-123',
         hallName: 'Test Hall',
-        amenities: []
+        amenities: [],
       };
 
-      service.updateHallAmenities(hallId, amenities).subscribe(response => {
+      service.updateHallAmenities(hallId, amenities).subscribe((response) => {
         expect(response.amenities).toEqual([]);
         expect(response.amenities.length).toBe(0);
       });
@@ -187,7 +187,7 @@ describe('HallAmenitiesService', () => {
         next: () => fail('should have failed with 400 error'),
         error: (error) => {
           expect(error.status).toBe(400);
-        }
+        },
       });
 
       const req = httpMock.expectOne(`${apiUrl}/${hallId}/amenities`);
@@ -203,7 +203,7 @@ describe('HallAmenitiesService', () => {
         next: () => fail('should have failed with 403 error'),
         error: (error) => {
           expect(error.status).toBe(403);
-        }
+        },
       });
 
       const req = httpMock.expectOne(`${apiUrl}/${hallId}/amenities`);
@@ -219,7 +219,7 @@ describe('HallAmenitiesService', () => {
         next: () => fail('should have failed with 404 error'),
         error: (error) => {
           expect(error.status).toBe(404);
-        }
+        },
       });
 
       const req = httpMock.expectOne(`${apiUrl}/${hallId}/amenities`);
@@ -235,7 +235,7 @@ describe('HallAmenitiesService', () => {
         next: () => fail('should have failed with 500 error'),
         error: (error) => {
           expect(error.status).toBe(500);
-        }
+        },
       });
 
       const req = httpMock.expectOne(`${apiUrl}/${hallId}/amenities`);

@@ -5,7 +5,6 @@ import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,12 +12,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 @Entity
-@Table(name = "study_halls")
+@Table(name = "study_halls",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"owner_id", "hall_name"}))
 @Getter
 @Setter
 @NoArgsConstructor
@@ -39,13 +40,53 @@ public class StudyHall {
     @Column(name = "hall_name", nullable = false)
     private String hallName;
 
-    @NotNull(message = "Seat count is required")
-    @Positive(message = "Seat count must be positive")
-    @Column(name = "seat_count", nullable = false)
-    private Integer seatCount;
+    @Size(max = 1000)
+    @Column(length = 1000)
+    private String description;
 
+    @NotBlank(message = "Address is required")
+    @Size(max = 500, message = "Address must not exceed 500 characters")
     @Column(columnDefinition = "TEXT")
     private String address;
+
+    @NotBlank(message = "City is required")
+    @Size(max = 100, message = "City must not exceed 100 characters")
+    @Column(length = 100)
+    private String city;
+
+    @NotBlank(message = "State is required")
+    @Size(max = 100, message = "State must not exceed 100 characters")
+    @Column(length = 100)
+    private String state;
+
+    @Size(max = 20, message = "Postal code must not exceed 20 characters")
+    @Column(name = "postal_code", length = 20)
+    private String postalCode;
+
+    @NotBlank(message = "Country is required")
+    @Size(max = 100, message = "Country must not exceed 100 characters")
+    @Column(length = 100)
+    private String country;
+
+    @Size(max = 20)
+    @Column(length = 20)
+    private String status;
+
+    @Column(name = "base_pricing", precision = 10, scale = 2)
+    private BigDecimal basePricing;
+
+    @Column(precision = 10, scale = 8)
+    private BigDecimal latitude;
+
+    @Column(precision = 11, scale = 8)
+    private BigDecimal longitude;
+
+    @Size(max = 50)
+    @Column(length = 50)
+    private String region;
+
+    @Column(name = "seat_count", nullable = false)
+    private Integer seatCount;
 
     @Type(JsonBinaryType.class)
     @Column(name = "opening_hours", columnDefinition = "jsonb")
@@ -65,6 +106,12 @@ public class StudyHall {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        if (status == null || status.isBlank()) {
+            status = "DRAFT";
+        }
+        if (country == null || country.isBlank()) {
+            country = "India";
+        }
     }
 
     @PreUpdate

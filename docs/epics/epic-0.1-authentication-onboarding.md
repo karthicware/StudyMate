@@ -153,8 +153,16 @@ Establish the foundational authentication and onboarding system for the StudyMat
 7. Owner can manage multiple halls (create additional halls later)
 
 **Related Stories:**
-- Story 0.1.6: Owner Onboarding Wizard - Initial Hall Setup (Frontend)
-- Story 0.1.6-backend: Hall Creation & Onboarding API (Backend)
+- ✅ [Story 0.1.6: Owner Onboarding Wizard - Initial Hall Setup (Frontend)](0.1.6-onboarding-wizard-hall-setup.story.md) - **CREATED 2025-10-19**
+- ✅ [Story 0.1.6-backend: Hall Creation & Onboarding API (Backend)](0.1.6-backend-hall-creation-api.story.md) - **CREATED 2025-10-19**
+
+**Story Status:** 🔄 In Progress (Rework - Integration)
+**Priority:** P0 - CRITICAL (Unblocks Story 1.4 Seat Map Configuration)
+**Story Points:** 0.1.6-backend: 5 SP, 0.1.6: 8 SP
+**Documentation:**
+- [Validation Report](../qa/story-validation-report-onboarding-stories.md)
+- [Backlog Summary](../planning/backlog-summary-owner-onboarding.md)
+- [Visual Flow Diagram](../diagrams/owner-onboarding-wizard-flow.md)
 
 ---
 
@@ -173,8 +181,17 @@ Establish the foundational authentication and onboarding system for the StudyMat
 7. Revenue calculations use custom pricing if set, else base pricing
 
 **Related Stories:**
-- Story 0.1.7: Pricing Configuration Interface (Frontend)
-- Story 0.1.7-backend: Pricing Management API (Backend)
+- ✅ [Story 0.1.7: Pricing Configuration Interface (Frontend)](0.1.7-pricing-configuration.story.md) - **CREATED 2025-10-19**
+- ✅ [Story 0.1.7-backend: Pricing Management API (Backend)](0.1.7-backend-pricing-api.story.md) - **CREATED 2025-10-19**
+
+**Story Status:** Draft (Ready for Sprint Planning)
+**Priority:** P1 - HIGH
+**Story Points:** 0.1.7-backend: 2 SP, 0.1.7: 3 SP
+**Dependencies:** Blocked by Story 0.1.6 and 0.1.6-backend
+**Documentation:**
+- [Validation Report](../qa/story-validation-report-onboarding-stories.md)
+- [Backlog Summary](../planning/backlog-summary-owner-onboarding.md)
+- [Visual Flow Diagram](../diagrams/owner-onboarding-wizard-flow.md)
 
 ---
 
@@ -193,8 +210,18 @@ Establish the foundational authentication and onboarding system for the StudyMat
 7. Hall appears on student discovery map after activation
 
 **Related Stories:**
-- Story 0.1.8: Location/Region Configuration Interface (Frontend)
-- Story 0.1.8-backend: Location Management API (Backend)
+- ✅ [Story 0.1.8: Location/Region Configuration Interface (Frontend)](0.1.8-location-configuration.story.md) - **CREATED 2025-10-19**
+- ✅ [Story 0.1.8-backend: Location Management API (Backend)](0.1.8-backend-location-api.story.md) - **CREATED 2025-10-19**
+
+**Story Status:** Draft (Ready for Sprint Planning)
+**Priority:** P1 - HIGH
+**Story Points:** 0.1.8-backend: 3 SP, 0.1.8: 5 SP
+**Dependencies:** Blocked by Story 0.1.7 and 0.1.7-backend
+**External Dependency:** Google Maps API key required (obtain before Sprint 3)
+**Documentation:**
+- [Validation Report](../qa/story-validation-report-onboarding-stories.md)
+- [Backlog Summary](../planning/backlog-summary-owner-onboarding.md)
+- [Visual Flow Diagram](../diagrams/owner-onboarding-wizard-flow.md)
 
 ---
 
@@ -362,27 +389,30 @@ Establish the foundational authentication and onboarding system for the StudyMat
 
 ## Story Breakdown Summary
 
-| Story ID | Story Name | Type | Estimated Complexity |
-|----------|------------|------|---------------------|
-| 0.1.1 | Owner Registration Form & Email Verification | Frontend | Medium |
-| 0.1.1-backend | Owner Registration API Implementation | Backend | Medium |
-| 0.1.2 | Owner Login Page & Session Management | Frontend | Medium |
-| 0.1.2-backend | Owner Authentication API & JWT Implementation | Backend | High |
-| 0.1.3 | Student Registration Form & Email Verification | Frontend | Medium |
-| 0.1.3-backend | Student Registration API Implementation | Backend | Medium |
-| 0.1.4 | Student Login Page & Session Management | Frontend | Medium |
-| 0.1.4-backend | Student Authentication API & JWT Implementation | Backend | Medium |
-| 0.1.5 | Password Reset Flow | Frontend | Medium |
-| 0.1.5-backend | Password Reset API Implementation | Backend | Medium |
-| 0.1.6 | Owner Onboarding Wizard - Initial Hall Setup | Frontend | High |
-| 0.1.6-backend | Hall Creation & Onboarding API | Backend | Medium |
-| 0.1.7 | Pricing Configuration Interface | Frontend | Low |
-| 0.1.7-backend | Pricing Management API | Backend | Low |
-| 0.1.8 | Location/Region Configuration Interface | Frontend | Medium |
-| 0.1.8-backend | Location Management API | Backend | Medium |
-| 0.1.99 | Epic 0.1 API Validation with PostgreSQL MCP | Testing | High |
+| Story ID | Story Name | Type | Complexity | Story Points | Status |
+|----------|------------|------|------------|--------------|--------|
+| 0.1.1 | Owner Registration Form & Email Verification | Frontend | Medium | TBD | Planned |
+| 0.1.1-backend | Owner Registration API Implementation | Backend | Medium | TBD | Planned |
+| 0.1.2 | Owner Login Page & Session Management | Frontend | Medium | TBD | Planned |
+| 0.1.2-backend | Owner Authentication API & JWT Implementation | Backend | High | TBD | Planned |
+| 0.1.3 | Student Registration Form & Email Verification | Frontend | Medium | TBD | Planned |
+| 0.1.3-backend | Student Registration API Implementation | Backend | Medium | TBD | Planned |
+| 0.1.4 | Student Login Page & Session Management | Frontend | Medium | TBD | Planned |
+| 0.1.4-backend | Student Authentication API & JWT Implementation | Backend | Medium | TBD | Planned |
+| 0.1.5 | Password Reset Flow | Frontend | Medium | TBD | Planned |
+| 0.1.5-backend | Password Reset API Implementation | Backend | Medium | TBD | Planned |
+| **0.1.6** | **Owner Onboarding Wizard - Initial Hall Setup** | **Frontend** | **High** | **8 SP** | **🔄 In Progress** |
+| **0.1.6-backend** | **Hall Creation & Onboarding API** | **Backend** | **Medium** | **5 SP** | **✅ Draft** |
+| **0.1.7** | **Pricing Configuration Interface** | **Frontend** | **Low** | **3 SP** | **✅ Draft** |
+| **0.1.7-backend** | **Pricing Management API** | **Backend** | **Low** | **2 SP** | **✅ Draft** |
+| **0.1.8** | **Location/Region Configuration Interface** | **Frontend** | **Medium** | **5 SP** | **✅ Draft** |
+| **0.1.8-backend** | **Location Management API** | **Backend** | **Medium** | **3 SP** | **✅ Draft** |
+| 0.1.99 | Epic 0.1 API Validation with PostgreSQL MCP | Testing | High | TBD | Planned |
 
 **Total Stories:** 17 (8 frontend, 8 backend, 1 testing)
+**Stories Created:** 6 (Stories 0.1.6 through 0.1.8, created 2025-10-19)
+**Estimated Story Points (Onboarding):** 26 SP
+**Recommended Implementation:** 3 sprints (sequential) or 2 sprints (parallel backend)
 
 ---
 
@@ -421,6 +451,101 @@ Establish the foundational authentication and onboarding system for the StudyMat
 | Date | Version | Description | Author |
 |------|---------|-------------|--------|
 | 2025-10-12 | 1.0 | Epic 0.1 created from Sprint Change Proposal and PRD V2 | Sarah (PO) |
+| 2025-10-19 | 2.0 | **MAJOR UPDATE:** Created 6 stories for Features 0.1.6, 0.1.7, 0.1.8 (Owner Onboarding); Added story links, story points (26 SP), validation report, backlog summary, visual flow diagrams | Sarah (PO) |
+
+---
+
+## Owner Onboarding Stories - Creation Summary (2025-10-19)
+
+### Stories Created Today
+
+**6 Stories Created** to implement complete 3-step owner onboarding wizard:
+
+1. ✅ **Story 0.1.6-backend** (5 SP): Hall Creation & Onboarding API
+   - File: [0.1.6-backend-hall-creation-api.story.md](0.1.6-backend-hall-creation-api.story.md)
+   - Status: Draft (Ready for Sprint 1)
+
+2. ✅ **Story 0.1.6** (8 SP): Owner Onboarding Wizard - Initial Hall Setup
+   - File: [0.1.6-onboarding-wizard-hall-setup.story.md](0.1.6-onboarding-wizard-hall-setup.story.md)
+   - Status: Draft (Ready for Sprint 1)
+
+3. ✅ **Story 0.1.7-backend** (2 SP): Pricing Management API
+   - File: [0.1.7-backend-pricing-api.story.md](0.1.7-backend-pricing-api.story.md)
+   - Status: Draft (Ready for Sprint 2)
+
+4. ✅ **Story 0.1.7** (3 SP): Pricing Configuration Interface
+   - File: [0.1.7-pricing-configuration.story.md](0.1.7-pricing-configuration.story.md)
+   - Status: Draft (Ready for Sprint 2)
+
+5. ✅ **Story 0.1.8-backend** (3 SP): Location Management API
+   - File: [0.1.8-backend-location-api.story.md](0.1.8-backend-location-api.story.md)
+   - Status: Draft (Ready for Sprint 3)
+
+6. ✅ **Story 0.1.8** (5 SP): Location/Region Configuration Interface
+   - File: [0.1.8-location-configuration.story.md](0.1.8-location-configuration.story.md)
+   - Status: Draft (Ready for Sprint 3)
+
+### Supporting Documentation Created
+
+1. **Story Validation Report**
+   - File: [docs/qa/story-validation-report-onboarding-stories.md](../qa/story-validation-report-onboarding-stories.md)
+   - All 6 stories validated and approved for implementation
+   - Implementation Readiness Score: 9/10
+   - Confidence Level: HIGH
+
+2. **Backlog Summary**
+   - File: [docs/planning/backlog-summary-owner-onboarding.md](../planning/backlog-summary-owner-onboarding.md)
+   - 26 SP total across 3 sprints
+   - Detailed sprint planning, dependencies, and resource allocation
+   - Risk assessment and mitigation strategies
+
+3. **Visual Flow Diagrams**
+   - File: [docs/diagrams/owner-onboarding-wizard-flow.md](../diagrams/owner-onboarding-wizard-flow.md)
+   - 8 comprehensive Mermaid diagrams:
+     - Complete onboarding flow
+     - User journey map
+     - API sequence diagram
+     - State transition diagram
+     - Error handling flow
+     - Multi-hall management flow
+     - Component hierarchy
+     - Database schema visualization
+
+### Business Impact
+
+**Critical Blocker Resolved:**
+- ❌ **Before:** Story 1.4 (Seat Map Configuration) blocked - no way to create halls
+- ✅ **After:** Complete onboarding flow enables hall creation, pricing, location setup
+- ✅ **Result:** Unblocks Story 1.4 and all hall-dependent owner features
+
+**Value Delivered:**
+- 3-step onboarding wizard (Hall Setup → Pricing → Location)
+- Multi-hall support for owners
+- Hall status management (DRAFT → ACTIVE)
+- Google Maps integration for location selection
+- Foundation for student hall discovery
+
+### Implementation Timeline
+
+**Recommended Approach:** 3 Sprints (Sequential)
+- **Sprint 1:** Stories 0.1.6-backend + 0.1.6 (13 SP)
+- **Sprint 2:** Stories 0.1.7-backend + 0.1.7 (5 SP)
+- **Sprint 3:** Stories 0.1.8-backend + 0.1.8 (8 SP)
+
+**Alternative:** 2 Sprints (Parallel Backend Development)
+
+### Next Actions
+
+**Immediate:**
+1. Obtain Google Maps API key (before Sprint 3)
+2. Add stories to sprint backlog
+3. Allocate 1 backend + 1 frontend developer
+
+**Pre-Sprint Checklist:**
+- [ ] Google Maps API key obtained
+- [ ] Backend test server (port 8081) verified
+- [ ] Database `studymate` accessible
+- [ ] Team capacity confirmed
 
 ---
 
@@ -430,3 +555,6 @@ Establish the foundational authentication and onboarding system for the StudyMat
 - **PRD V2:** [docs/prd.md](../prd.md) - Features 0.1.1 through 0.1.8
 - **Architecture V2:** [docs/architecture/studymate-system-architecture-blueprint.md](../architecture/studymate-system-architecture-blueprint.md)
 - **Epic 1 (Blocked by this epic):** [docs/epics/epic-1-owner-dashboard-analytics.md](epic-1-owner-dashboard-analytics.md)
+- **Story Validation Report:** [docs/qa/story-validation-report-onboarding-stories.md](../qa/story-validation-report-onboarding-stories.md)
+- **Backlog Summary:** [docs/planning/backlog-summary-owner-onboarding.md](../planning/backlog-summary-owner-onboarding.md)
+- **Visual Diagrams:** [docs/diagrams/owner-onboarding-wizard-flow.md](../diagrams/owner-onboarding-wizard-flow.md)

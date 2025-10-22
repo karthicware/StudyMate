@@ -14,21 +14,24 @@ export interface TestUser {
 }
 
 /**
- * Test users seeded in the test database
+ * Test users seeded in the test database (V3__insert_test_users.sql)
  * Password for all users: "Test@123"
+ *
+ * IMPORTANT: These emails match the Flyway migration V3__insert_test_users.sql
+ * DO NOT change these emails unless you also update the migration file!
  */
 export const TEST_USERS = {
   owner: {
-    email: 'test.owner@studymate.test',
+    email: 'owner@studymate.com',
     password: 'Test@123',
-    firstName: 'Test',
+    firstName: 'Study Hall',
     lastName: 'Owner',
     userType: 'OWNER' as const,
     phone: '+1234567890',
     gender: 'MALE' as const,
   },
   student: {
-    email: 'test.student@studymate.test',
+    email: 'student@studymate.com',
     password: 'Test@123',
     firstName: 'Test',
     lastName: 'Student',
@@ -37,10 +40,10 @@ export const TEST_USERS = {
     gender: 'FEMALE' as const,
   },
   owner2: {
-    email: 'test.owner2@studymate.test',
+    email: 'jane.smith@example.com',
     password: 'Test@123',
-    firstName: 'Second',
-    lastName: 'Owner',
+    firstName: 'Jane',
+    lastName: 'Smith',
     userType: 'OWNER' as const,
     phone: '+1234567892',
     gender: 'OTHER' as const,

@@ -1,0 +1,412 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "StudyMate - Hall Management API",
+		"description": "API collection for Hall Creation & Management endpoints (Story 0.1.6-backend)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12345678"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Owner Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Save JWT token to environment variable",
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('jwt_token', response.token);",
+									"    console.log('JWT token saved:', response.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"owner@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login as owner to obtain JWT token. The token is automatically saved to environment variable 'jwt_token' for use in subsequent requests."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Hall Management",
+			"item": [
+				{
+					"name": "Create New Hall",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test assertions",
+									"pm.test('Status code is 201 Created', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Response has hall ID', function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('id');",
+									"    pm.expect(response.id).to.be.a('number');",
+									"});",
+									"",
+									"pm.test('Response has correct hall name', function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.hallName).to.eql('Downtown Study Center');",
+									"});",
+									"",
+									"pm.test('Response has default status DRAFT', function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.status).to.eql('DRAFT');",
+									"});",
+									"",
+									"pm.test('Response has timestamps', function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('createdAt');",
+									"    pm.expect(response).to.have.property('updatedAt');",
+									"});",
+									"",
+									"// Save hall ID for future requests",
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('hall_id', response.id);",
+									"    console.log('Hall ID saved:', response.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"hallName\": \"Downtown Study Center\",\n  \"description\": \"Premium study hall in the heart of downtown, equipped with high-speed WiFi and comfortable seating.\",\n  \"address\": \"123 Main Street, 5th Floor\",\n  \"city\": \"Mumbai\",\n  \"state\": \"Maharashtra\",\n  \"postalCode\": \"400001\",\n  \"country\": \"India\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/owner/halls",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"owner",
+								"halls"
+							]
+						},
+						"description": "Creates a new study hall for the authenticated owner.\n\n**Authentication Required:** Bearer JWT token (ROLE_OWNER)\n\n**Request Body:**\n- hallName (required, max 255 chars): Unique hall name for this owner\n- description (optional, max 1000 chars): Hall description\n- address (required, max 500 chars): Full street address\n- city (required, max 100 chars): City name\n- state (required, max 100 chars): State/province\n- postalCode (optional, max 20 chars): Postal/ZIP code\n- country (required, max 100 chars): Country (default: India)\n\n**Success Response:** 201 Created with hall details\n**Error Responses:**\n- 400 Bad Request: Validation errors\n- 401 Unauthorized: Missing/invalid JWT token\n- 403 Forbidden: Not OWNER role\n- 409 Conflict: Duplicate hall name for this owner"
+					},
+					"response": [
+						{
+							"name": "Success - 201 Created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"hallName\": \"Downtown Study Center\",\n  \"description\": \"Premium study hall in downtown\",\n  \"address\": \"123 Main Street, 5th Floor\",\n  \"city\": \"Mumbai\",\n  \"state\": \"Maharashtra\",\n  \"postalCode\": \"400001\",\n  \"country\": \"India\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/owner/halls",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"owner",
+										"halls"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"id\": 1,\n  \"ownerId\": 100,\n  \"hallName\": \"Downtown Study Center\",\n  \"description\": \"Premium study hall in downtown\",\n  \"address\": \"123 Main Street, 5th Floor\",\n  \"city\": \"Mumbai\",\n  \"state\": \"Maharashtra\",\n  \"postalCode\": \"400001\",\n  \"country\": \"India\",\n  \"status\": \"DRAFT\",\n  \"seatCount\": 0,\n  \"createdAt\": \"2025-10-19T18:30:00\",\n  \"updatedAt\": \"2025-10-19T18:30:00\"\n}"
+						},
+						{
+							"name": "Error - 409 Duplicate Hall Name",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"hallName\": \"Downtown Study Center\",\n  \"description\": \"Duplicate name attempt\",\n  \"address\": \"456 Different Street\",\n  \"city\": \"Delhi\",\n  \"state\": \"Delhi\",\n  \"postalCode\": \"110001\",\n  \"country\": \"India\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/owner/halls",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"owner",
+										"halls"
+									]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"status\": 409,\n  \"error\": \"Conflict\",\n  \"message\": \"A hall with the name 'Downtown Study Center' already exists for this owner\",\n  \"timestamp\": \"2025-10-19T18:31:00\"\n}"
+						},
+						{
+							"name": "Error - 400 Validation Failed",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"hallName\": \"\",\n  \"address\": \"\",\n  \"city\": \"\",\n  \"state\": \"\",\n  \"country\": \"\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/owner/halls",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"owner",
+										"halls"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"status\": 400,\n  \"error\": \"Validation Failed\",\n  \"errors\": {\n    \"hallName\": \"Hall name is required\",\n    \"address\": \"Address is required\",\n    \"city\": \"City is required\",\n    \"state\": \"State is required\",\n    \"country\": \"Country is required\"\n  },\n  \"timestamp\": \"2025-10-19T18:32:00\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Owner's Halls",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Test assertions",
+									"pm.test('Status code is 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has halls array', function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response).to.have.property('halls');",
+									"    pm.expect(response.halls).to.be.an('array');",
+									"});",
+									"",
+									"pm.test('Halls are sorted by creation date (newest first)', function () {",
+									"    const response = pm.response.json();",
+									"    if (response.halls.length > 1) {",
+									"        for (let i = 0; i < response.halls.length - 1; i++) {",
+									"            const current = new Date(response.halls[i].createdAt);",
+									"            const next = new Date(response.halls[i + 1].createdAt);",
+									"            pm.expect(current.getTime()).to.be.at.least(next.getTime());",
+									"        }",
+									"    }",
+									"});",
+									"",
+									"pm.test('Each hall has required fields', function () {",
+									"    const response = pm.response.json();",
+									"    if (response.halls.length > 0) {",
+									"        const hall = response.halls[0];",
+									"        pm.expect(hall).to.have.property('id');",
+									"        pm.expect(hall).to.have.property('hallName');",
+									"        pm.expect(hall).to.have.property('status');",
+									"        pm.expect(hall).to.have.property('city');",
+									"        pm.expect(hall).to.have.property('createdAt');",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/owner/halls",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"owner",
+								"halls"
+							]
+						},
+						"description": "Retrieves all study halls for the authenticated owner.\n\n**Authentication Required:** Bearer JWT token (ROLE_OWNER)\n\n**Success Response:** 200 OK with array of halls\n- Halls are sorted by createdAt DESC (newest first)\n- Each hall includes: id, hallName, status, city, createdAt\n\n**Error Responses:**\n- 401 Unauthorized: Missing/invalid JWT token\n- 403 Forbidden: Not OWNER role"
+					},
+					"response": [
+						{
+							"name": "Success - 200 OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/owner/halls",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"owner",
+										"halls"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"halls\": [\n    {\n      \"id\": 3,\n      \"hallName\": \"Riverside Study Hub\",\n      \"status\": \"ACTIVE\",\n      \"city\": \"Bangalore\",\n      \"createdAt\": \"2025-10-19T18:35:00\"\n    },\n    {\n      \"id\": 2,\n      \"hallName\": \"Central Library Space\",\n      \"status\": \"DRAFT\",\n      \"city\": \"Delhi\",\n      \"createdAt\": \"2025-10-19T18:32:00\"\n    },\n    {\n      \"id\": 1,\n      \"hallName\": \"Downtown Study Center\",\n      \"status\": \"DRAFT\",\n      \"city\": \"Mumbai\",\n      \"createdAt\": \"2025-10-19T18:30:00\"\n    }\n  ]\n}"
+						},
+						{
+							"name": "Success - Empty List",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/owner/halls",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"owner",
+										"halls"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"halls\": []\n}"
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "hall_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

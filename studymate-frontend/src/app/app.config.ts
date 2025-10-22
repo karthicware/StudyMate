@@ -17,7 +17,7 @@ import { AuthService } from './core/services/auth.service';
  * Initialize authentication state before application starts
  * This ensures the AuthService constructor runs and checks for existing tokens
  */
-function initializeAuth(authService: AuthService) {
+function initializeAuth(_authService: AuthService) {
   return () => {
     // AuthService constructor already calls checkAuthStatus()
     // This just ensures the service is instantiated before routing begins

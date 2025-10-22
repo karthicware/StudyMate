@@ -20,27 +20,23 @@ describe('ProfileComponent', () => {
     phone: '(123) 456-7890',
     profilePictureUrl: 'https://example.com/avatar.jpg',
     studyHallName: 'Downtown Study Hall',
-    createdAt: '2024-01-01T00:00:00Z'
+    createdAt: '2024-01-01T00:00:00Z',
   };
 
   beforeEach(async () => {
     const profileServiceSpy = jasmine.createSpyObj('ProfileService', [
       'getProfile',
       'updateProfile',
-      'uploadAvatar'
+      'uploadAvatar',
     ]);
-    const toastServiceSpy = jasmine.createSpyObj('ToastService', [
-      'success',
-      'error',
-      'info'
-    ]);
+    const toastServiceSpy = jasmine.createSpyObj('ToastService', ['success', 'error', 'info']);
 
     await TestBed.configureTestingModule({
       imports: [ProfileComponent, ReactiveFormsModule],
       providers: [
         { provide: ProfileService, useValue: profileServiceSpy },
-        { provide: ToastService, useValue: toastServiceSpy }
-      ]
+        { provide: ToastService, useValue: toastServiceSpy },
+      ],
     }).compileComponents();
 
     profileService = TestBed.inject(ProfileService) as jasmine.SpyObj<ProfileService>;
@@ -152,7 +148,7 @@ describe('ProfileComponent', () => {
       component.toggleEditMode();
       component.profileForm.patchValue({
         firstName: 'Changed',
-        lastName: 'Name'
+        lastName: 'Name',
       });
 
       component.cancelEdit();
@@ -232,7 +228,7 @@ describe('ProfileComponent', () => {
       component.profileForm.patchValue({
         firstName: 'Updated',
         lastName: 'Name',
-        phone: '(555) 555-5555'
+        phone: '(555) 555-5555',
       });
 
       component.saveProfile();
@@ -240,14 +236,14 @@ describe('ProfileComponent', () => {
       expect(profileService.updateProfile).toHaveBeenCalledWith({
         firstName: 'Updated',
         lastName: 'Name',
-        phone: '(555) 555-5555'
+        phone: '(555) 555-5555',
       });
     });
 
     it('should show success toast after successful save', () => {
       component.profileForm.patchValue({
         firstName: 'Updated',
-        lastName: 'Name'
+        lastName: 'Name',
       });
 
       component.saveProfile();
@@ -264,7 +260,7 @@ describe('ProfileComponent', () => {
     it('should not save when form is invalid', () => {
       component.profileForm.patchValue({
         firstName: '',
-        lastName: ''
+        lastName: '',
       });
 
       component.saveProfile();
@@ -305,7 +301,9 @@ describe('ProfileComponent', () => {
 
       component.saveProfile();
 
-      expect(toastService.error).toHaveBeenCalledWith('Failed to update profile. Please try again.');
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Failed to update profile. Please try again.',
+      );
     });
   });
 
@@ -316,16 +314,22 @@ describe('ProfileComponent', () => {
 
     it('should validate file type', () => {
       const file = new File(['content'], 'test.txt', { type: 'text/plain' });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const event = { target: { files: [file], value: '' } } as any;
 
       component.onAvatarSelected(event);
 
-      expect(toastService.error).toHaveBeenCalledWith('Invalid file type. Please use JPG, PNG, or WEBP.');
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Invalid file type. Please use JPG, PNG, or WEBP.',
+      );
       expect(profileService.uploadAvatar).not.toHaveBeenCalled();
     });
 
     it('should validate file size (max 5MB)', () => {
-      const largeFile = new File(['x'.repeat(6 * 1024 * 1024)], 'large.jpg', { type: 'image/jpeg' });
+      const largeFile = new File(['x'.repeat(6 * 1024 * 1024)], 'large.jpg', {
+        type: 'image/jpeg',
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const event = { target: { files: [largeFile], value: '' } } as any;
 
       component.onAvatarSelected(event);
@@ -336,9 +340,10 @@ describe('ProfileComponent', () => {
 
     it('should accept valid image files', () => {
       const validFile = new File(['content'], 'avatar.jpg', { type: 'image/jpeg' });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const event = { target: { files: [validFile], value: 'avatar.jpg' } } as any;
       profileService.uploadAvatar.and.returnValue(
-        of({ profilePictureUrl: 'https://example.com/new-avatar.jpg' })
+        of({ profilePictureUrl: 'https://example.com/new-avatar.jpg' }),
       );
 
       component.onAvatarSelected(event);
@@ -348,9 +353,10 @@ describe('ProfileComponent', () => {
 
     it('should show success toast after successful upload', (done) => {
       const validFile = new File(['content'], 'avatar.jpg', { type: 'image/jpeg' });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const event = { target: { files: [validFile], value: '' } } as any;
       profileService.uploadAvatar.and.returnValue(
-        of({ profilePictureUrl: 'https://example.com/new-avatar.jpg' })
+        of({ profilePictureUrl: 'https://example.com/new-avatar.jpg' }),
       );
 
       component.onAvatarSelected(event);
@@ -364,13 +370,16 @@ describe('ProfileComponent', () => {
     it('should handle avatar upload error', (done) => {
       spyOn(console, 'error'); // Suppress console.error in test
       const validFile = new File(['content'], 'avatar.jpg', { type: 'image/jpeg' });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const event = { target: { files: [validFile], value: '' } } as any;
       profileService.uploadAvatar.and.returnValue(throwError(() => new Error('Upload failed')));
 
       component.onAvatarSelected(event);
 
       setTimeout(() => {
-        expect(toastService.error).toHaveBeenCalledWith('Failed to upload avatar. Please try again.');
+        expect(toastService.error).toHaveBeenCalledWith(
+          'Failed to upload avatar. Please try again.',
+        );
         expect(component.avatarUploading()).toBeFalse();
         done();
       }, 100);
@@ -422,7 +431,9 @@ describe('ProfileComponent', () => {
       firstName?.setValue('a'.repeat(101));
       firstName?.markAsTouched();
 
-      expect(component.getErrorMessage('firstName')).toBe('First Name must be less than 100 characters');
+      expect(component.getErrorMessage('firstName')).toBe(
+        'First Name must be less than 100 characters',
+      );
     });
 
     it('should return error message for invalid phone', () => {
@@ -430,7 +441,9 @@ describe('ProfileComponent', () => {
       phone?.setValue('invalid');
       phone?.markAsTouched();
 
-      expect(component.getErrorMessage('phone')).toBe('Phone must be in format (XXX) XXX-XXXX or +1-XXX-XXX-XXXX');
+      expect(component.getErrorMessage('phone')).toBe(
+        'Phone must be in format (XXX) XXX-XXXX or +1-XXX-XXX-XXXX',
+      );
     });
 
     it('should return empty string when field is valid', () => {

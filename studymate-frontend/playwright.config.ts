@@ -51,14 +51,13 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
       timeout: 120000,
     },
-    {
-      command: 'cd ../studymate-backend && ./scripts/start-test-server.sh',
-      url: 'http://localhost:8081/auth/register',
-      reuseExistingServer: !process.env.CI,
-      timeout: 120000,
-      // Check if backend is ready by testing the register endpoint (Pattern A - no prefix)
-      // We don't care if it returns error, just that it responds
-      ignoreHTTPSErrors: true,
-    },
+    // TEMPORARILY COMMENTED: Backend started manually via scripts/start-test-server.sh
+    // {
+    //   command: 'cd ../studymate-backend && ./scripts/start-test-server.sh',
+    //   url: 'http://localhost:8081/auth/register',
+    //   reuseExistingServer: !process.env.CI,
+    //   timeout: 120000,
+    //   ignoreHTTPSErrors: true,
+    // },
   ],
 });

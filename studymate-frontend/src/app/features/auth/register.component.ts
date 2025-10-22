@@ -10,7 +10,6 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
-import { Gender } from '../../core/models/auth.models';
 
 @Component({
   selector: 'app-register',
@@ -18,27 +17,35 @@ import { Gender } from '../../core/models/auth.models';
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
     <!-- Page Background - Shade 1 (pushed deeper) -->
-    <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-
+    <div
+      class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
+    >
       <!-- Register Card Container - Shade 2 (neutral base) with Two-Layer Shadow -->
-      <div class="max-w-md w-full bg-white rounded-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_3px_6px_rgba(0,0,0,0.15)] p-8">
-
+      <div
+        class="max-w-md w-full bg-white rounded-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_3px_6px_rgba(0,0,0,0.15)] p-8"
+      >
         <!-- Header Section -->
         <div class="mb-8">
           <h2 class="text-3xl font-bold text-gray-900 text-center font-heading">
             Create your account
           </h2>
-          <p class="mt-2 text-center text-sm text-gray-600 font-body">
-            Join StudyMate today
-          </p>
+          <p class="mt-2 text-center text-sm text-gray-600 font-body">Join StudyMate today</p>
         </div>
 
         <!-- Error Message with Airbnb-style Alert -->
         @if (errorMessage()) {
           <div class="mb-6 rounded-lg bg-danger-50 border border-danger-200 p-4">
             <div class="flex">
-              <svg class="h-5 w-5 text-danger-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+              <svg
+                class="h-5 w-5 text-danger-500 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clip-rule="evenodd"
+                />
               </svg>
               <div class="ml-3">
                 <p class="text-sm text-danger-700 font-medium">
@@ -51,7 +58,6 @@ import { Gender } from '../../core/models/auth.models';
 
         <!-- Register Form -->
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
-
           <!-- Form Fields -->
           <div class="space-y-5">
             <!-- First Name Input Field - Airbnb Style -->
@@ -69,10 +75,16 @@ import { Gender } from '../../core/models/auth.models';
                        transition-all duration-200
                        focus:outline-none focus:border-2 focus:border-black
                        disabled:opacity-50 disabled:cursor-not-allowed"
-                [class.border-danger-500]="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched"
-                [class.focus:border-danger-500]="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched"
+                [class.border-danger-500]="
+                  registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched
+                "
+                [class.focus:border-danger-500]="
+                  registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched
+                "
               />
-              @if (registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched) {
+              @if (
+                registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched
+              ) {
                 <p class="mt-2 text-sm text-danger-500">First name is required</p>
               }
             </div>
@@ -92,8 +104,12 @@ import { Gender } from '../../core/models/auth.models';
                        transition-all duration-200
                        focus:outline-none focus:border-2 focus:border-black
                        disabled:opacity-50 disabled:cursor-not-allowed"
-                [class.border-danger-500]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched"
-                [class.focus:border-danger-500]="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched"
+                [class.border-danger-500]="
+                  registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched
+                "
+                [class.focus:border-danger-500]="
+                  registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched
+                "
               />
               @if (registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched) {
                 <p class="mt-2 text-sm text-danger-500">Last name is required</p>
@@ -115,8 +131,12 @@ import { Gender } from '../../core/models/auth.models';
                        transition-all duration-200
                        focus:outline-none focus:border-2 focus:border-black
                        disabled:opacity-50 disabled:cursor-not-allowed"
-                [class.border-danger-500]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
-                [class.focus:border-danger-500]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+                [class.border-danger-500]="
+                  registerForm.get('email')?.invalid && registerForm.get('email')?.touched
+                "
+                [class.focus:border-danger-500]="
+                  registerForm.get('email')?.invalid && registerForm.get('email')?.touched
+                "
               />
               @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
                 <p class="mt-2 text-sm text-danger-500">Please enter a valid email address</p>
@@ -138,8 +158,12 @@ import { Gender } from '../../core/models/auth.models';
                        transition-all duration-200
                        focus:outline-none focus:border-2 focus:border-black
                        disabled:opacity-50 disabled:cursor-not-allowed"
-                [class.border-danger-500]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
-                [class.focus:border-danger-500]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+                [class.border-danger-500]="
+                  registerForm.get('password')?.invalid && registerForm.get('password')?.touched
+                "
+                [class.focus:border-danger-500]="
+                  registerForm.get('password')?.invalid && registerForm.get('password')?.touched
+                "
               />
               @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
                 <p class="mt-2 text-sm text-danger-500">Password must be at least 6 characters</p>
@@ -161,10 +185,19 @@ import { Gender } from '../../core/models/auth.models';
                        transition-all duration-200
                        focus:outline-none focus:border-2 focus:border-black
                        disabled:opacity-50 disabled:cursor-not-allowed"
-                [class.border-danger-500]="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched"
-                [class.focus:border-danger-500]="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched"
+                [class.border-danger-500]="
+                  registerForm.errors?.['passwordMismatch'] &&
+                  registerForm.get('confirmPassword')?.touched
+                "
+                [class.focus:border-danger-500]="
+                  registerForm.errors?.['passwordMismatch'] &&
+                  registerForm.get('confirmPassword')?.touched
+                "
               />
-              @if (registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched) {
+              @if (
+                registerForm.errors?.['passwordMismatch'] &&
+                registerForm.get('confirmPassword')?.touched
+              ) {
                 <p class="mt-2 text-sm text-danger-500">Passwords do not match</p>
               }
             </div>
@@ -211,9 +244,24 @@ import { Gender } from '../../core/models/auth.models';
           >
             @if (isLoading()) {
               <span class="flex items-center justify-center">
-                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 Creating account...
               </span>
@@ -238,7 +286,8 @@ import { Gender } from '../../core/models/auth.models';
               Already have an account?
               <a
                 routerLink="/login"
-                class="font-semibold text-primary-500 hover:text-primary-600 hover:underline transition-all duration-200 ml-1">
+                class="font-semibold text-primary-500 hover:text-primary-600 hover:underline transition-all duration-200 ml-1"
+              >
                 Sign in
               </a>
             </p>
@@ -248,12 +297,12 @@ import { Gender } from '../../core/models/auth.models';
           <div class="pt-4 border-t border-gray-200">
             <p class="text-xs text-gray-500 text-center">
               By creating an account, you agree to our
-              <a href="#" class="text-gray-700 underline hover:text-gray-900">Terms of Service</a> and
+              <a href="#" class="text-gray-700 underline hover:text-gray-900">Terms of Service</a>
+              and
               <a href="#" class="text-gray-700 underline hover:text-gray-900">Privacy Policy</a>
             </p>
           </div>
         </form>
-
       </div>
     </div>
   `,
@@ -271,7 +320,7 @@ export class RegisterComponent {
     { value: '', label: 'Prefer not to say' },
     { value: 'MALE', label: 'Male' },
     { value: 'FEMALE', label: 'Female' },
-    { value: 'OTHER', label: 'Other' }
+    { value: 'OTHER', label: 'Other' },
   ];
 
   registerForm: FormGroup = this.fb.group(
@@ -309,7 +358,8 @@ export class RegisterComponent {
     this.errorMessage.set('');
 
     // Remove confirmPassword before sending to API
-    const { confirmPassword, ...registerData } = this.registerForm.value;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { confirmPassword: _confirmPassword, ...registerData } = this.registerForm.value;
 
     // Remove gender if empty string (not selected)
     if (registerData.gender === '') {

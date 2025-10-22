@@ -16,13 +16,13 @@ describe('ProfileService', () => {
     phone: '(123) 456-7890',
     profilePictureUrl: 'https://example.com/avatar.jpg',
     studyHallName: 'Downtown Study Hall',
-    createdAt: '2024-01-01T00:00:00Z'
+    createdAt: '2024-01-01T00:00:00Z',
   };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [ProfileService]
+      providers: [ProfileService],
     });
     service = TestBed.inject(ProfileService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -38,7 +38,7 @@ describe('ProfileService', () => {
 
   describe('getProfile', () => {
     it('should fetch profile data via GET request', () => {
-      service.getProfile().subscribe(profile => {
+      service.getProfile().subscribe((profile) => {
         expect(profile).toEqual(mockProfile);
       });
 
@@ -52,7 +52,7 @@ describe('ProfileService', () => {
         next: () => fail('should have failed'),
         error: (error) => {
           expect(error.status).toBe(404);
-        }
+        },
       });
 
       const req = httpMock.expectOne(apiUrl);
@@ -65,12 +65,12 @@ describe('ProfileService', () => {
       const updateRequest: OwnerProfileUpdateRequest = {
         firstName: 'Updated',
         lastName: 'Name',
-        phone: '(555) 555-5555'
+        phone: '(555) 555-5555',
       };
 
       const updatedProfile = { ...mockProfile, ...updateRequest };
 
-      service.updateProfile(updateRequest).subscribe(profile => {
+      service.updateProfile(updateRequest).subscribe((profile) => {
         expect(profile).toEqual(updatedProfile);
       });
 
@@ -84,7 +84,7 @@ describe('ProfileService', () => {
       const updateRequest: OwnerProfileUpdateRequest = {
         firstName: '',
         lastName: '',
-        phone: ''
+        phone: '',
       };
 
       service.updateProfile(updateRequest).subscribe({
@@ -92,27 +92,24 @@ describe('ProfileService', () => {
         error: (error) => {
           expect(error.status).toBe(400);
           expect(error.error.message).toBe('Validation failed');
-        }
+        },
       });
 
       const req = httpMock.expectOne(apiUrl);
-      req.flush(
-        { message: 'Validation failed' },
-        { status: 400, statusText: 'Bad Request' }
-      );
+      req.flush({ message: 'Validation failed' }, { status: 400, statusText: 'Bad Request' });
     });
 
     it('should handle unauthorized error (401)', () => {
       const updateRequest: OwnerProfileUpdateRequest = {
         firstName: 'Test',
-        lastName: 'User'
+        lastName: 'User',
       };
 
       service.updateProfile(updateRequest).subscribe({
         next: () => fail('should have failed'),
         error: (error) => {
           expect(error.status).toBe(401);
-        }
+        },
       });
 
       const req = httpMock.expectOne(apiUrl);
@@ -125,7 +122,7 @@ describe('ProfileService', () => {
       const file = new File(['content'], 'avatar.jpg', { type: 'image/jpeg' });
       const responseUrl = { profilePictureUrl: 'https://example.com/new-avatar.jpg' };
 
-      service.uploadAvatar(file).subscribe(response => {
+      service.uploadAvatar(file).subscribe((response) => {
         expect(response).toEqual(responseUrl);
       });
 
@@ -143,7 +140,7 @@ describe('ProfileService', () => {
         next: () => fail('should have failed'),
         error: (error) => {
           expect(error.status).toBe(500);
-        }
+        },
       });
 
       const req = httpMock.expectOne(`${apiUrl}/avatar`);
@@ -157,7 +154,7 @@ describe('ProfileService', () => {
         next: () => fail('should have failed'),
         error: (error) => {
           expect(error.status).toBe(413);
-        }
+        },
       });
 
       const req = httpMock.expectOne(`${apiUrl}/avatar`);

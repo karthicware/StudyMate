@@ -14,7 +14,6 @@ import com.studymate.backend.repository.StudyHallRepository;
 import com.studymate.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,15 +48,15 @@ public class SeatConfigurationService {
      *
      * @param hallId the hall ID
      * @param request the seat configuration request
-     * @param userDetails authenticated user details
+     * @param currentUser authenticated user
      * @return seat configuration response
      */
     @Transactional
-    public SeatConfigResponse saveSeatConfiguration(Long hallId, SeatConfigRequest request, UserDetails userDetails) {
-        log.debug("Saving seat configuration for hall: {}, user: {}", hallId, userDetails.getUsername());
+    public SeatConfigResponse saveSeatConfiguration(Long hallId, SeatConfigRequest request, User currentUser) {
+        log.debug("Saving seat configuration for hall: {}, user: {}", hallId, currentUser.getEmail());
 
         // Verify hall exists and user is owner
-        StudyHall hall = verifyHallOwnership(hallId, userDetails);
+        StudyHall hall = verifyHallOwnership(hallId, currentUser);
 
         // Validate seat numbers are unique
         validateSeatNumberUniqueness(request.getSeats());
@@ -97,15 +96,15 @@ public class SeatConfigurationService {
      * Get seat configuration for a study hall.
      *
      * @param hallId the hall ID
-     * @param userDetails authenticated user details
+     * @param currentUser authenticated user
      * @return list of seats
      */
     @Transactional(readOnly = true)
-    public List<SeatDTO> getSeatConfiguration(Long hallId, UserDetails userDetails) {
-        log.debug("Fetching seat configuration for hall: {}, user: {}", hallId, userDetails.getUsername());
+    public List<SeatDTO> getSeatConfiguration(Long hallId, User currentUser) {
+        log.debug("Fetching seat configuration for hall: {}, user: {}", hallId, currentUser.getEmail());
 
         // Verify hall exists and user is owner
-        verifyHallOwnership(hallId, userDetails);
+        verifyHallOwnership(hallId, currentUser);
 
         List<Seat> seats = seatRepository.findByHallId(hallId);
 
@@ -119,15 +118,15 @@ public class SeatConfigurationService {
      *
      * @param hallId the hall ID
      * @param seatId the seat ID
-     * @param userDetails authenticated user details
+     * @param currentUser authenticated user
      * @return response with success message
      */
     @Transactional
-    public SeatConfigResponse deleteSeat(Long hallId, Long seatId, UserDetails userDetails) {
-        log.debug("Deleting seat: {} from hall: {}, user: {}", seatId, hallId, userDetails.getUsername());
+    public SeatConfigResponse deleteSeat(Long hallId, Long seatId, User currentUser) {
+        log.debug("Deleting seat: {} from hall: {}, user: {}", seatId, hallId, currentUser.getEmail());
 
         // Verify hall exists and user is owner
-        verifyHallOwnership(hallId, userDetails);
+        verifyHallOwnership(hallId, currentUser);
 
         // Delete seat
         seatRepository.deleteByIdAndHallId(seatId, hallId);
@@ -145,20 +144,17 @@ public class SeatConfigurationService {
      * Verify that the authenticated user owns the specified hall.
      *
      * @param hallId the hall ID
-     * @param userDetails authenticated user details
+     * @param currentUser authenticated user
      * @return the StudyHall if ownership is verified
      * @throws ResourceNotFoundException if hall doesn't exist
      * @throws ForbiddenException if user doesn't own the hall
      */
-    private StudyHall verifyHallOwnership(Long hallId, UserDetails userDetails) {
+    private StudyHall verifyHallOwnership(Long hallId, User currentUser) {
         StudyHall hall = studyHallRepository.findById(hallId)
                 .orElseThrow(() -> new ResourceNotFoundException("Hall not found"));
 
-        User owner = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        if (!hall.getOwner().getId().equals(owner.getId())) {
-            log.warn("Unauthorized access attempt: user {} tried to access hall {}", owner.getId(), hallId);
+        if (!hall.getOwner().getId().equals(currentUser.getId())) {
+            log.warn("Unauthorized access attempt: user {} tried to access hall {}", currentUser.getId(), hallId);
             throw new ForbiddenException("You don't have access to this hall");
         }
 

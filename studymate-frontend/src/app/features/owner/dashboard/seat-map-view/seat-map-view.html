@@ -60,11 +60,7 @@
 
       <!-- SVG Seat Map -->
       @if (totalSeats() > 0) {
-        <svg
-          [attr.viewBox]="viewBox"
-          class="seat-map-svg"
-          preserveAspectRatio="xMidYMid meet"
-        >
+        <svg [attr.viewBox]="viewBox" class="seat-map-svg" preserveAspectRatio="xMidYMid meet">
           <!-- Seats -->
           @for (seat of seats(); track seat.id) {
             <g
@@ -79,15 +75,12 @@
                 [attr.fill]="getSeatColor(seat.status)"
                 class="seat-rect"
               >
-                <title>{{ seat.seatNumber }} - {{ getStatusLabel(seat.status || 'available') }}</title>
+                <title>
+                  {{ seat.seatNumber }} - {{ getStatusLabel(seat.status || 'available') }}
+                </title>
               </rect>
               <!-- Seat Number -->
-              <text
-                x="20"
-                y="25"
-                text-anchor="middle"
-                class="seat-number"
-              >
+              <text x="20" y="25" text-anchor="middle" class="seat-number">
                 {{ seat.seatNumber }}
               </text>
             </g>

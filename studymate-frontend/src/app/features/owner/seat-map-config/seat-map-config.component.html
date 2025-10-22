@@ -1,50 +1,143 @@
-<div class="seat-map-config-container p-6 max-w-7xl mx-auto">
-  <!-- Header -->
-  <div class="mb-6">
-    <h1 class="text-2xl font-semibold text-gray-900 mb-2 font-heading">Seat Map Configuration</h1>
-    <p class="text-gray-600 font-body">Configure seating arrangements with space types for your study hall.</p>
+<div class="seat-map-config-container p-8 max-w-7xl mx-auto">
+  <!-- Header with Icon -->
+  <div class="mb-8">
+    <div class="flex items-center gap-3 mb-2">
+      <svg
+        class="w-7 h-7 text-gray-700"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+      >
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" />
+      </svg>
+      <h1 class="text-3xl font-semibold text-gray-900 tracking-tight">Seat Map Configuration</h1>
+    </div>
+    <p class="text-base text-gray-600 ml-10">
+      Configure seating arrangements with space types for your study hall.
+    </p>
   </div>
 
-  <!-- Hall Selection Dropdown (AC1) -->
-  <div class="mb-6 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-    <label class="block text-sm font-medium text-gray-700 mb-2">
-      Select Study Hall <span class="text-red-500">*</span>
-    </label>
-    <select
-      data-testid="hall-selection-dropdown"
-      [value]="selectedHallId()"
-      (change)="onHallSelectionChange($any($event.target).value)"
-      class="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-    >
-      <option value="">-- Select a Hall --</option>
-      @for (hall of studyHalls(); track hall.id) {
-        <option [value]="hall.id">{{ hall.name }} - {{ hall.city }}</option>
+  <!-- Hall Selection Card (AC1) -->
+  <div class="mb-8 bg-white p-6 rounded-xl shadow-md border border-gray-200">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+      <svg
+        class="w-5 h-5 text-gray-600"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+        />
+      </svg>
+      Hall Details
+    </h2>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">
+        Select Study Hall <span class="text-red-600">*</span>
+      </label>
+      <select
+        data-testid="hall-selection-dropdown"
+        [value]="selectedHallId()"
+        (change)="onHallSelectionChange($any($event.target).value)"
+        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base appearance-none bg-white"
+        style="
+          background-image: url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e');
+          background-repeat: no-repeat;
+          background-position: right 1rem center;
+          background-size: 1.25em 1.25em;
+          padding-right: 3rem;
+        "
+      >
+        <option value="">-- Select a Hall --</option>
+        @for (hall of studyHalls(); track hall.id) {
+          <option [value]="hall.id">{{ hall.name }} - {{ hall.city }}</option>
+        }
+      </select>
+      @if (editorDisabled()) {
+        <p class="mt-3 text-sm text-gray-500 flex items-center gap-2">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          Seat map editor is disabled until you select a hall
+        </p>
       }
-    </select>
-    @if (editorDisabled()) {
-      <p class="mt-2 text-sm text-gray-500">⚠️ Seat map editor is disabled until you select a hall</p>
-    }
+    </div>
   </div>
 
   <!-- Hall Amenities Section (Story 1.22) -->
   @if (selectedHallId()) {
-    <div class="mb-6 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+    <div class="mb-8 bg-white p-6 rounded-xl shadow-md border border-gray-200">
       <!-- Section Header with Saving Indicator -->
-      <div class="mb-4 flex items-center justify-between">
-        <div>
-          <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            Hall Amenities
-            @if (amenitiesSaving()) {
-              <span data-testid="amenities-saving-indicator" class="text-blue-600 text-sm animate-pulse">⏳ Saving...</span>
-            }
-            @if (amenitiesSaveSuccess()) {
-              <span data-testid="amenities-success-indicator" class="text-green-600 text-sm">✓ Saved</span>
-            }
-          </h2>
-          <p class="text-sm text-gray-600 mt-1">
-            Configure available amenities for students to discover your hall
-          </p>
-        </div>
+      <div class="mb-6">
+        <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-2">
+          <svg
+            class="w-5 h-5 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+            />
+          </svg>
+          Hall Amenities
+          @if (amenitiesSaving()) {
+            <span
+              data-testid="amenities-saving-indicator"
+              class="text-blue-600 text-sm animate-pulse flex items-center gap-1"
+            >
+              <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Saving...
+            </span>
+          }
+          @if (amenitiesSaveSuccess()) {
+            <span
+              data-testid="amenities-success-indicator"
+              class="text-green-600 text-sm flex items-center gap-1"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              Saved
+            </span>
+          }
+        </h2>
+        <p class="text-sm text-gray-600 ml-7">
+          Configure available amenities for students to discover your hall
+        </p>
       </div>
 
       <!-- Loading State -->
@@ -59,7 +152,9 @@
       @if (!amenitiesLoading()) {
         <form [formGroup]="amenitiesForm" class="space-y-3">
           <!-- Air Conditioning Checkbox -->
-          <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <div
+            class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
             <input
               type="checkbox"
               id="amenityAC"
@@ -77,7 +172,9 @@
           </div>
 
           <!-- Wi-Fi Checkbox -->
-          <div class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <div
+            class="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+          >
             <input
               type="checkbox"
               id="amenityWiFi"
@@ -100,61 +197,128 @@
 
   <!-- Success Message -->
   @if (saveSuccess()) {
-    <div data-testid="success-message" class="mb-4 rounded-lg bg-green-50 border border-green-200 p-4">
-      <div class="flex">
-        <svg class="h-5 w-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+    <div
+      data-testid="success-message"
+      class="mb-6 rounded-xl bg-green-50 border border-green-200 p-4 shadow-sm"
+    >
+      <div class="flex items-center gap-3">
+        <svg class="h-5 w-5 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+            clip-rule="evenodd"
+          />
         </svg>
-        <div class="ml-3">
-          <p class="text-sm text-green-700 font-medium">Configuration saved successfully!</p>
-        </div>
+        <p class="text-sm text-green-800 font-medium">Configuration saved successfully!</p>
       </div>
     </div>
   }
 
   <!-- Error Message -->
   @if (errorMessage()) {
-    <div data-testid="error-message" class="mb-6 rounded-xl bg-red-50 border border-red-100 p-4 shadow-sm">
-      <div class="flex items-start">
-        <svg class="h-5 w-5 text-red-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+    <div
+      data-testid="error-message"
+      class="mb-6 rounded-xl bg-red-50 border border-red-200 p-4 shadow-sm"
+    >
+      <div class="flex items-start gap-3">
+        <svg
+          class="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+            clip-rule="evenodd"
+          />
         </svg>
-        <div class="ml-3 flex-1">
-          <p class="text-sm text-red-800 leading-relaxed">{{ errorMessage() }}</p>
-        </div>
+        <p class="text-sm text-red-800 leading-relaxed">{{ errorMessage() }}</p>
       </div>
     </div>
   }
 
   <!-- Main Content Grid -->
-  <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
     <!-- Seat Map Canvas (3 columns) - AC2 -->
     <div class="lg:col-span-3">
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="flex justify-between items-center mb-4">
+      <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+        <!-- Header with Actions -->
+        <div
+          class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6 pb-6 border-b border-gray-200"
+        >
           <div>
-            <h2 class="text-xl font-semibold text-gray-900">Seat Map</h2>
-            <p class="text-sm text-gray-600">Total Seats: {{ seatCount() }} | Drag seats to reposition</p>
+            <h2 class="text-xl font-semibold text-gray-900 mb-1.5 flex items-center gap-2">
+              <svg
+                class="w-6 h-6 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+                />
+              </svg>
+              Seat Map
+            </h2>
+            <p class="text-sm text-gray-600">
+              <span class="font-medium text-gray-900">{{ seatCount() }}</span> seats configured ·
+              Drag to reposition
+            </p>
           </div>
-          <div class="flex gap-2">
+          <div class="flex gap-3">
             <button
               data-testid="open-add-seat-modal-btn"
               (click)="openAddSeatModal()"
               [disabled]="editorDisabled()"
-              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all shadow-sm"
             >
-              + Add Seat
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              Add Seat
             </button>
             <button
               data-testid="save-configuration-btn"
               (click)="saveSeatConfiguration()"
               [disabled]="editorDisabled() || isLoading() || !hasUnsavedChanges()"
-              class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-gray-700 text-sm font-medium rounded-lg border-2 border-gray-300 hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed transition-all"
             >
               @if (isLoading()) {
+                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
                 <span>Saving...</span>
               } @else {
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  stroke-width="2.5"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
                 <span>Save Configuration</span>
               }
             </button>
@@ -169,7 +333,15 @@
           [class.opacity-50]="editorDisabled()"
         >
           <!-- Grid Background -->
-          <div class="absolute inset-0 opacity-20" style="background-image: linear-gradient(#ccc 1px, transparent 1px), linear-gradient(90deg, #ccc 1px, transparent 1px); background-size: 50px 50px;"></div>
+          <div
+            class="absolute inset-0 opacity-20"
+            style="
+              background-image:
+                linear-gradient(#ccc 1px, transparent 1px),
+                linear-gradient(90deg, #ccc 1px, transparent 1px);
+              background-size: 50px 50px;
+            "
+          ></div>
 
           <!-- Draggable Seats with Space Type Icons (AC2, AC3) -->
           @for (seat of seats(); track seat.seatNumber) {
@@ -187,14 +359,20 @@
             >
               <!-- Seat Visual with Space Type Icon -->
               <div
-                class="seat-visual w-12 h-12 rounded-lg flex items-center justify-center border-2 shadow-lg transition-all"
-                [ngClass]="[getSpaceTypeConfig(seat.spaceType).bgColor, getSpaceTypeConfig(seat.spaceType).borderColor, getSpaceTypeConfig(seat.spaceType).color]"
+                class="seat-visual w-12 h-12 rounded-lg flex items-center justify-center border-2 shadow-lg transition-all overflow-hidden"
+                [ngClass]="[getSpaceTypeConfig(seat.spaceType).borderColor]"
               >
-                <span class="text-2xl">{{ getSpaceTypeConfig(seat.spaceType).icon }}</span>
+                <img
+                  [src]="getSpaceTypeConfig(seat.spaceType).imageUrl"
+                  [alt]="getSpaceTypeConfig(seat.spaceType).label"
+                  class="w-full h-full object-cover"
+                />
               </div>
               <!-- Seat Number Badge -->
               <div class="absolute -bottom-5 left-0 right-0 text-center">
-                <span class="text-xs font-bold bg-white px-2 py-0.5 rounded shadow">{{ seat.seatNumber }}</span>
+                <span class="text-xs font-bold bg-white px-2 py-0.5 rounded shadow">{{
+                  seat.seatNumber
+                }}</span>
               </div>
             </div>
           }
@@ -203,8 +381,18 @@
           @if (seats().length === 0 && !editorDisabled()) {
             <div class="absolute inset-0 flex items-center justify-center">
               <div class="text-center">
-                <svg class="mx-auto h-16 w-16 text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 21h18M3 7v1a3 3 0 003 3h12a3 3 0 003-3V7m-18 0V5a2 2 0 012-2h14a2 2 0 012 2v2M3 7h18M6 16h.01M10 16h.01M14 16h.01M18 16h.01" />
+                <svg
+                  class="mx-auto h-16 w-16 text-gray-300 mb-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M3 21h18M3 7v1a3 3 0 003 3h12a3 3 0 003-3V7m-18 0V5a2 2 0 012-2h14a2 2 0 012 2v2M3 7h18M6 16h.01M10 16h.01M14 16h.01M18 16h.01"
+                  />
                 </svg>
                 <p class="text-gray-500 font-medium">No seats configured</p>
                 <p class="text-gray-400 text-sm">Click "Add Seat" to start</p>
@@ -221,18 +409,51 @@
         </div>
 
         <!-- Space Type Legend (AC3) -->
-        <div class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <p class="text-sm font-semibold text-gray-700 mb-3">Space Types:</p>
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-            @for (type of ['Cabin', 'Seat Row', '4-Person Table', 'Study Pod', 'Meeting Room', 'Lounge Area']; track type) {
-              <div class="flex items-center gap-2">
+        <div
+          class="mt-6 p-5 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200"
+        >
+          <h3 class="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <svg
+              class="w-4 h-4 text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+              />
+            </svg>
+            Space Types
+          </h3>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            @for (
+              type of [
+                'Cabin',
+                'Seat Row',
+                '4-Person Table',
+                'Study Pod',
+                'Meeting Room',
+                'Lounge Area',
+              ];
+              track type
+            ) {
+              <div
+                class="flex items-center gap-3 bg-white p-2.5 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+              >
                 <div
-                  class="w-10 h-10 rounded-lg flex items-center justify-center border-2 shadow-sm"
-                  [ngClass]="[getSpaceTypeConfig(type).bgColor, getSpaceTypeConfig(type).borderColor]"
+                  class="w-11 h-11 rounded-lg flex items-center justify-center border-2 shadow-sm overflow-hidden flex-shrink-0"
+                  [ngClass]="[getSpaceTypeConfig(type).borderColor]"
                 >
-                  <span class="text-xl">{{ getSpaceTypeConfig(type).icon }}</span>
+                  <img
+                    [src]="getSpaceTypeConfig(type).imageUrl"
+                    [alt]="getSpaceTypeConfig(type).label"
+                    class="w-full h-full object-cover"
+                  />
                 </div>
-                <span class="text-xs font-medium text-gray-700">{{ type }}</span>
+                <span class="text-sm font-medium text-gray-800 leading-tight">{{ type }}</span>
               </div>
             }
           </div>
@@ -249,13 +470,49 @@
           (cancel)="onCancelProperties()"
         />
       } @else {
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">Seat Properties</h3>
-          <div class="text-center py-8">
-            <svg class="mx-auto h-12 w-12 text-gray-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/>
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+            <svg
+              class="w-5 h-5 text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
             </svg>
-            <p class="text-sm text-gray-500">Click on a seat to edit its properties</p>
+            Seat Properties
+          </h3>
+          <div class="text-center py-12">
+            <div
+              class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4"
+            >
+              <svg
+                class="w-8 h-8 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"
+                />
+              </svg>
+            </div>
+            <p class="text-sm text-gray-600 leading-relaxed">
+              Click on a seat in the map<br />to view and edit its properties
+            </p>
           </div>
         </div>
       }
@@ -265,10 +522,28 @@
 
 <!-- Add Seat Modal -->
 @if (showSeatModal()) {
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
-      <h3 class="text-xl font-semibold text-gray-900 mb-4">Add New Seat</h3>
-      <div class="mb-4">
+  <div
+    class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 backdrop-blur-sm"
+  >
+    <div
+      class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl border border-gray-100 transform transition-all"
+    >
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+          <svg
+            class="w-5 h-5 text-blue-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            stroke-width="2.5"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+        </div>
+        <h3 class="text-2xl font-semibold text-gray-900">Add New Seat</h3>
+      </div>
+
+      <div class="mb-6">
         <label class="block text-sm font-medium text-gray-700 mb-2">Seat Number</label>
         <input
           data-testid="new-seat-number-input"
@@ -276,24 +551,37 @@
           [value]="newSeatNumber()"
           (input)="newSeatNumber.set($any($event.target).value)"
           placeholder="e.g., A1, B2, C3"
-          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base transition-all"
           (keyup.enter)="addSeat()"
-          autofocus
         />
-        <p class="mt-1 text-xs text-gray-500">Seat will be placed at default position (100, 100). Drag to reposition.</p>
+        <p class="mt-2 text-xs text-gray-500 flex items-start gap-1.5">
+          <svg
+            class="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <span>Seat will be placed at default position (100, 100). Drag to reposition.</span>
+        </p>
       </div>
-      <div class="flex gap-2">
+
+      <div class="flex gap-3">
         <button
           data-testid="confirm-add-seat-btn"
           (click)="addSeat()"
-          class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          class="flex-1 px-5 py-3 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-all shadow-sm"
         >
           Add Seat
         </button>
         <button
           data-testid="modal-cancel-btn"
           (click)="showSeatModal.set(false)"
-          class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+          class="flex-1 px-5 py-3 bg-white text-gray-700 text-sm font-medium rounded-lg border-2 border-gray-300 hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 transition-all"
         >
           Cancel
         </button>

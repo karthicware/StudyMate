@@ -12,7 +12,7 @@
 export interface HallAmenities {
   hallId: string;
   hallName: string;
-  amenities: string[];  // ["AC", "WiFi"]
+  amenities: string[]; // ["AC", "WiFi"]
 }
 
 /**
@@ -20,5 +20,5 @@ export interface HallAmenities {
  * Request body for PUT /owner/halls/{hallId}/amenities
  */
 export interface UpdateHallAmenitiesRequest {
-  amenities: string[];  // ["AC", "WiFi"]
+  amenities: string[]; // ["AC", "WiFi"]
 }

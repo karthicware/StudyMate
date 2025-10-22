@@ -288,7 +288,9 @@ describe('SeatPropertiesPanelComponent', () => {
     it('should render ladies-only checkbox in the template', () => {
       fixture.detectChanges();
       const compiled = fixture.nativeElement;
-      const checkbox = compiled.querySelector('input[type="checkbox"][formControlName="isLadiesOnly"]');
+      const checkbox = compiled.querySelector(
+        'input[type="checkbox"][formControlName="isLadiesOnly"]',
+      );
       expect(checkbox).toBeTruthy();
       expect(checkbox.id).toBe('ladiesOnly');
     });
@@ -297,7 +299,9 @@ describe('SeatPropertiesPanelComponent', () => {
       fixture.detectChanges();
       const compiled = fixture.nativeElement;
       const label = compiled.querySelector('label[for="ladiesOnly"]');
-      const helpText = compiled.querySelector('label[for="ladiesOnly"]').parentElement.querySelector('p');
+      const helpText = compiled
+        .querySelector('label[for="ladiesOnly"]')
+        .parentElement.querySelector('p');
 
       expect(label?.textContent?.trim()).toContain('Ladies Only Seat');
       expect(helpText?.textContent?.trim()).toBe('Only female users can book this seat');
@@ -306,7 +310,9 @@ describe('SeatPropertiesPanelComponent', () => {
     it('should update form state when ladies-only checkbox is checked', () => {
       fixture.detectChanges();
       const compiled = fixture.nativeElement;
-      const checkbox = compiled.querySelector('input[type="checkbox"][formControlName="isLadiesOnly"]');
+      const checkbox = compiled.querySelector(
+        'input[type="checkbox"][formControlName="isLadiesOnly"]',
+      );
       const isLadiesOnlyControl = component.propertiesForm.get('isLadiesOnly');
 
       // Initially unchecked
@@ -408,7 +414,9 @@ describe('SeatPropertiesPanelComponent', () => {
     it('should display pink-themed styling for ladies-only checkbox container', () => {
       fixture.detectChanges();
       const compiled = fixture.nativeElement;
-      const checkbox = compiled.querySelector('input[type="checkbox"][formControlName="isLadiesOnly"]');
+      const checkbox = compiled.querySelector(
+        'input[type="checkbox"][formControlName="isLadiesOnly"]',
+      );
       const container = checkbox?.closest('.bg-pink-50');
 
       expect(container).toBeTruthy();
@@ -418,7 +426,9 @@ describe('SeatPropertiesPanelComponent', () => {
     it('should have pink-themed checkbox styling classes', () => {
       fixture.detectChanges();
       const compiled = fixture.nativeElement;
-      const checkbox = compiled.querySelector('input[type="checkbox"][formControlName="isLadiesOnly"]');
+      const checkbox = compiled.querySelector(
+        'input[type="checkbox"][formControlName="isLadiesOnly"]',
+      );
 
       expect(checkbox?.classList.contains('text-pink-600')).toBe(true);
     });

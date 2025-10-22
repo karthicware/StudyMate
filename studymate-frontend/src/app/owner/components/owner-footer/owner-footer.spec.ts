@@ -52,7 +52,7 @@ describe('OwnerFooterComponent', () => {
 
     it('should have Owner Resources column with 4 links', () => {
       const ownerResourcesColumn = component.footerColumns.find(
-        (col) => col.heading === 'Owner Resources'
+        (col) => col.heading === 'Owner Resources',
       );
       expect(ownerResourcesColumn).toBeTruthy();
       expect(ownerResourcesColumn?.links.length).toBe(4);

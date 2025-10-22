@@ -15,7 +15,7 @@ describe('SeatMapService', () => {
       seatNumber: 'A1',
       xCoord: 100,
       yCoord: 150,
-      status: 'available'
+      status: 'available',
     },
     {
       id: 'seat-2',
@@ -23,18 +23,18 @@ describe('SeatMapService', () => {
       seatNumber: 'A2',
       xCoord: 200,
       yCoord: 150,
-      status: 'booked'
-    }
+      status: 'booked',
+    },
   ];
 
   const mockResponse: SeatMapResponse = {
-    seats: mockSeats
+    seats: mockSeats,
   };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [SeatMapService]
+      providers: [SeatMapService],
     });
     service = TestBed.inject(SeatMapService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -57,7 +57,7 @@ describe('SeatMapService', () => {
           expect(response.seats[0].seatNumber).toBe('A1');
           done();
         },
-        error: done.fail
+        error: done.fail,
       });
 
       const req = httpMock.expectOne(`/api/owner/seats/${mockHallId}`);
@@ -74,7 +74,7 @@ describe('SeatMapService', () => {
           expect(response.seats.length).toBe(0);
           done();
         },
-        error: done.fail
+        error: done.fail,
       });
 
       const req = httpMock.expectOne(`/api/owner/seats/${mockHallId}`);
@@ -90,7 +90,7 @@ describe('SeatMapService', () => {
           expect(error.status).toBe(404);
           expect(error.error).toBe(errorMessage);
           done();
-        }
+        },
       });
 
       const req = httpMock.expectOne(`/api/owner/seats/${mockHallId}`);
@@ -105,7 +105,7 @@ describe('SeatMapService', () => {
           expect(response).toEqual(mockResponse);
           done();
         },
-        error: done.fail
+        error: done.fail,
       });
 
       const req = httpMock.expectOne(`/api/owner/seats/${mockHallId}`);
@@ -119,7 +119,7 @@ describe('SeatMapService', () => {
           subscription.unsubscribe();
           done();
         },
-        error: done.fail
+        error: done.fail,
       });
 
       const req = httpMock.expectOne(`/api/owner/seats/${mockHallId}`);
@@ -134,7 +134,7 @@ describe('SeatMapService', () => {
           subscription.unsubscribe();
           done();
         },
-        error: done.fail
+        error: done.fail,
       });
 
       const req = httpMock.expectOne(`/api/owner/seats/${mockHallId}`);

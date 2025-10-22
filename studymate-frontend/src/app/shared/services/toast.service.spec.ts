@@ -82,7 +82,7 @@ describe('ToastService', () => {
 
       const remainingMessages = service.messages();
       expect(remainingMessages.length).toBe(2);
-      expect(remainingMessages.find(m => m.id === middleToastId)).toBeUndefined();
+      expect(remainingMessages.find((m) => m.id === middleToastId)).toBeUndefined();
     });
 
     it('should do nothing if ID does not exist', () => {
@@ -153,7 +153,7 @@ describe('ToastService', () => {
       service.success('Message 3');
 
       const messages = service.messages();
-      const ids = messages.map(m => m.id);
+      const ids = messages.map((m) => m.id);
 
       expect(new Set(ids).size).toBe(3);
     });

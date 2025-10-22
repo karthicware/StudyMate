@@ -10,16 +10,16 @@ import { AuthService } from '../../core/services/auth.service';
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
     <!-- Page Background - Shade 1 (pushed deeper) -->
-    <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-
+    <div
+      class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
+    >
       <!-- Login Card Container - Shade 2 (neutral base) with Two-Layer Shadow -->
-      <div class="max-w-md w-full bg-white rounded-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_3px_6px_rgba(0,0,0,0.15)] p-8">
-
+      <div
+        class="max-w-md w-full bg-white rounded-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_3px_6px_rgba(0,0,0,0.15)] p-8"
+      >
         <!-- Header Section -->
         <div class="mb-8">
-          <h2 class="text-3xl font-bold text-gray-900 text-center font-heading">
-            Welcome back
-          </h2>
+          <h2 class="text-3xl font-bold text-gray-900 text-center font-heading">Welcome back</h2>
           <p class="mt-2 text-center text-sm text-gray-600 font-body">
             Sign in to your Owner account
           </p>
@@ -29,8 +29,16 @@ import { AuthService } from '../../core/services/auth.service';
         @if (errorMessage()) {
           <div class="mb-6 rounded-lg bg-danger-50 border border-danger-200 p-4">
             <div class="flex">
-              <svg class="h-5 w-5 text-danger-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+              <svg
+                class="h-5 w-5 text-danger-500 flex-shrink-0"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clip-rule="evenodd"
+                />
               </svg>
               <div class="ml-3">
                 <p class="text-sm text-danger-700 font-medium">
@@ -43,7 +51,6 @@ import { AuthService } from '../../core/services/auth.service';
 
         <!-- Login Form -->
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
-
           <!-- Email Input Field - Airbnb Style -->
           <div>
             <label for="email" class="block text-xs font-medium text-gray-700 mb-2">
@@ -59,13 +66,15 @@ import { AuthService } from '../../core/services/auth.service';
                      transition-all duration-200
                      focus:outline-none focus:border-2 focus:border-black
                      disabled:opacity-50 disabled:cursor-not-allowed"
-              [class.border-danger-500]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-              [class.focus:border-danger-500]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+              [class.border-danger-500]="
+                loginForm.get('email')?.invalid && loginForm.get('email')?.touched
+              "
+              [class.focus:border-danger-500]="
+                loginForm.get('email')?.invalid && loginForm.get('email')?.touched
+              "
             />
             @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
-              <p class="mt-2 text-sm text-danger-500">
-                Please enter a valid email address
-              </p>
+              <p class="mt-2 text-sm text-danger-500">Please enter a valid email address</p>
             }
           </div>
 
@@ -84,13 +93,15 @@ import { AuthService } from '../../core/services/auth.service';
                      transition-all duration-200
                      focus:outline-none focus:border-2 focus:border-black
                      disabled:opacity-50 disabled:cursor-not-allowed"
-              [class.border-danger-500]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-              [class.focus:border-danger-500]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+              [class.border-danger-500]="
+                loginForm.get('password')?.invalid && loginForm.get('password')?.touched
+              "
+              [class.focus:border-danger-500]="
+                loginForm.get('password')?.invalid && loginForm.get('password')?.touched
+              "
             />
             @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-              <p class="mt-2 text-sm text-danger-500">
-                Password must be at least 6 characters
-              </p>
+              <p class="mt-2 text-sm text-danger-500">Password must be at least 6 characters</p>
             }
           </div>
 
@@ -110,9 +121,24 @@ import { AuthService } from '../../core/services/auth.service';
           >
             @if (isLoading()) {
               <span class="flex items-center justify-center">
-                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 Signing in...
               </span>
@@ -137,7 +163,8 @@ import { AuthService } from '../../core/services/auth.service';
               Don't have an owner account?
               <a
                 routerLink="/register"
-                class="font-semibold text-primary-500 hover:text-primary-600 hover:underline transition-all duration-200 ml-1">
+                class="font-semibold text-primary-500 hover:text-primary-600 hover:underline transition-all duration-200 ml-1"
+              >
                 Register now
               </a>
             </p>
@@ -146,10 +173,16 @@ import { AuthService } from '../../core/services/auth.service';
           <!-- Additional Links -->
           <div class="pt-4 border-t border-gray-200">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
-              <a href="#" class="text-gray-700 hover:text-gray-900 hover:underline transition-all duration-200">
+              <a
+                href="#"
+                class="text-gray-700 hover:text-gray-900 hover:underline transition-all duration-200"
+              >
                 Forgot password?
               </a>
-              <a href="#" class="text-gray-700 hover:text-gray-900 hover:underline transition-all duration-200">
+              <a
+                href="#"
+                class="text-gray-700 hover:text-gray-900 hover:underline transition-all duration-200"
+              >
                 Need help?
               </a>
             </div>
@@ -164,7 +197,6 @@ import { AuthService } from '../../core/services/auth.service';
             <a href="#" class="text-gray-700 underline hover:text-gray-900">Privacy Policy</a>
           </p>
         </div>
-
       </div>
     </div>
   `,

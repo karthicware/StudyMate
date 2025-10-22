@@ -16,13 +16,28 @@ describe('SeatMapConfigComponent', () => {
   let mockHallAmenitiesService: jasmine.SpyObj<HallAmenitiesService>;
 
   const mockSeats: Seat[] = [
-    { id: '1', seatNumber: 'A1', xCoord: 100, yCoord: 150, status: 'available', spaceType: 'Cabin' },
-    { id: '2', seatNumber: 'A2', xCoord: 200, yCoord: 150, status: 'available', spaceType: 'Study Pod', customPrice: 500 }
+    {
+      id: '1',
+      seatNumber: 'A1',
+      xCoord: 100,
+      yCoord: 150,
+      status: 'available',
+      spaceType: 'Cabin',
+    },
+    {
+      id: '2',
+      seatNumber: 'A2',
+      xCoord: 200,
+      yCoord: 150,
+      status: 'available',
+      spaceType: 'Study Pod',
+      customPrice: 500,
+    },
   ];
 
   const mockShifts: Shift[] = [
     { id: '1', name: 'Morning', startTime: '06:00', endTime: '12:00' },
-    { id: '2', name: 'Afternoon', startTime: '12:00', endTime: '18:00' }
+    { id: '2', name: 'Afternoon', startTime: '12:00', endTime: '18:00' },
   ];
 
   beforeEach(async () => {
@@ -34,12 +49,12 @@ describe('SeatMapConfigComponent', () => {
       'saveShiftConfiguration',
       'validateSeatNumberUnique',
       'validateShiftTimesNoOverlap',
-      'getDefaultShifts'
+      'getDefaultShifts',
     ]);
 
     const hallAmenitiesServiceSpy = jasmine.createSpyObj('HallAmenitiesService', [
       'getHallAmenities',
-      'updateHallAmenities'
+      'updateHallAmenities',
     ]);
 
     await TestBed.configureTestingModule({
@@ -48,12 +63,14 @@ describe('SeatMapConfigComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: SeatConfigService, useValue: seatConfigServiceSpy },
-        { provide: HallAmenitiesService, useValue: hallAmenitiesServiceSpy }
-      ]
+        { provide: HallAmenitiesService, useValue: hallAmenitiesServiceSpy },
+      ],
     }).compileComponents();
 
     mockSeatConfigService = TestBed.inject(SeatConfigService) as jasmine.SpyObj<SeatConfigService>;
-    mockHallAmenitiesService = TestBed.inject(HallAmenitiesService) as jasmine.SpyObj<HallAmenitiesService>;
+    mockHallAmenitiesService = TestBed.inject(
+      HallAmenitiesService,
+    ) as jasmine.SpyObj<HallAmenitiesService>;
     fixture = TestBed.createComponent(SeatMapConfigComponent);
     component = fixture.componentInstance;
   });
@@ -72,7 +89,7 @@ describe('SeatMapConfigComponent', () => {
 
     it('should handle error when loading seats', () => {
       mockSeatConfigService.getSeatConfiguration.and.returnValue(
-        throwError(() => new Error('Load failed'))
+        throwError(() => new Error('Load failed')),
       );
       mockSeatConfigService.getShiftConfiguration.and.returnValue(of({} as OpeningHours));
       mockSeatConfigService.getDefaultShifts.and.returnValue([]);
@@ -86,7 +103,7 @@ describe('SeatMapConfigComponent', () => {
     it('should use default shifts on shift load error', () => {
       mockSeatConfigService.getSeatConfiguration.and.returnValue(of([]));
       mockSeatConfigService.getShiftConfiguration.and.returnValue(
-        throwError(() => new Error('Load failed'))
+        throwError(() => new Error('Load failed')),
       );
       mockSeatConfigService.getDefaultShifts.and.returnValue(mockShifts);
 
@@ -173,7 +190,7 @@ describe('SeatMapConfigComponent', () => {
     it('should handle drag end event', () => {
       const seat = mockSeats[0];
       const dragEvent = {
-        dropPoint: { x: 250, y: 300 }
+        dropPoint: { x: 250, y: 300 },
       } as CdkDragEnd;
 
       component.onSeatDragEnded(dragEvent, seat);
@@ -200,14 +217,17 @@ describe('SeatMapConfigComponent', () => {
         success: true,
         message: 'Saved',
         seats: mockSeats,
-        seatCount: 2
+        seatCount: 2,
       };
       mockSeatConfigService.saveSeatConfiguration.and.returnValue(of(mockResponse));
       component.seats.set(mockSeats);
 
       component.saveSeatConfiguration();
 
-      expect(mockSeatConfigService.saveSeatConfiguration).toHaveBeenCalledWith('hall-123', mockSeats);
+      expect(mockSeatConfigService.saveSeatConfiguration).toHaveBeenCalledWith(
+        'hall-123',
+        mockSeats,
+      );
       expect(component.saveSuccess()).toBe(true);
       expect(component.hasUnsavedChanges()).toBe(false);
       expect(component.isLoading()).toBe(false);
@@ -215,7 +235,7 @@ describe('SeatMapConfigComponent', () => {
 
     it('should handle save error', () => {
       mockSeatConfigService.saveSeatConfiguration.and.returnValue(
-        throwError(() => new Error('Save failed'))
+        throwError(() => new Error('Save failed')),
       );
       component.seats.set(mockSeats);
 
@@ -326,7 +346,7 @@ describe('SeatMapConfigComponent', () => {
       const mockResponse = {
         success: true,
         message: 'Saved',
-        openingHours: {} as OpeningHours
+        openingHours: {} as OpeningHours,
       };
       mockSeatConfigService.saveShiftConfiguration.and.returnValue(of(mockResponse));
       component.shifts.set(mockShifts);
@@ -340,7 +360,7 @@ describe('SeatMapConfigComponent', () => {
 
     it('should handle shift save error', () => {
       mockSeatConfigService.saveShiftConfiguration.and.returnValue(
-        throwError(() => new Error('Save failed'))
+        throwError(() => new Error('Save failed')),
       );
       component.shifts.set(mockShifts);
 
@@ -355,7 +375,7 @@ describe('SeatMapConfigComponent', () => {
     const mockAmenitiesResponse: HallAmenities = {
       hallId: '1',
       hallName: 'Test Hall',
-      amenities: []
+      amenities: [],
     };
 
     it('should enable editor after hall selection', () => {
@@ -392,7 +412,9 @@ describe('SeatMapConfigComponent', () => {
       mockSeatConfigService.getSeatConfiguration.and.returnValue(of([]));
       mockSeatConfigService.getShiftConfiguration.and.returnValue(of({} as OpeningHours));
       mockSeatConfigService.getDefaultShifts.and.returnValue([]);
-      mockHallAmenitiesService.getHallAmenities.and.returnValue(of({ ...mockAmenitiesResponse, hallId: '2' }));
+      mockHallAmenitiesService.getHallAmenities.and.returnValue(
+        of({ ...mockAmenitiesResponse, hallId: '2' }),
+      );
 
       component.onHallSelectionChange('2');
 
@@ -471,12 +493,14 @@ describe('SeatMapConfigComponent', () => {
 
   describe('Save Configuration with Hall ID (AC5, AC6)', () => {
     it('should use selected hall ID when saving', () => {
-      mockSeatConfigService.saveSeatConfiguration.and.returnValue(of({
-        success: true,
-        message: 'Saved',
-        seats: mockSeats,
-        seatCount: 2
-      }));
+      mockSeatConfigService.saveSeatConfiguration.and.returnValue(
+        of({
+          success: true,
+          message: 'Saved',
+          seats: mockSeats,
+          seatCount: 2,
+        }),
+      );
       mockSeatConfigService.getSeatConfiguration.and.returnValue(of(mockSeats));
 
       component.selectedHallId.set('5');
@@ -498,12 +522,14 @@ describe('SeatMapConfigComponent', () => {
     });
 
     it('should reload configuration after successful save', () => {
-      mockSeatConfigService.saveSeatConfiguration.and.returnValue(of({
-        success: true,
-        message: 'Saved',
-        seats: mockSeats,
-        seatCount: 2
-      }));
+      mockSeatConfigService.saveSeatConfiguration.and.returnValue(
+        of({
+          success: true,
+          message: 'Saved',
+          seats: mockSeats,
+          seatCount: 2,
+        }),
+      );
       mockSeatConfigService.getSeatConfiguration.and.returnValue(of(mockSeats));
 
       component.selectedHallId.set('1');
@@ -519,7 +545,7 @@ describe('SeatMapConfigComponent', () => {
     const mockAmenities: HallAmenities = {
       hallId: 'test-hall-1',
       hallName: 'Test Hall',
-      amenities: ['AC', 'WiFi']
+      amenities: ['AC', 'WiFi'],
     };
 
     beforeEach(() => {
@@ -559,7 +585,7 @@ describe('SeatMapConfigComponent', () => {
       const onlyAC: HallAmenities = {
         hallId: 'test-hall-1',
         hallName: 'Test Hall',
-        amenities: ['AC']
+        amenities: ['AC'],
       };
       mockHallAmenitiesService.getHallAmenities.and.returnValue(of(onlyAC));
 
@@ -572,7 +598,7 @@ describe('SeatMapConfigComponent', () => {
 
     it('should handle amenities load error gracefully', fakeAsync(() => {
       mockHallAmenitiesService.getHallAmenities.and.returnValue(
-        throwError(() => new Error('Load failed'))
+        throwError(() => new Error('Load failed')),
       );
 
       component['loadAmenities']('test-hall-1');
@@ -590,10 +616,9 @@ describe('SeatMapConfigComponent', () => {
       component.amenitiesForm.patchValue({ amenityAC: true });
       tick(500); // Debounce time
 
-      expect(mockHallAmenitiesService.updateHallAmenities).toHaveBeenCalledWith(
-        'test-hall-1',
-        ['AC']
-      );
+      expect(mockHallAmenitiesService.updateHallAmenities).toHaveBeenCalledWith('test-hall-1', [
+        'AC',
+      ]);
     }));
 
     it('should not trigger auto-save before debounce time', fakeAsync(() => {
@@ -611,10 +636,10 @@ describe('SeatMapConfigComponent', () => {
       component.amenitiesForm.patchValue({ amenityAC: true, amenityWiFi: true });
       tick(500);
 
-      expect(mockHallAmenitiesService.updateHallAmenities).toHaveBeenCalledWith(
-        'test-hall-1',
-        ['AC', 'WiFi']
-      );
+      expect(mockHallAmenitiesService.updateHallAmenities).toHaveBeenCalledWith('test-hall-1', [
+        'AC',
+        'WiFi',
+      ]);
     }));
 
     it('should save empty array when all checkboxes unchecked', fakeAsync(() => {
@@ -624,10 +649,7 @@ describe('SeatMapConfigComponent', () => {
       component.amenitiesForm.patchValue({ amenityAC: false, amenityWiFi: false });
       tick(500);
 
-      expect(mockHallAmenitiesService.updateHallAmenities).toHaveBeenCalledWith(
-        'test-hall-1',
-        []
-      );
+      expect(mockHallAmenitiesService.updateHallAmenities).toHaveBeenCalledWith('test-hall-1', []);
     }));
 
     it('should show saving indicator during save', fakeAsync(() => {
@@ -657,7 +679,7 @@ describe('SeatMapConfigComponent', () => {
 
     it('should handle save error and display error message', fakeAsync(() => {
       mockHallAmenitiesService.updateHallAmenities.and.returnValue(
-        throwError(() => new Error('Save failed'))
+        throwError(() => new Error('Save failed')),
       );
 
       component['saveAmenities']();

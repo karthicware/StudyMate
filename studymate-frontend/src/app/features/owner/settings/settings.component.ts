@@ -27,7 +27,7 @@ import { ToastService } from '../../../shared/services/toast.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss']
+  styleUrls: ['./settings.component.scss'],
 })
 export class SettingsComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
@@ -44,7 +44,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     notifications: true,
     notificationTypes: false,
     system: false,
-    privacy: false
+    privacy: false,
   });
 
   // Form
@@ -54,7 +54,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   languages = [
     { value: 'en', label: 'English' },
     { value: 'es', label: 'Spanish' },
-    { value: 'fr', label: 'French' }
+    { value: 'fr', label: 'French' },
   ];
 
   timezones = [
@@ -62,12 +62,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
     { value: 'America/Chicago', label: 'Central Time (CT)' },
     { value: 'America/Denver', label: 'Mountain Time (MT)' },
     { value: 'America/Los_Angeles', label: 'Pacific Time (PT)' },
-    { value: 'UTC', label: 'UTC' }
+    { value: 'UTC', label: 'UTC' },
   ];
 
   defaultViews = [
     { value: 'dashboard', label: 'Dashboard' },
-    { value: 'seat-map', label: 'Seat Map' }
+    { value: 'seat-map', label: 'Seat Map' },
   ];
 
   ngOnInit(): void {
@@ -94,7 +94,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       language: ['en'],
       timezone: ['America/New_York'],
       defaultView: ['dashboard'],
-      profileVisibility: ['public']
+      profileVisibility: ['public'],
     });
   }
 
@@ -103,7 +103,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
    */
   private loadSettings(): void {
     this.loading.set(true);
-    this.settingsService.getSettings()
+    this.settingsService
+      .getSettings()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (settings) => {
@@ -121,7 +122,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
           // Setup auto-save even if load fails (use defaults)
           this.setupAutoSave();
-        }
+        },
       });
   }
 
@@ -133,7 +134,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       .pipe(
         debounceTime(500),
         distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
-        takeUntil(this.destroy$)
+        takeUntil(this.destroy$),
       )
       .subscribe(() => {
         this.saveSettings();
@@ -151,7 +152,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.saving.set(true);
     this.saveSuccess.set(false);
 
-    this.settingsService.updateSettings(this.settingsForm.value)
+    this.settingsService
+      .updateSettings(this.settingsForm.value)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
@@ -165,7 +167,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
           console.error('Failed to save settings:', error);
           this.toastService.error('Failed to save settings');
           this.saving.set(false);
-        }
+        },
       });
   }
 
@@ -173,9 +175,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
    * Toggle accordion section
    */
   toggleSection(section: string): void {
-    this.expandedSections.update(sections => ({
+    this.expandedSections.update((sections) => ({
       ...sections,
-      [section]: !sections[section]
+      [section]: !sections[section],
     }));
   }
 
@@ -201,7 +203,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
   confirmRestore(): void {
     this.showConfirmModal.set(false);
 
-    this.settingsService.restoreDefaults()
+    this.settingsService
+      .restoreDefaults()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (defaults) => {
@@ -215,7 +218,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Failed to restore defaults:', error);
           this.toastService.error('Failed to restore defaults');
-        }
+        },
       });
   }
 

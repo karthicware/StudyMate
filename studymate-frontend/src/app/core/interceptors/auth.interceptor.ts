@@ -42,7 +42,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         }
 
         // Try to refresh token and retry request
-        console.log('Received 401, attempting token refresh');
         return authService.refreshToken().pipe(
           switchMap((response) => {
             // Retry the original request with new token
@@ -52,7 +51,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                 Authorization: `Bearer ${newToken}`,
               },
             });
-            console.log('Token refreshed, retrying request');
             return next(clonedReq);
           }),
           catchError((refreshError) => {

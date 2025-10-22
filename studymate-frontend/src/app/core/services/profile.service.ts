@@ -10,7 +10,7 @@ import { OwnerProfile, OwnerProfileUpdateRequest } from '../models/profile.model
  * Integrates with backend API endpoints for fetching, updating, and avatar upload.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProfileService {
   private http = inject(HttpClient);

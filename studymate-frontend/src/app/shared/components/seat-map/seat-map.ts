@@ -1,4 +1,4 @@
-import { Component, input, computed, effect } from '@angular/core';
+import { Component, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SeatStatus } from '../../../core/models/dashboard.model';
 

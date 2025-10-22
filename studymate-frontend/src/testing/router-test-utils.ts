@@ -1,8 +1,13 @@
-import { provideRouter } from '@angular/router';
-import { Router, Routes } from '@angular/router';
+import { provideRouter, Routes } from '@angular/router';
+import { Component } from '@angular/core';
 
 // Type declaration for Jasmine (for test files only)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const jasmine: any;
+
+// Dummy component for test routes
+@Component({ template: '' })
+class DummyComponent {}
 
 /**
  * Provides empty router configuration for isolated component tests.
@@ -83,22 +88,22 @@ export function createRouterSpy() {
  */
 export const TEST_ROUTES: Routes = [
   // Auth routes
-  { path: 'auth/login', component: {} as any },
-  { path: 'auth/register', component: {} as any },
-  { path: 'auth/owner-register', component: {} as any },
-  { path: 'auth/verify-email', component: {} as any },
+  { path: 'auth/login', component: DummyComponent },
+  { path: 'auth/register', component: DummyComponent },
+  { path: 'auth/owner-register', component: DummyComponent },
+  { path: 'auth/verify-email', component: DummyComponent },
 
   // Owner portal routes
-  { path: 'owner/dashboard', component: {} as any },
-  { path: 'owner/profile', component: {} as any },
-  { path: 'owner/settings', component: {} as any },
-  { path: 'owner/users', component: {} as any },
-  { path: 'owner/reports', component: {} as any },
+  { path: 'owner/dashboard', component: DummyComponent },
+  { path: 'owner/profile', component: DummyComponent },
+  { path: 'owner/settings', component: DummyComponent },
+  { path: 'owner/users', component: DummyComponent },
+  { path: 'owner/reports', component: DummyComponent },
 
   // Student routes
-  { path: 'student/dashboard', component: {} as any },
-  { path: 'student/discovery', component: {} as any },
-  { path: 'student/bookings', component: {} as any },
+  { path: 'student/dashboard', component: DummyComponent },
+  { path: 'student/discovery', component: DummyComponent },
+  { path: 'student/bookings', component: DummyComponent },
 
   // Root
   { path: '', redirectTo: '/auth/login', pathMatch: 'full' },

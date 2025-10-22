@@ -18,7 +18,7 @@ export interface ToastMessage {
  * Auto-dismisses messages after specified duration (default: 4000ms).
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ToastService {
   private toasts = signal<ToastMessage[]>([]);
@@ -34,7 +34,7 @@ export class ToastService {
    * @param message - Message to display
    * @param duration - Duration in milliseconds (default: 4000)
    */
-  success(message: string, duration: number = 4000): void {
+  success(message: string, duration = 4000): void {
     this.show(message, 'success', duration);
   }
 
@@ -43,7 +43,7 @@ export class ToastService {
    * @param message - Message to display
    * @param duration - Duration in milliseconds (default: 4000)
    */
-  error(message: string, duration: number = 4000): void {
+  error(message: string, duration = 4000): void {
     this.show(message, 'error', duration);
   }
 
@@ -52,7 +52,7 @@ export class ToastService {
    * @param message - Message to display
    * @param duration - Duration in milliseconds (default: 4000)
    */
-  info(message: string, duration: number = 4000): void {
+  info(message: string, duration = 4000): void {
     this.show(message, 'info', duration);
   }
 
@@ -61,7 +61,7 @@ export class ToastService {
    * @param message - Message to display
    * @param duration - Duration in milliseconds (default: 4000)
    */
-  warning(message: string, duration: number = 4000): void {
+  warning(message: string, duration = 4000): void {
     this.show(message, 'warning', duration);
   }
 
@@ -76,10 +76,10 @@ export class ToastService {
       id: this.nextId++,
       message,
       type,
-      duration
+      duration,
     };
 
-    this.toasts.update(toasts => [...toasts, toast]);
+    this.toasts.update((toasts) => [...toasts, toast]);
 
     // Auto-dismiss after duration
     setTimeout(() => {
@@ -92,7 +92,7 @@ export class ToastService {
    * @param id - Toast ID to dismiss
    */
   dismiss(id: number): void {
-    this.toasts.update(toasts => toasts.filter(t => t.id !== id));
+    this.toasts.update((toasts) => toasts.filter((t) => t.id !== id));
   }
 
   /**

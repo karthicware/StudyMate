@@ -13,6 +13,7 @@ describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
   let authService: jasmine.SpyObj<AuthService>;
   let router: Router;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let activatedRoute: any;
 
   const mockAuthResponse = {

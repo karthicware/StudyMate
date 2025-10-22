@@ -1,0 +1,339 @@
+<!-- Onboarding Wizard Modal -->
+<div
+  data-testid="onboarding-wizard-modal"
+  class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 p-4"
+  role="dialog"
+  aria-labelledby="wizard-title"
+  aria-describedby="wizard-description"
+>
+  <div class="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <!-- Wizard Header -->
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h2 id="wizard-title" class="text-2xl font-semibold text-gray-800">Welcome to StudyMate!</h2>
+      <p id="wizard-description" class="text-sm text-gray-600 mt-1">
+        Let's set up your first study hall
+      </p>
+
+      <!-- Progress Indicator -->
+      <div
+        class="mt-4 flex items-center"
+        role="progressbar"
+        aria-valuenow="1"
+        aria-valuemin="1"
+        aria-valuemax="3"
+        aria-label="Onboarding progress: Step 1 of 3"
+      >
+        <div class="flex items-center">
+          <div
+            class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white font-semibold"
+          >
+            1
+          </div>
+          <span class="ml-2 text-sm font-medium text-blue-600">Hall Setup</span>
+        </div>
+        <div class="flex-1 h-1 mx-4 bg-gray-200"></div>
+        <div class="flex items-center">
+          <div
+            class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 text-gray-600 font-semibold"
+          >
+            2
+          </div>
+          <span class="ml-2 text-sm text-gray-500">Pricing</span>
+        </div>
+        <div class="flex-1 h-1 mx-4 bg-gray-200"></div>
+        <div class="flex items-center">
+          <div
+            class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 text-gray-600 font-semibold"
+          >
+            3
+          </div>
+          <span class="ml-2 text-sm text-gray-500">Location</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wizard Body - Hall Creation Form -->
+    <div class="px-6 py-6">
+      <form [formGroup]="hallForm" (ngSubmit)="onSubmit()" data-testid="hall-creation-form">
+        <!-- Success Message -->
+        <div
+          *ngIf="successMessage()"
+          data-testid="success-message"
+          class="mb-4 p-4 bg-green-50 border border-green-200 rounded-md"
+          role="alert"
+          aria-live="polite"
+        >
+          <p class="text-green-800 text-sm">✓ {{ successMessage() }}</p>
+        </div>
+
+        <!-- Error Message -->
+        <div
+          *ngIf="errorMessage()"
+          data-testid="error-message"
+          class="mb-4 p-4 bg-red-50 border border-red-200 rounded-md"
+          role="alert"
+          aria-live="assertive"
+        >
+          <p class="text-red-800 text-sm">✗ {{ errorMessage() }}</p>
+        </div>
+
+        <!-- Hall Name -->
+        <div class="mb-4">
+          <label for="hallName" class="block text-sm font-medium text-gray-700 mb-1">
+            Hall Name <span class="text-red-500">*</span>
+          </label>
+          <input
+            id="hallName"
+            type="text"
+            formControlName="hallName"
+            data-testid="hall-name-input"
+            placeholder="e.g., Downtown Study Center"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [class.border-red-500]="
+              hasError('hallName', 'required') || hasError('hallName', 'pattern')
+            "
+            aria-required="true"
+            [attr.aria-invalid]="
+              hasError('hallName', 'required') || hasError('hallName', 'pattern') ? 'true' : null
+            "
+            [attr.aria-describedby]="getErrorMessage('hallName') ? 'hallName-error' : null"
+          />
+          <p
+            *ngIf="getErrorMessage('hallName')"
+            id="hallName-error"
+            data-testid="hall-name-error-message"
+            class="mt-1 text-sm text-red-600"
+            role="alert"
+          >
+            {{ getErrorMessage('hallName') }}
+          </p>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-4">
+          <label for="description" class="block text-sm font-medium text-gray-700 mb-1">
+            Description (optional)
+          </label>
+          <textarea
+            id="description"
+            formControlName="description"
+            data-testid="description-textarea"
+            placeholder="Brief description of your study hall"
+            rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [class.border-red-500]="hasError('description', 'maxlength')"
+          ></textarea>
+          <p
+            *ngIf="getErrorMessage('description')"
+            data-testid="description-error-message"
+            class="mt-1 text-sm text-red-600"
+          >
+            {{ getErrorMessage('description') }}
+          </p>
+        </div>
+
+        <!-- Address -->
+        <div class="mb-4">
+          <label for="address" class="block text-sm font-medium text-gray-700 mb-1">
+            Address <span class="text-red-500">*</span>
+          </label>
+          <textarea
+            id="address"
+            formControlName="address"
+            data-testid="address-textarea"
+            placeholder="Street address, floor, building name"
+            rows="2"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [class.border-red-500]="hasError('address', 'required')"
+          ></textarea>
+          <p
+            *ngIf="getErrorMessage('address')"
+            data-testid="address-error-message"
+            class="mt-1 text-sm text-red-600"
+          >
+            {{ getErrorMessage('address') }}
+          </p>
+        </div>
+
+        <!-- City and State Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <!-- City -->
+          <div>
+            <label for="city" class="block text-sm font-medium text-gray-700 mb-1">
+              City <span class="text-red-500">*</span>
+            </label>
+            <input
+              id="city"
+              type="text"
+              formControlName="city"
+              data-testid="city-input"
+              placeholder="e.g., Mumbai"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              [class.border-red-500]="hasError('city', 'required')"
+            />
+            <p
+              *ngIf="getErrorMessage('city')"
+              data-testid="city-error-message"
+              class="mt-1 text-sm text-red-600"
+            >
+              {{ getErrorMessage('city') }}
+            </p>
+          </div>
+
+          <!-- State -->
+          <div>
+            <label for="state" class="block text-sm font-medium text-gray-700 mb-1">
+              State/Province <span class="text-red-500">*</span>
+            </label>
+            <input
+              id="state"
+              type="text"
+              formControlName="state"
+              data-testid="state-input"
+              placeholder="e.g., Maharashtra"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              [class.border-red-500]="hasError('state', 'required')"
+            />
+            <p
+              *ngIf="getErrorMessage('state')"
+              data-testid="state-error-message"
+              class="mt-1 text-sm text-red-600"
+            >
+              {{ getErrorMessage('state') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Postal Code and Country Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <!-- Postal Code -->
+          <div>
+            <label for="postalCode" class="block text-sm font-medium text-gray-700 mb-1">
+              Postal Code (optional)
+            </label>
+            <input
+              id="postalCode"
+              type="text"
+              formControlName="postalCode"
+              data-testid="postal-code-input"
+              placeholder="e.g., 400001"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              [class.border-red-500]="hasError('postalCode', 'pattern')"
+            />
+            <p
+              *ngIf="getErrorMessage('postalCode')"
+              data-testid="postal-code-error-message"
+              class="mt-1 text-sm text-red-600"
+            >
+              {{ getErrorMessage('postalCode') }}
+            </p>
+          </div>
+
+          <!-- Country -->
+          <div>
+            <label for="country" class="block text-sm font-medium text-gray-700 mb-1">
+              Country <span class="text-red-500">*</span>
+            </label>
+            <select
+              id="country"
+              formControlName="country"
+              data-testid="country-select"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              [class.border-red-500]="hasError('country', 'required')"
+            >
+              <option *ngFor="let country of supportedCountries" [value]="country">
+                {{ country }}
+              </option>
+            </select>
+            <p
+              *ngIf="getErrorMessage('country')"
+              data-testid="country-error-message"
+              class="mt-1 text-sm text-red-600"
+            >
+              {{ getErrorMessage('country') }}
+            </p>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Wizard Footer -->
+    <div class="px-6 py-4 border-t border-gray-200 flex justify-between">
+      <button
+        type="button"
+        (click)="onSkipClick()"
+        data-testid="skip-button"
+        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+        [disabled]="isLoading()"
+      >
+        Skip for now
+      </button>
+
+      <button
+        type="submit"
+        (click)="onSubmit()"
+        data-testid="create-hall-button"
+        class="px-6 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-300 disabled:cursor-not-allowed"
+        [disabled]="hallForm.invalid || isLoading()"
+      >
+        <span *ngIf="!isLoading()">Create Hall</span>
+        <span *ngIf="isLoading()" class="flex items-center">
+          <svg
+            class="animate-spin h-4 w-4 mr-2"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          Creating...
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Skip Confirmation Dialog -->
+<div
+  *ngIf="showSkipConfirmation()"
+  data-testid="skip-confirmation-modal"
+  class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-[60]"
+>
+  <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6 m-4">
+    <h3 class="text-lg font-semibold text-gray-800 mb-2">Skip Onboarding?</h3>
+    <p class="text-sm text-gray-600 mb-6">
+      You can create your hall later from the dashboard. Are you sure you want to skip this setup?
+    </p>
+
+    <div class="flex justify-end space-x-3">
+      <button
+        type="button"
+        (click)="onCancelSkip()"
+        data-testid="skip-cancel-button"
+        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        (click)="onConfirmSkip()"
+        data-testid="skip-confirm-button"
+        class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+      >
+        Yes, Skip
+      </button>
+    </div>
+  </div>
+</div>

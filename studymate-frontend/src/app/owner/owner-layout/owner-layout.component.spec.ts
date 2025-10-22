@@ -1,15 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { OwnerLayoutComponent } from './owner-layout.component';
-import { OwnerHeaderComponent } from '../components/owner-header/owner-header';
-import { OwnerFooterComponent } from '../components/owner-footer/owner-footer';
 import { AuthStore } from '../../store/auth/auth.store';
-import { signal } from '@angular/core';
+import { Signal, signal } from '@angular/core';
+import { User } from '../../core/models/auth.models';
 
 describe('OwnerLayoutComponent', () => {
   let component: OwnerLayoutComponent;
   let fixture: ComponentFixture<OwnerLayoutComponent>;
-  let mockAuthStore: any;
+  let mockAuthStore: {
+    selectUser: Signal<User | null>;
+    selectIsAuthenticated: Signal<boolean>;
+    logout: jasmine.Spy;
+  };
 
   beforeEach(async () => {
     // Create mock auth store with signals
@@ -35,6 +38,7 @@ describe('OwnerLayoutComponent', () => {
     });
 
     it('should have standalone configuration', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const metadata = (OwnerLayoutComponent as any).ɵcmp;
       expect(metadata.standalone).toBe(true);
     });

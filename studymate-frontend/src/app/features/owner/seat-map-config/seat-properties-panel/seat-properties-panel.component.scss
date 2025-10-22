@@ -1,11 +1,7 @@
 .seat-properties-panel {
-  position: fixed;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-  z-index: 1000;
-  max-height: 90vh;
-  overflow-y: auto;
+  // Removed fixed positioning to allow natural scroll flow
+  max-height: none;
+  overflow-y: visible;
 }
 
 /* Custom scrollbar for better UX */

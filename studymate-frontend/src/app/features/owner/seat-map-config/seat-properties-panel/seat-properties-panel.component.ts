@@ -1,6 +1,12 @@
 import { Component, Input, Output, EventEmitter, OnChanges, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+  AbstractControl,
+} from '@angular/forms';
 import { Seat, SpaceType } from '../../../../core/models/seat-config.model';
 
 /**
@@ -61,11 +67,16 @@ export class SeatPropertiesPanelComponent implements OnChanges {
    * Only validates if value is provided (not null/empty)
    */
   private optionalRangeValidator(min: number, max: number) {
-    return (control: any) => {
+    return (control: AbstractControl) => {
       const value = control.value;
 
       // Allow null, undefined, or empty string (optional field)
-      if (value === null || value === undefined || value === '' || (typeof value === 'string' && value.trim() === '')) {
+      if (
+        value === null ||
+        value === undefined ||
+        value === '' ||
+        (typeof value === 'string' && value.trim() === '')
+      ) {
         return null;
       }
 

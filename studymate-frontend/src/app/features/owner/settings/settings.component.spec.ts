@@ -22,28 +22,28 @@ describe('SettingsComponent', () => {
     language: 'en',
     timezone: 'America/New_York',
     defaultView: 'dashboard',
-    profileVisibility: 'public'
+    profileVisibility: 'public',
   };
 
   beforeEach(async () => {
     const settingsServiceSpy = jasmine.createSpyObj('SettingsService', [
       'getSettings',
       'updateSettings',
-      'restoreDefaults'
+      'restoreDefaults',
     ]);
     const toastServiceSpy = jasmine.createSpyObj('ToastService', [
       'success',
       'error',
       'info',
-      'warning'
+      'warning',
     ]);
 
     await TestBed.configureTestingModule({
       imports: [SettingsComponent, ReactiveFormsModule],
       providers: [
         { provide: SettingsService, useValue: settingsServiceSpy },
-        { provide: ToastService, useValue: toastServiceSpy }
-      ]
+        { provide: ToastService, useValue: toastServiceSpy },
+      ],
     }).compileComponents();
 
     settingsService = TestBed.inject(SettingsService) as jasmine.SpyObj<SettingsService>;
@@ -83,7 +83,7 @@ describe('SettingsComponent', () => {
 
     it('should handle settings load error', fakeAsync(() => {
       settingsService.getSettings.and.returnValue(
-        throwError(() => ({ status: 500, message: 'Server error' }))
+        throwError(() => ({ status: 500, message: 'Server error' })),
       );
 
       fixture.detectChanges();
@@ -165,7 +165,7 @@ describe('SettingsComponent', () => {
 
     it('should handle save error', fakeAsync(() => {
       settingsService.updateSettings.and.returnValue(
-        throwError(() => ({ status: 500, message: 'Save failed' }))
+        throwError(() => ({ status: 500, message: 'Save failed' })),
       );
 
       component.settingsForm.patchValue({ emailNotifications: false });
@@ -230,6 +230,7 @@ describe('SettingsComponent', () => {
     }));
 
     it('should set profileVisibility to "public" when checked', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const event = { target: { checked: true } } as any;
       component.onProfileVisibilityChange(event);
 
@@ -237,6 +238,7 @@ describe('SettingsComponent', () => {
     });
 
     it('should set profileVisibility to "private" when unchecked', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const event = { target: { checked: false } } as any;
       component.onProfileVisibilityChange(event);
 
@@ -266,7 +268,7 @@ describe('SettingsComponent', () => {
       const defaultSettings: OwnerSettings = {
         ...mockSettings,
         emailNotifications: true,
-        smsNotifications: true
+        smsNotifications: true,
       };
 
       settingsService.restoreDefaults.and.returnValue(of(defaultSettings));
@@ -281,7 +283,7 @@ describe('SettingsComponent', () => {
 
     it('should handle restore defaults error', fakeAsync(() => {
       settingsService.restoreDefaults.and.returnValue(
-        throwError(() => ({ status: 500, message: 'Restore failed' }))
+        throwError(() => ({ status: 500, message: 'Restore failed' })),
       );
 
       component.confirmRestore();
@@ -296,7 +298,7 @@ describe('SettingsComponent', () => {
       expect(component.languages).toEqual([
         { value: 'en', label: 'English' },
         { value: 'es', label: 'Spanish' },
-        { value: 'fr', label: 'French' }
+        { value: 'fr', label: 'French' },
       ]);
     });
 
@@ -304,14 +306,14 @@ describe('SettingsComponent', () => {
       expect(component.timezones.length).toBe(5);
       expect(component.timezones[0]).toEqual({
         value: 'America/New_York',
-        label: 'Eastern Time (ET)'
+        label: 'Eastern Time (ET)',
       });
     });
 
     it('should have correct default view options', () => {
       expect(component.defaultViews).toEqual([
         { value: 'dashboard', label: 'Dashboard' },
-        { value: 'seat-map', label: 'Seat Map' }
+        { value: 'seat-map', label: 'Seat Map' },
       ]);
     });
   });
@@ -379,7 +381,9 @@ describe('SettingsComponent', () => {
 
       const compiled = fixture.nativeElement;
       expect(compiled.querySelector('.modal-overlay')).toBeTruthy();
-      expect(compiled.querySelector('.modal-title').textContent).toContain('Restore Default Settings');
+      expect(compiled.querySelector('.modal-title').textContent).toContain(
+        'Restore Default Settings',
+      );
     });
   });
 });

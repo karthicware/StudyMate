@@ -41,7 +41,7 @@ export class OwnerRegisterComponent implements OnDestroy {
     { value: '', label: 'Prefer not to say' },
     { value: 'MALE', label: 'Male' },
     { value: 'FEMALE', label: 'Female' },
-    { value: 'OTHER', label: 'Other' }
+    { value: 'OTHER', label: 'Other' },
   ];
 
   constructor() {
@@ -180,7 +180,7 @@ export class OwnerRegisterComponent implements OnDestroy {
     }
   }
 
-  private handleError(error: any): void {
+  private handleError(error: { status: number; error?: { message?: string } }): void {
     if (error.status === 409) {
       this.errorMessage.set(
         'An account with this email already exists. Please use a different email or try logging in.',

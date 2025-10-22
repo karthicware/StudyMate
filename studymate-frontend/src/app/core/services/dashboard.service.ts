@@ -1,15 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { DashboardMetrics } from '../models/dashboard.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DashboardService {
   private http = inject(HttpClient);
-  private apiUrl = '/api/owner/dashboard'; // Will be configured via environment
+  private apiUrl = `${environment.apiBaseUrl}/owner/dashboard`;
 
   /**
    * Fetches dashboard metrics for a specific study hall

@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CdkDrag, CdkDragEnd } from '@angular/cdk/drag-drop';
 import { SeatConfigService } from '../../../core/services/seat-config.service';
 import { HallAmenitiesService } from '../../../core/services/hall-amenities.service';
@@ -26,6 +27,7 @@ export class SeatMapConfigComponent implements OnInit, OnDestroy {
   private seatConfigService = inject(SeatConfigService);
   private hallAmenitiesService = inject(HallAmenitiesService);
   private fb = inject(FormBuilder);
+  private sanitizer = inject(DomSanitizer);
   private destroy$ = new Subject<void>();
 
   // Signals for reactive state management
@@ -84,7 +86,7 @@ export class SeatMapConfigComponent implements OnInit, OnDestroy {
   private initAmenitiesForm(): void {
     this.amenitiesForm = this.fb.group({
       amenityAC: [false],
-      amenityWiFi: [false]
+      amenityWiFi: [false],
     });
   }
 
@@ -94,11 +96,7 @@ export class SeatMapConfigComponent implements OnInit, OnDestroy {
    */
   private setupAmenitiesAutoSave(): void {
     this.amenitiesForm.valueChanges
-      .pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        takeUntil(this.destroy$)
-      )
+      .pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe(() => {
         this.saveAmenities();
       });
@@ -223,6 +221,14 @@ export class SeatMapConfigComponent implements OnInit, OnDestroy {
    */
   getSpaceTypeConfig(spaceType: SpaceType | string | undefined) {
     return getSpaceTypeConfig(spaceType);
+  }
+
+  /**
+   * Get sanitized SVG icon for safe HTML rendering
+   */
+  getSafeIcon(spaceType: SpaceType | string | undefined): SafeHtml {
+    const config = getSpaceTypeConfig(spaceType);
+    return this.sanitizer.bypassSecurityTrustHtml(config.icon);
   }
 
   /**
@@ -461,22 +467,26 @@ export class SeatMapConfigComponent implements OnInit, OnDestroy {
   private loadAmenities(hallId: string): void {
     this.amenitiesLoading.set(true);
 
-    this.hallAmenitiesService.getHallAmenities(hallId)
+    this.hallAmenitiesService
+      .getHallAmenities(hallId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           // Update form with amenities from API
-          this.amenitiesForm.patchValue({
-            amenityAC: response.amenities.includes('AC'),
-            amenityWiFi: response.amenities.includes('WiFi')
-          }, { emitEvent: false });  // Prevent auto-save trigger on load
+          this.amenitiesForm.patchValue(
+            {
+              amenityAC: response.amenities.includes('AC'),
+              amenityWiFi: response.amenities.includes('WiFi'),
+            },
+            { emitEvent: false },
+          ); // Prevent auto-save trigger on load
           this.amenitiesLoading.set(false);
         },
         error: (err) => {
           console.error('Error loading amenities:', err);
           this.amenitiesLoading.set(false);
           // On error, keep default unchecked state
-        }
+        },
       });
   }
 
@@ -499,7 +509,8 @@ export class SeatMapConfigComponent implements OnInit, OnDestroy {
     if (formValue.amenityAC) amenities.push('AC');
     if (formValue.amenityWiFi) amenities.push('WiFi');
 
-    this.hallAmenitiesService.updateHallAmenities(hallId, amenities)
+    this.hallAmenitiesService
+      .updateHallAmenities(hallId, amenities)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
@@ -512,7 +523,7 @@ export class SeatMapConfigComponent implements OnInit, OnDestroy {
           console.error('Error saving amenities:', err);
           this.errorMessage.set('Failed to save hall amenities');
           this.amenitiesSaving.set(false);
-        }
+        },
       });
   }
 }

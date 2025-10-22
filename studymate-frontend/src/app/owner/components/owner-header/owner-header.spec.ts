@@ -8,6 +8,7 @@ import { AuthStore, User } from '../../../store/auth/auth.store';
 describe('OwnerHeaderComponent', () => {
   let component: OwnerHeaderComponent;
   let fixture: ComponentFixture<OwnerHeaderComponent>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mockAuthStore: any;
   let mockRouter: jasmine.SpyObj<Router>;
 
@@ -51,6 +52,7 @@ describe('OwnerHeaderComponent', () => {
     });
 
     it('should have standalone configuration', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const metadata = (OwnerHeaderComponent as any).ɵcmp;
       expect(metadata.standalone).toBe(true);
     });

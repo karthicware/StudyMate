@@ -13,7 +13,7 @@ import { Seat } from '../../../../core/models/seat-config.model';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './seat-map-view.html',
-  styleUrl: './seat-map-view.scss'
+  styleUrl: './seat-map-view.scss',
 })
 export class SeatMapView implements OnInit, OnDestroy {
   private seatMapService = inject(SeatMapService);
@@ -35,21 +35,13 @@ export class SeatMapView implements OnInit, OnDestroy {
   // Computed metrics
   totalSeats = computed(() => this.seats().length);
 
-  bookedSeats = computed(() =>
-    this.seats().filter(s => s.status === 'booked').length
-  );
+  bookedSeats = computed(() => this.seats().filter((s) => s.status === 'booked').length);
 
-  availableSeats = computed(() =>
-    this.seats().filter(s => s.status === 'available').length
-  );
+  availableSeats = computed(() => this.seats().filter((s) => s.status === 'available').length);
 
-  lockedSeats = computed(() =>
-    this.seats().filter(s => s.status === 'locked').length
-  );
+  lockedSeats = computed(() => this.seats().filter((s) => s.status === 'locked').length);
 
-  maintenanceSeats = computed(() =>
-    this.seats().filter(s => s.status === 'maintenance').length
-  );
+  maintenanceSeats = computed(() => this.seats().filter((s) => s.status === 'maintenance').length);
 
   occupancyPercent = computed(() => {
     const total = this.totalSeats();
@@ -71,20 +63,18 @@ export class SeatMapView implements OnInit, OnDestroy {
   loadSeatsWithPolling(): void {
     const hallIdValue = this.hallId();
 
-    this.subscription = this.seatMapService
-      .getSeatsWithPolling(hallIdValue, 10000)
-      .subscribe({
-        next: (response) => {
-          this.seats.set(response.seats);
-          this.isLoading.set(false);
-          this.errorMessage.set(null);
-        },
-        error: (error) => {
-          console.error('Failed to load seat map:', error);
-          this.errorMessage.set('Failed to load seat map. Please try again.');
-          this.isLoading.set(false);
-        }
-      });
+    this.subscription = this.seatMapService.getSeatsWithPolling(hallIdValue, 10000).subscribe({
+      next: (response) => {
+        this.seats.set(response.seats);
+        this.isLoading.set(false);
+        this.errorMessage.set(null);
+      },
+      error: (error) => {
+        console.error('Failed to load seat map:', error);
+        this.errorMessage.set('Failed to load seat map. Please try again.');
+        this.isLoading.set(false);
+      },
+    });
   }
 
   /**
@@ -94,10 +84,10 @@ export class SeatMapView implements OnInit, OnDestroy {
    */
   getSeatColor(status: string | undefined): string {
     const colors: Record<string, string> = {
-      available: '#10B981',  // Green
-      booked: '#EF4444',      // Red
-      locked: '#F59E0B',      // Yellow
-      maintenance: '#6B7280'  // Gray
+      available: '#10B981', // Green
+      booked: '#EF4444', // Red
+      locked: '#F59E0B', // Yellow
+      maintenance: '#6B7280', // Gray
     };
     return colors[status || 'available'] || colors['available'];
   }
@@ -110,7 +100,7 @@ export class SeatMapView implements OnInit, OnDestroy {
       available: 'Available',
       booked: 'Booked',
       locked: 'Locked',
-      maintenance: 'Maintenance'
+      maintenance: 'Maintenance',
     };
     return labels[status] || 'Unknown';
   }

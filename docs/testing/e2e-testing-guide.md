@@ -5,6 +5,40 @@ This guide provides comprehensive patterns and best practices for writing end-to
 
 ---
 
+## 📚 Documentation Strategy: Hybrid Approach
+
+**This guide contains GENERAL patterns. Story-specific instructions live in each story.**
+
+### What's in This Guide (General Guidance)
+- Authentication patterns (how to use `loginAsOwnerAPI`)
+- Database setup/cleanup procedures
+- Playwright configuration
+- Debugging techniques
+- Test structure standards
+- Common troubleshooting
+
+### What's in Each Story (Story-Specific)
+- **AC0: Backend API Verification** - Test backend endpoints BEFORE UI development
+  - Specific API endpoints for that story
+  - Exact curl commands to test those endpoints
+  - Expected response structures
+  - Story-specific verification checklist
+- **E2E Test Requirements** - Story-specific E2E test cases
+- **Database cleanup commands** - For that story's test data
+
+### Why Hybrid?
+- ✅ **Self-contained stories** - Developers don't need to cross-reference multiple docs
+- ✅ **Context-specific** - Exact commands for the task at hand
+- ✅ **Prevents backend issues** - AC0 catches API problems before UI development
+- ✅ **DRY principle** - General patterns documented once here
+
+### Related Documents
+- **Backend API Verification (AC0)**: `docs/guidelines/backend-api-verification-ac0.md`
+- **Story Template**: `.bmad-core/templates/story-tmpl.yaml` (includes AC0 + E2E sections)
+- **Verification Script**: `studymate-backend/scripts/verify-before-commit.sh`
+
+---
+
 ## 🚨 CRITICAL: E2E Test Execution Requirement
 
 **MANDATORY RULE**: E2E tests MUST be executed before marking any story "Done"

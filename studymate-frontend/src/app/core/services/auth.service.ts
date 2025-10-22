@@ -10,6 +10,7 @@ import {
   AuthResponse,
 } from '../models/auth.models';
 import { AuthStore } from '../../store/auth/auth.store';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -18,7 +19,7 @@ export class AuthService {
   private authStore = inject(AuthStore);
 
   private readonly TOKEN_KEY = 'token';
-  private readonly API_URL = '/api/auth';
+  private readonly API_URL = `${environment.apiBaseUrl}/auth`;
   private refreshTimer: ReturnType<typeof setTimeout> | null = null;
 
   // Expose computed selectors from store
@@ -109,7 +110,7 @@ export class AuthService {
    */
   getTokenExpiry(token: string): number | null {
     try {
-      const decoded: any = jwtDecode(token);
+      const decoded: { exp?: number } = jwtDecode(token);
       if (decoded.exp) {
         return decoded.exp * 1000; // Convert seconds to milliseconds
       }
@@ -145,17 +146,23 @@ export class AuthService {
       if (expiry && expiry > Date.now()) {
         // Token is valid and not expired, decode user from token
         try {
-          const decoded: any = jwtDecode(token);
+          const decoded: {
+            userId?: number;
+            sub: string;
+            firstName: string;
+            lastName: string;
+            role: string;
+          } = jwtDecode(token);
           // Extract user info from JWT payload
           const user = {
-            id: decoded.userId || decoded.sub,
+            id: decoded.userId || parseInt(decoded.sub, 10),
             email: decoded.sub,
             firstName: decoded.firstName,
             lastName: decoded.lastName,
             role: decoded.role,
             enabled: true,
             locked: false,
-            createdAt: null
+            createdAt: null,
           };
           this.authStore.setUser(user);
           this.startTokenRefresh(token);
@@ -193,11 +200,11 @@ export class AuthService {
 
     // Only set timer if refresh time is in the future
     if (timeout > 0) {
-      console.log(`Token refresh scheduled in ${Math.round(timeout / 1000)} seconds`);
       this.refreshTimer = setTimeout(() => {
-        console.log('Refreshing token...');
         this.refreshToken().subscribe({
-          next: () => console.log('Token refreshed successfully'),
+          next: () => {
+            // Token refreshed successfully
+          },
           error: (err) => {
             console.error('Token refresh failed:', err);
             // If refresh fails, logout user
@@ -209,7 +216,9 @@ export class AuthService {
       console.warn('Token expires soon or already expired, refreshing now');
       // Token expires very soon, refresh immediately
       this.refreshToken().subscribe({
-        next: () => console.log('Token refreshed successfully'),
+        next: () => {
+          // Token refreshed successfully
+        },
         error: (err) => {
           console.error('Token refresh failed:', err);
           this.logout();
@@ -225,7 +234,6 @@ export class AuthService {
     if (this.refreshTimer) {
       clearTimeout(this.refreshTimer);
       this.refreshTimer = null;
-      console.log('Token refresh timer stopped');
     }
   }
 }

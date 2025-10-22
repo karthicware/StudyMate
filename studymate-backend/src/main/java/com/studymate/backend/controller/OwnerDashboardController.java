@@ -1,12 +1,12 @@
 package com.studymate.backend.controller;
 
 import com.studymate.backend.dto.DashboardResponse;
+import com.studymate.backend.model.User;
 import com.studymate.backend.service.DashboardService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * Provides endpoints for hall owners to view metrics and seat status.
  */
 @RestController
-@RequestMapping("/api/v1/owner/dashboard")
+@RequestMapping("/owner/dashboard")
 @Slf4j
 public class OwnerDashboardController {
 
@@ -29,18 +29,18 @@ public class OwnerDashboardController {
      * Requires OWNER role and user must own the specified hall.
      *
      * @param hallId the ID of the study hall
-     * @param userDetails the authenticated user details
+     * @param currentUser the authenticated user
      * @return dashboard response with metrics and seat map
      */
     @GetMapping("/{hallId}")
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<DashboardResponse> getDashboard(
             @PathVariable Long hallId,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @AuthenticationPrincipal User currentUser) {
 
-        log.debug("Fetching dashboard for hall: {}, user: {}", hallId, userDetails.getUsername());
+        log.debug("Fetching dashboard for hall: {}, user: {}", hallId, currentUser.getEmail());
 
-        DashboardResponse response = dashboardService.getDashboardMetrics(hallId, userDetails);
+        DashboardResponse response = dashboardService.getDashboardMetrics(hallId, currentUser);
         return ResponseEntity.ok(response);
     }
 }

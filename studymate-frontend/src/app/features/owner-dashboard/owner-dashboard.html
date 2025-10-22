@@ -1,27 +1,157 @@
 <div class="min-h-screen bg-neutral-50 p-4 md:p-6 lg:p-8">
   <div class="max-w-7xl mx-auto">
     <!-- Header -->
-    <header class="mb-6">
-      <h1 class="text-3xl font-bold text-neutral-900">Dashboard Overview</h1>
-      <p class="text-sm text-neutral-600 mt-1">Hall ID: {{ hallId() }}</p>
+    <header class="mb-6 flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-neutral-900">Dashboard Overview</h1>
+        @if (hasHalls()) {
+          <p class="text-sm text-neutral-600 mt-1">Managing: {{ selectedHallName() }}</p>
+        }
+      </div>
+
+      <!-- Hall Selector Dropdown (shown when owner has halls) -->
+      @if (hasHalls()) {
+        <div class="relative" data-testid="hall-selector-container">
+          <button
+            (click)="toggleHallSelector()"
+            class="bg-white border border-neutral-300 hover:border-neutral-400 rounded-lg px-4 py-2 flex items-center gap-2 transition-colors"
+            data-testid="hall-selector-button"
+          >
+            <span class="text-sm font-medium text-neutral-700">{{ selectedHallName() }}</span>
+            <svg
+              class="w-4 h-4 text-neutral-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+
+          <!-- Dropdown Menu -->
+          @if (showHallSelector()) {
+            <div
+              class="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg border border-neutral-200 z-10"
+              data-testid="hall-selector-dropdown"
+            >
+              <div class="py-2">
+                <!-- Hall List -->
+                @for (hall of ownerHalls(); track hall.id) {
+                  <button
+                    (click)="selectHall(hall.id)"
+                    class="w-full text-left px-4 py-2 hover:bg-neutral-50 transition-colors flex items-center justify-between"
+                    [attr.data-testid]="'hall-selector-option-' + hall.id"
+                  >
+                    <div>
+                      <p class="text-sm font-medium text-neutral-900">{{ hall.hallName }}</p>
+                      <p class="text-xs text-neutral-500">{{ hall.city }} • {{ hall.status }}</p>
+                    </div>
+                    @if (hallId() === hall.id) {
+                      <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          fill-rule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    }
+                  </button>
+                }
+
+                <!-- Divider -->
+                <div class="border-t border-neutral-200 my-2"></div>
+
+                <!-- Add New Hall Button -->
+                <button
+                  (click)="navigateToAddNewHall()"
+                  class="w-full text-left px-4 py-2 hover:bg-blue-50 transition-colors flex items-center gap-2 text-blue-600"
+                  data-testid="dashboard-add-new-hall-button"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  <span class="text-sm font-medium">Add New Hall</span>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
     </header>
 
     <!-- Loading State -->
     @if (isLoading()) {
-      <div class="flex items-center justify-center h-64">
+      <div class="flex items-center justify-center h-64" data-testid="dashboard-loading-state">
         <div class="text-neutral-600">Loading dashboard data...</div>
       </div>
     }
 
     <!-- Error State -->
     @if (error()) {
-      <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+      <div
+        class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"
+        data-testid="dashboard-error-state"
+      >
         <p class="text-red-800">{{ error() }}</p>
       </div>
     }
 
-    <!-- Dashboard Content -->
-    @if (!isLoading() && !error()) {
+    <!-- Empty State - No Halls -->
+    @if (!isLoading() && !error() && !hasHalls()) {
+      <div class="flex items-center justify-center min-h-[60vh]">
+        <div
+          class="bg-white rounded-lg shadow-md p-8 max-w-md text-center"
+          data-testid="dashboard-empty-state"
+        >
+          <!-- Icon/Illustration -->
+          <div class="mb-6" data-testid="empty-state-icon">
+            <svg
+              class="mx-auto h-24 w-24 text-neutral-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+              />
+            </svg>
+          </div>
+
+          <!-- Welcome Message -->
+          <h2 class="text-2xl font-bold text-neutral-900 mb-3" data-testid="empty-state-heading">
+            Welcome to StudyMate!
+          </h2>
+          <p class="text-neutral-600 mb-6" data-testid="empty-state-message">
+            Create your first study hall to get started and begin managing your space.
+          </p>
+
+          <!-- CTA Button -->
+          <button
+            (click)="navigateToOnboarding()"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
+            data-testid="dashboard-create-first-hall-button"
+          >
+            Create Your First Hall
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Dashboard Content - Has Halls -->
+    @if (!isLoading() && !error() && hasHalls()) {
       <div class="space-y-6">
         <!-- Metrics Cards Section -->
         <section class="grid grid-cols-1 md:grid-cols-3 gap-4">

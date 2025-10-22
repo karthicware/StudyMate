@@ -16,24 +16,38 @@
   <!-- Settings Form -->
   @if (!loading()) {
     <form [formGroup]="settingsForm" class="settings-form">
-
       <!-- Notifications Section -->
       <div class="settings-section">
         <button
           type="button"
           class="section-header"
           (click)="toggleSection('notifications')"
-          aria-expanded="{{expandedSections()['notifications']}}">
+          aria-expanded="{{ expandedSections()['notifications'] }}"
+        >
           <div class="section-header-content">
             <svg class="section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              />
             </svg>
             <h2 class="section-title">Notifications</h2>
           </div>
-          <svg class="chevron-icon" [class.rotate-180]="expandedSections()['notifications']"
-            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          <svg
+            class="chevron-icon"
+            [class.rotate-180]="expandedSections()['notifications']"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </button>
 
@@ -49,7 +63,8 @@
                   type="checkbox"
                   id="emailNotifications"
                   formControlName="emailNotifications"
-                  class="toggle-input">
+                  class="toggle-input"
+                />
                 <span class="toggle-slider"></span>
               </label>
             </div>
@@ -64,7 +79,8 @@
                   type="checkbox"
                   id="smsNotifications"
                   formControlName="smsNotifications"
-                  class="toggle-input">
+                  class="toggle-input"
+                />
                 <span class="toggle-slider"></span>
               </label>
             </div>
@@ -79,7 +95,8 @@
                   type="checkbox"
                   id="pushNotifications"
                   formControlName="pushNotifications"
-                  class="toggle-input">
+                  class="toggle-input"
+                />
                 <span class="toggle-slider"></span>
               </label>
             </div>
@@ -93,17 +110,32 @@
           type="button"
           class="section-header"
           (click)="toggleSection('notificationTypes')"
-          aria-expanded="{{expandedSections()['notificationTypes']}}">
+          aria-expanded="{{ expandedSections()['notificationTypes'] }}"
+        >
           <div class="section-header-content">
             <svg class="section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+              />
             </svg>
             <h2 class="section-title">Notification Types</h2>
           </div>
-          <svg class="chevron-icon" [class.rotate-180]="expandedSections()['notificationTypes']"
-            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          <svg
+            class="chevron-icon"
+            [class.rotate-180]="expandedSections()['notificationTypes']"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </button>
 
@@ -119,7 +151,8 @@
                   type="checkbox"
                   id="notificationBooking"
                   formControlName="notificationBooking"
-                  class="toggle-input">
+                  class="toggle-input"
+                />
                 <span class="toggle-slider"></span>
               </label>
             </div>
@@ -134,7 +167,8 @@
                   type="checkbox"
                   id="notificationPayment"
                   formControlName="notificationPayment"
-                  class="toggle-input">
+                  class="toggle-input"
+                />
                 <span class="toggle-slider"></span>
               </label>
             </div>
@@ -149,7 +183,8 @@
                   type="checkbox"
                   id="notificationSystem"
                   formControlName="notificationSystem"
-                  class="toggle-input">
+                  class="toggle-input"
+                />
                 <span class="toggle-slider"></span>
               </label>
             </div>
@@ -163,18 +198,38 @@
           type="button"
           class="section-header"
           (click)="toggleSection('system')"
-          aria-expanded="{{expandedSections()['system']}}">
+          aria-expanded="{{ expandedSections()['system'] }}"
+        >
           <div class="section-header-content">
             <svg class="section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
             </svg>
             <h2 class="section-title">System Preferences</h2>
           </div>
-          <svg class="chevron-icon" [class.rotate-180]="expandedSections()['system']"
-            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          <svg
+            class="chevron-icon"
+            [class.rotate-180]="expandedSections()['system']"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </button>
 
@@ -182,36 +237,27 @@
           <div class="section-content">
             <div class="setting-item-full">
               <label class="setting-label" for="language">Language</label>
-              <select
-                id="language"
-                formControlName="language"
-                class="setting-select">
+              <select id="language" formControlName="language" class="setting-select">
                 @for (lang of languages; track lang.value) {
-                  <option [value]="lang.value">{{lang.label}}</option>
+                  <option [value]="lang.value">{{ lang.label }}</option>
                 }
               </select>
             </div>
 
             <div class="setting-item-full">
               <label class="setting-label" for="timezone">Timezone</label>
-              <select
-                id="timezone"
-                formControlName="timezone"
-                class="setting-select">
+              <select id="timezone" formControlName="timezone" class="setting-select">
                 @for (tz of timezones; track tz.value) {
-                  <option [value]="tz.value">{{tz.label}}</option>
+                  <option [value]="tz.value">{{ tz.label }}</option>
                 }
               </select>
             </div>
 
             <div class="setting-item-full">
               <label class="setting-label" for="defaultView">Default View</label>
-              <select
-                id="defaultView"
-                formControlName="defaultView"
-                class="setting-select">
+              <select id="defaultView" formControlName="defaultView" class="setting-select">
                 @for (view of defaultViews; track view.value) {
-                  <option [value]="view.value">{{view.label}}</option>
+                  <option [value]="view.value">{{ view.label }}</option>
                 }
               </select>
             </div>
@@ -225,17 +271,32 @@
           type="button"
           class="section-header"
           (click)="toggleSection('privacy')"
-          aria-expanded="{{expandedSections()['privacy']}}">
+          aria-expanded="{{ expandedSections()['privacy'] }}"
+        >
           <div class="section-header-content">
             <svg class="section-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              />
             </svg>
             <h2 class="section-title">Privacy</h2>
           </div>
-          <svg class="chevron-icon" [class.rotate-180]="expandedSections()['privacy']"
-            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          <svg
+            class="chevron-icon"
+            [class.rotate-180]="expandedSections()['privacy']"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </button>
 
@@ -258,7 +319,8 @@
                   id="profileVisibility"
                   [checked]="settingsForm.value.profileVisibility === 'public'"
                   (change)="onProfileVisibilityChange($event)"
-                  class="toggle-input">
+                  class="toggle-input"
+                />
                 <span class="toggle-slider"></span>
               </label>
             </div>
@@ -277,7 +339,12 @@
         @if (saveSuccess()) {
           <div class="save-indicator success">
             <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
             </svg>
             <span>Saved</span>
           </div>
@@ -290,10 +357,15 @@
           type="button"
           class="restore-defaults-btn"
           (click)="restoreDefaults()"
-          [disabled]="saving()">
+          [disabled]="saving()"
+        >
           <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            />
           </svg>
           Restore Defaults
         </button>
@@ -307,7 +379,9 @@
   <div class="modal-overlay" (click)="cancelRestore()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <h3 class="modal-title">Restore Default Settings?</h3>
-      <p class="modal-message">This will reset all settings to their default values. This action cannot be undone.</p>
+      <p class="modal-message">
+        This will reset all settings to their default values. This action cannot be undone.
+      </p>
       <div class="modal-actions">
         <button type="button" class="modal-btn modal-btn-cancel" (click)="cancelRestore()">
           Cancel

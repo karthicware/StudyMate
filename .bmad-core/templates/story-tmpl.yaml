@@ -203,6 +203,86 @@ sections:
         owner: scrum-master
         editors: [scrum-master]
 
+      - id: e2e-execution-steps
+        title: "E2E Test Execution Steps (Acceptance Criteria)"
+        instruction: |
+          For UI stories with E2E tests, include this standardized AC section in the story's Acceptance Criteria.
+
+          This section provides step-by-step operational procedures for executing E2E tests, ensuring developers
+          can run tests successfully without troubleshooting environment issues.
+
+          Copy the following template into the story's Acceptance Criteria section (after all functional AC):
+
+          ---
+
+          ### E2E Test Execution (Mandatory for Story Completion)
+
+          **Pre-Execution Checklist** (MUST verify before running tests):
+          - [ ] STOP all running backend servers (ports 8080, 8081): `lsof -ti:8080,8081 | xargs kill`
+          - [ ] STOP frontend dev server (port 4200): `lsof -ti:4200 | xargs kill`
+          - [ ] Verify PostgreSQL is running: `brew services list | grep postgresql`
+          - [ ] Verify test database exists: `PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate -c "SELECT 1"`
+
+          **Step 1: Start Backend Test Server**
+          ```bash
+          cd ../studymate-backend
+          ./scripts/start-test-server.sh
+          ```
+          - **Port**: 8081
+          - **Verification**: Server logs show "Started StudyMateApplication" and "Flyway migration completed"
+          - **Authentication Endpoint**: `http://localhost:8081/auth/login`
+          - **Test User**: `e2eowner@studymate.com` / `Test@1234`
+
+          **Step 2: Verify Backend Health**
+          ```bash
+          # In new terminal
+          curl http://localhost:8081/auth/register
+          ```
+          - **Expected**: HTTP 400 or 200 (endpoint responds, not 404)
+
+          **Step 3: Run E2E Tests**
+          ```bash
+          # From studymate-frontend directory
+          npx playwright test e2e/[STORY-SPEC-FILE].spec.ts --project=chromium
+          ```
+          - Replace `[STORY-SPEC-FILE]` with actual spec file name (e.g., `owner-onboarding-wizard`)
+          - Playwright will auto-start frontend on port 4200 (via `webServer` config)
+          - **Do NOT manually start frontend** - Playwright manages it
+
+          **Step 4: Verify Results**
+          - [ ] All tests pass (X/X green checkmarks) - specify expected test count
+          - [ ] Zero console errors in test output
+          - [ ] Screenshots captured in `e2e/screenshots/` directory (X screenshots expected) - specify count
+          - [ ] Review screenshots for visual regressions
+
+          **Step 5: Cleanup**
+          ```bash
+          # Stop backend server (Ctrl+C in terminal)
+          # Playwright auto-stops frontend
+          ```
+
+          **Troubleshooting**:
+          - **Port conflict errors**: Verify no processes on ports via `lsof -ti:4200,8080,8081`
+          - **Authentication failures**: Check backend logs for JWT token generation
+          - **API 404 errors**: Verify backend server fully started (wait 30s after startup)
+          - **Timeout errors**: Increase `timeout` in `playwright.config.ts` (current: 30000ms)
+
+          **Documentation References**:
+          - E2E Execution Guide: `docs/testing/e2e-execution-guide.md`
+          - Playwright Config: `playwright.config.ts`
+          - Backend Startup Script: `studymate-backend/scripts/start-test-server.sh`
+
+          ---
+
+          When adding to story:
+          1. Replace `[STORY-SPEC-FILE]` with actual E2E spec file name
+          2. Replace `X/X` with expected test count (e.g., "7/7" if 7 tests)
+          3. Replace `X screenshots` with expected screenshot count (e.g., "10 screenshots")
+          4. Add this as final AC section (e.g., AC7, AC8) after all functional acceptance criteria
+        elicit: false
+        owner: scrum-master
+        editors: [scrum-master]
+
   - id: change-log
     title: Change Log
     type: table

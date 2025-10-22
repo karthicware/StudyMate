@@ -1,5 +1,11 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  AbstractControl,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../../core/services/profile.service';
 import { ToastService } from '../../../shared/services/toast.service';
@@ -25,7 +31,7 @@ import { OwnerProfile } from '../../../core/models/profile.model';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './profile.component.html',
-  styleUrl: './profile.component.scss'
+  styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -68,7 +74,7 @@ export class ProfileComponent implements OnInit {
     this.profileForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.maxLength(100)]],
       lastName: ['', [Validators.required, Validators.maxLength(100)]],
-      phone: ['', [this.phoneValidator.bind(this)]]
+      phone: ['', [this.phoneValidator.bind(this)]],
     });
 
     // Disable form by default (display mode)
@@ -80,7 +86,7 @@ export class ProfileComponent implements OnInit {
    * Validates format: (XXX) XXX-XXXX or +1-XXX-XXX-XXXX
    * AC2: Phone format validation
    */
-  private phoneValidator(control: any): { [key: string]: boolean } | null {
+  private phoneValidator(control: AbstractControl): Record<string, boolean> | null {
     if (!control.value) return null; // Optional field
 
     const phonePattern1 = /^\(\d{3}\) \d{3}-\d{4}$/; // (123) 456-7890
@@ -106,7 +112,7 @@ export class ProfileComponent implements OnInit {
         this.profileForm.patchValue({
           firstName: profile.firstName,
           lastName: profile.lastName,
-          phone: profile.phone || ''
+          phone: profile.phone || '',
         });
         this.avatarPreview.set(profile.profilePictureUrl || null);
         this.loading.set(false);
@@ -115,7 +121,7 @@ export class ProfileComponent implements OnInit {
         console.error('Failed to load profile:', error);
         this.toastService.error('Failed to load profile. Please try again.');
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -149,7 +155,7 @@ export class ProfileComponent implements OnInit {
       this.profileForm.patchValue({
         firstName: p.firstName,
         lastName: p.lastName,
-        phone: p.phone || ''
+        phone: p.phone || '',
       });
     }
   }
@@ -163,7 +169,7 @@ export class ProfileComponent implements OnInit {
   saveProfile(): void {
     if (this.profileForm.invalid) {
       // Mark all fields as touched to show validation errors
-      Object.keys(this.profileForm.controls).forEach(key => {
+      Object.keys(this.profileForm.controls).forEach((key) => {
         this.profileForm.get(key)?.markAsTouched();
       });
       return;
@@ -186,14 +192,16 @@ export class ProfileComponent implements OnInit {
 
         // Handle specific error codes
         if (error.status === 400) {
-          this.toastService.error(error.error?.message || 'Invalid profile data. Please check your inputs.');
+          this.toastService.error(
+            error.error?.message || 'Invalid profile data. Please check your inputs.',
+          );
         } else if (error.status === 401) {
           this.toastService.error('Session expired. Please log in again.');
           // Could redirect to login here
         } else {
           this.toastService.error('Failed to update profile. Please try again.');
         }
-      }
+      },
     });
   }
 
@@ -253,7 +261,7 @@ export class ProfileComponent implements OnInit {
         if (currentProfile) {
           this.profile.set({
             ...currentProfile,
-            profilePictureUrl: response.profilePictureUrl
+            profilePictureUrl: response.profilePictureUrl,
           });
         }
         this.avatarPreview.set(response.profilePictureUrl);
@@ -267,7 +275,7 @@ export class ProfileComponent implements OnInit {
         const currentProfile = this.profile();
         this.avatarPreview.set(currentProfile?.profilePictureUrl || null);
         this.toastService.error('Failed to upload avatar. Please try again.');
-      }
+      },
     });
   }
 
@@ -296,10 +304,10 @@ export class ProfileComponent implements OnInit {
    * Get human-readable field label
    */
   private getFieldLabel(fieldName: string): string {
-    const labels: { [key: string]: string } = {
+    const labels: Record<string, string> = {
       firstName: 'First Name',
       lastName: 'Last Name',
-      phone: 'Phone Number'
+      phone: 'Phone Number',
     };
     return labels[fieldName] || fieldName;
   }

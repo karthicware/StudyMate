@@ -392,6 +392,83 @@ showError() {
 
 ---
 
+### Onboarding Components
+
+#### Owner Onboarding Wizard Component
+
+**Purpose**: Multi-step wizard for onboarding new owners (Step 1: Hall Setup)
+
+**Location**: `src/app/features/owner/onboarding/owner-onboarding-wizard.component.ts`
+
+**Status**: ✅ Component Implemented | 🔄 Integration In Progress
+
+**Implementation Notes**:
+- Component, template, tests complete (60% story completion)
+- Integration with onboarding guard pending (Task 14)
+- Triggered by dashboard empty state CTA pending (Task 7)
+- E2E tests pending (Task 12)
+
+**Props**: None (standalone modal component)
+
+**Features**:
+- Multi-step wizard modal (Step 1 of 3: Hall Setup)
+- Reactive form with comprehensive validation
+- Skip functionality with confirmation dialog
+- Success/error message handling
+- Loading state during API calls
+- Progress indicator
+- Tailwind CSS styling (Section 9 compliance)
+
+**Form Fields**:
+- `hallName`: string (required, max 255 chars, alphanumeric + spaces)
+- `description`: string (optional, max 1000 chars)
+- `address`: string (required, max 500 chars)
+- `city`: string (required, max 100 chars)
+- `state`: string (required, max 100 chars)
+- `postalCode`: string (optional, max 20 chars)
+- `country`: string (required, dropdown with 10 countries)
+
+**State Management**:
+- `isLoading`: signal - Loading state
+- `errorMessage`: signal - Error messages
+- `successMessage`: signal - Success messages
+- `showSkipConfirmation`: signal - Skip dialog visibility
+- `createdHallId`: signal - Created hall ID for next steps
+
+**Data Flow**:
+- Uses `HallManagementService.createHall()` for backend integration
+- Stores hall ID in `sessionStorage` for subsequent wizard steps
+- Sets `onboardingSkipped` flag in `localStorage` on skip
+
+**Testing**:
+- ✅ 24 unit tests (100% pass rate)
+- ✅ All interactive elements have `data-testid` attributes (15+ elements)
+- 🔄 E2E tests pending (Task 12)
+
+**Design System Compliance**:
+- ✅ Colors: Primary blue (`bg-blue-600`), secondary gray (`bg-gray-100`)
+- ✅ Typography: Inter font, proper heading hierarchy
+- ✅ Shadows: `shadow-lg` for modal
+- ✅ Spacing: 8-point grid (`p-4`, `p-6`, `gap-4`)
+- ✅ Border Radius: `rounded-lg` for modal and inputs
+- ✅ Responsive: Full-width on mobile, max-width container on desktop
+- ✅ Accessibility: ARIA labels, keyboard navigation, focus management
+
+**Usage**:
+```typescript
+<app-owner-onboarding-wizard />
+```
+
+**Related Stories**: 0.1.6 (Owner Onboarding Wizard - Initial Hall Setup)
+
+**Integration Requirements** (In Progress):
+- Onboarding guard to trigger wizard on first login (Task 14)
+- Dashboard empty state CTA to launch wizard (Task 7)
+- Multi-hall support UI integration (Task 8)
+- E2E test coverage (Task 12)
+
+---
+
 ### Dashboard Components
 
 #### 12. Dashboard Summary Card Component

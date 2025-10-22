@@ -46,3 +46,11 @@ Thumbs.db
 test-results/
 playwright-report/
 playwright/.cache/
+e2e/screenshots/
+
+# Adhoc verification scripts (don't commit these)
+show-*.js
+verify-*.js
+test-*.js
+login-*.js
+*-verification.js

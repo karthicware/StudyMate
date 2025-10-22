@@ -11,7 +11,7 @@ import { environment } from '../../../environments/environment';
  * Story: 1.22 - Hall Amenities Configuration UI (Frontend)
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class HallAmenitiesService {
   private http = inject(HttpClient);

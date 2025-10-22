@@ -20,7 +20,7 @@ describe('SeatMapView', () => {
       seatNumber: 'A1',
       xCoord: 100,
       yCoord: 150,
-      status: 'available'
+      status: 'available',
     },
     {
       id: 'seat-2',
@@ -28,7 +28,7 @@ describe('SeatMapView', () => {
       seatNumber: 'A2',
       xCoord: 200,
       yCoord: 150,
-      status: 'booked'
+      status: 'booked',
     },
     {
       id: 'seat-3',
@@ -36,7 +36,7 @@ describe('SeatMapView', () => {
       seatNumber: 'A3',
       xCoord: 300,
       yCoord: 150,
-      status: 'locked'
+      status: 'locked',
     },
     {
       id: 'seat-4',
@@ -44,12 +44,12 @@ describe('SeatMapView', () => {
       seatNumber: 'A4',
       xCoord: 400,
       yCoord: 150,
-      status: 'maintenance'
-    }
+      status: 'maintenance',
+    },
   ];
 
   const mockResponse: SeatMapResponse = {
-    seats: mockSeats
+    seats: mockSeats,
   };
 
   beforeEach(async () => {
@@ -57,9 +57,7 @@ describe('SeatMapView', () => {
 
     await TestBed.configureTestingModule({
       imports: [SeatMapView, HttpClientTestingModule],
-      providers: [
-        { provide: SeatMapService, useValue: seatMapServiceSpy }
-      ]
+      providers: [{ provide: SeatMapService, useValue: seatMapServiceSpy }],
     }).compileComponents();
 
     seatMapService = TestBed.inject(SeatMapService) as jasmine.SpyObj<SeatMapService>;
@@ -147,7 +145,7 @@ describe('SeatMapView', () => {
     it('should calculate 100% occupancy when all seats are booked', () => {
       const allBooked: Seat[] = [
         { seatNumber: 'A1', xCoord: 100, yCoord: 100, status: 'booked' },
-        { seatNumber: 'A2', xCoord: 200, yCoord: 100, status: 'booked' }
+        { seatNumber: 'A2', xCoord: 200, yCoord: 100, status: 'booked' },
       ];
       component.seats.set(allBooked);
       expect(component.occupancyPercent()).toBe('100.0');
@@ -210,6 +208,7 @@ describe('SeatMapView', () => {
       component.ngOnInit();
       tick();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const subscription = (component as any).subscription;
       expect(subscription).toBeDefined();
 

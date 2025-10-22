@@ -71,6 +71,14 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/owner-dashboard/owner-dashboard').then((m) => m.OwnerDashboard),
       },
+      // Onboarding Wizard - Hall Setup
+      {
+        path: 'onboarding',
+        loadComponent: () =>
+          import('./features/owner/onboarding/owner-onboarding-wizard.component').then(
+            (m) => m.OwnerOnboardingWizardComponent,
+          ),
+      },
       // Seat Map Configuration
       {
         path: 'seat-map-config',

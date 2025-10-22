@@ -11,7 +11,6 @@ import com.studymate.backend.repository.SeatRepository;
 import com.studymate.backend.repository.StudyHallRepository;
 import com.studymate.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,27 +45,23 @@ public class DashboardService {
      * Verifies the authenticated user owns the hall before returning data.
      *
      * @param hallId the ID of the study hall
-     * @param userDetails the authenticated user details
+     * @param currentUser the authenticated user
      * @return dashboard response with metrics and seat map
-     * @throws ResourceNotFoundException if hall or user not found
+     * @throws ResourceNotFoundException if hall not found
      * @throws ForbiddenException if user doesn't own the hall
      */
     @Transactional(readOnly = true)
-    public DashboardResponse getDashboardMetrics(Long hallId, UserDetails userDetails) {
-        log.debug("Fetching dashboard metrics for hall: {}, user: {}", hallId, userDetails.getUsername());
+    public DashboardResponse getDashboardMetrics(Long hallId, User currentUser) {
+        log.debug("Fetching dashboard metrics for hall: {}, user: {}", hallId, currentUser.getEmail());
 
         // Verify hall exists
         StudyHall hall = hallRepository.findById(hallId)
             .orElseThrow(() -> new ResourceNotFoundException("Hall not found"));
 
-        // Verify user exists
-        User owner = userRepository.findByEmail(userDetails.getUsername())
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
         // Verify user owns the hall
-        if (!hall.getOwner().getId().equals(owner.getId())) {
+        if (!hall.getOwner().getId().equals(currentUser.getId())) {
             log.warn("User {} attempted to access hall {} owned by user {}",
-                owner.getId(), hallId, hall.getOwner().getId());
+                currentUser.getId(), hallId, hall.getOwner().getId());
             throw new ForbiddenException("You don't have access to this hall");
         }
 

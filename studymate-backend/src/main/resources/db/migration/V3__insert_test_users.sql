@@ -2,17 +2,18 @@
 -- Insert test users for local development
 -- Story 0.20: User Entity and Repository
 -- Created: 2025-10-11
+-- Updated: 2025-10-21 (E2E Testing Standardization - SCP-2025-10-21-E2E-STANDARDIZATION)
 --
 -- DEVELOPMENT ONLY - DO NOT USE IN PRODUCTION
--- All test users have password: "password"
--- BCrypt hash (strength 10): $2a$10$xQX.jVWrW6q6L3Y5ZjJvdO8vY0C8g1LxVhQ5n2YY2L8F1Y5Y5Y5Y5
+-- All test users have password: "Test@123"
+-- BCrypt hash (strength 10): $2b$10$QQcdLHBPAN1WJdCStcwz3.kshS9HUKFMBjKOlljiQdJWlmUa2LDra
 --
 
 -- Test OWNER user
 INSERT INTO users (email, password_hash, first_name, last_name, role, enabled, locked)
 VALUES (
     'owner@studymate.com',
-    '$2a$10$xQX.jVWrW6q6L3Y5ZjJvdO8vY0C8g1LxVhQ5n2YY2L8F1Y5Y5Y5Y5',
+    '$2b$10$QQcdLHBPAN1WJdCStcwz3.kshS9HUKFMBjKOlljiQdJWlmUa2LDra',
     'Study Hall',
     'Owner',
     'ROLE_OWNER',
