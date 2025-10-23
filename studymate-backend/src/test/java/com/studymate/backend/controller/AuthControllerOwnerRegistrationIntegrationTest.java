@@ -2,8 +2,6 @@ package com.studymate.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studymate.backend.dto.OwnerRegistrationRequest;
-import com.studymate.backend.repository.OwnerProfileRepository;
-import com.studymate.backend.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +30,6 @@ class AuthControllerOwnerRegistrationIntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private OwnerProfileRepository ownerProfileRepository;
 
     // No cleanup needed - @Transactional ensures automatic rollback after each test
 

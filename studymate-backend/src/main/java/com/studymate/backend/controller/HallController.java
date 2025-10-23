@@ -3,6 +3,7 @@ package com.studymate.backend.controller;
 import com.studymate.backend.dto.HallCreateRequest;
 import com.studymate.backend.dto.HallListResponse;
 import com.studymate.backend.dto.HallResponse;
+import com.studymate.backend.dto.PricingUpdateRequest;
 import com.studymate.backend.model.User;
 import com.studymate.backend.service.HallService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -93,6 +94,43 @@ public class HallController {
 
         log.debug("Retrieved {} halls for owner ID: {}",
                   response.getHalls().size(), currentUser.getId());
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Update base pricing for a study hall.
+     *
+     * @param hallId the study hall ID
+     * @param currentUser the authenticated owner from JWT
+     * @param request the pricing update request
+     * @return ResponseEntity containing the updated hall data
+     */
+    @PutMapping("/{hallId}/pricing")
+    @Operation(summary = "Update hall base pricing",
+               description = "Update the base pricing for a study hall owned by the authenticated owner")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Pricing updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Validation error - pricing must be between ₹50 and ₹5000"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid"),
+        @ApiResponse(responseCode = "403", description = "Forbidden - hall does not belong to authenticated owner"),
+        @ApiResponse(responseCode = "404", description = "Not Found - hall does not exist")
+    })
+    public ResponseEntity<HallResponse> updatePricing(
+            @PathVariable Long hallId,
+            @AuthenticationPrincipal User currentUser,
+            @Valid @RequestBody PricingUpdateRequest request) {
+        if (currentUser == null) {
+            throw new IllegalStateException("User authentication is required");
+        }
+
+        log.debug("PUT /owner/halls/{}/pricing - Owner ID: {}, New Price: {}",
+                  hallId, currentUser.getId(), request.getBasePricing());
+
+        HallResponse response = hallService.updatePricing(hallId, currentUser.getId(), request);
+
+        log.info("Pricing updated successfully - Hall ID: {}, Owner ID: {}, New Price: {}",
+                 hallId, currentUser.getId(), request.getBasePricing());
 
         return ResponseEntity.ok(response);
     }

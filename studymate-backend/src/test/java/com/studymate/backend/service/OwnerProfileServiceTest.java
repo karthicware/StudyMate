@@ -21,6 +21,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -75,7 +76,7 @@ class OwnerProfileServiceTest {
     void getProfile_Success() {
         // Arrange
         when(userRepository.findById(1L)).thenReturn(Optional.of(testOwner));
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testStudyHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testStudyHall));
 
         // Act
         OwnerProfileDTO result = ownerProfileService.getProfile(1L);
@@ -91,7 +92,7 @@ class OwnerProfileServiceTest {
         assertEquals("Downtown Study Hall", result.getHallName());
 
         verify(userRepository).findById(1L);
-        verify(studyHallRepository).findByOwnerId(1L);
+        verify(studyHallRepository).findAllByOwnerId(1L);
     }
 
     @Test
@@ -99,7 +100,7 @@ class OwnerProfileServiceTest {
     void getProfile_NoStudyHall() {
         // Arrange
         when(userRepository.findById(1L)).thenReturn(Optional.of(testOwner));
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.empty());
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of());
 
         // Act
         OwnerProfileDTO result = ownerProfileService.getProfile(1L);
@@ -137,7 +138,7 @@ class OwnerProfileServiceTest {
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(testOwner));
         when(userRepository.save(any(User.class))).thenReturn(testOwner);
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testStudyHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testStudyHall));
 
         // Act
         OwnerProfileDTO result = ownerProfileService.updateProfile(1L, request);
@@ -187,7 +188,7 @@ class OwnerProfileServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(testOwner));
         when(fileStorageService.store(any(MultipartFile.class), eq("avatars"))).thenReturn(newAvatarUrl);
         when(userRepository.save(any(User.class))).thenReturn(testOwner);
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testStudyHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testStudyHall));
 
         // Act
         OwnerProfileDTO result = ownerProfileService.uploadAvatar(1L, file);
@@ -285,7 +286,7 @@ class OwnerProfileServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(testOwner));
         when(fileStorageService.store(any(MultipartFile.class), eq("avatars"))).thenReturn(newAvatarUrl);
         when(userRepository.save(any(User.class))).thenReturn(testOwner);
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testStudyHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testStudyHall));
 
         // Act
         OwnerProfileDTO result = ownerProfileService.uploadAvatar(1L, file);
@@ -307,7 +308,7 @@ class OwnerProfileServiceTest {
         // Arrange
         testOwner.setGender(Gender.FEMALE);
         when(userRepository.findById(1L)).thenReturn(Optional.of(testOwner));
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testStudyHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testStudyHall));
 
         // Act
         OwnerProfileDTO result = ownerProfileService.getProfile(1L);
@@ -324,7 +325,7 @@ class OwnerProfileServiceTest {
         // Arrange
         testOwner.setGender(null);
         when(userRepository.findById(1L)).thenReturn(Optional.of(testOwner));
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testStudyHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testStudyHall));
 
         // Act
         OwnerProfileDTO result = ownerProfileService.getProfile(1L);
@@ -348,7 +349,7 @@ class OwnerProfileServiceTest {
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(testOwner));
         when(userRepository.save(any(User.class))).thenReturn(testOwner);
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testStudyHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testStudyHall));
 
         // Act
         OwnerProfileDTO result = ownerProfileService.updateProfile(1L, request);
@@ -372,7 +373,7 @@ class OwnerProfileServiceTest {
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(testOwner));
         when(userRepository.save(any(User.class))).thenReturn(testOwner);
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testStudyHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testStudyHall));
 
         // Act
         OwnerProfileDTO result = ownerProfileService.updateProfile(1L, request);
@@ -396,7 +397,7 @@ class OwnerProfileServiceTest {
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(testOwner));
         when(userRepository.save(any(User.class))).thenReturn(testOwner);
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testStudyHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testStudyHall));
 
         // Act
         OwnerProfileDTO result = ownerProfileService.updateProfile(1L, request);

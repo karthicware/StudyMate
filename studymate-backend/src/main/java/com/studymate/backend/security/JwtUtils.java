@@ -41,7 +41,6 @@ import org.springframework.stereotype.Component;
 public class JwtUtils {
 
     private static final Logger log = LoggerFactory.getLogger(JwtUtils.class);
-    private static final String USER_ID_CLAIM = "userId";
 
     /**
      * Extracts user ID from Spring Security Authentication object.

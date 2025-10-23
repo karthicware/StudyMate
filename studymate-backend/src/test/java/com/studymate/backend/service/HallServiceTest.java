@@ -3,7 +3,9 @@ package com.studymate.backend.service;
 import com.studymate.backend.dto.HallCreateRequest;
 import com.studymate.backend.dto.HallListResponse;
 import com.studymate.backend.dto.HallResponse;
+import com.studymate.backend.dto.PricingUpdateRequest;
 import com.studymate.backend.exception.DuplicateHallNameException;
+import com.studymate.backend.exception.ForbiddenException;
 import com.studymate.backend.exception.ResourceNotFoundException;
 import com.studymate.backend.model.StudyHall;
 import com.studymate.backend.model.User;
@@ -18,16 +20,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -258,6 +259,108 @@ class HallServiceTest {
         assertThat(response.getState()).isEqualTo(createRequest.getState());
         assertThat(response.getPostalCode()).isEqualTo(createRequest.getPostalCode());
         assertThat(response.getCountry()).isEqualTo(createRequest.getCountry());
+    }
+
+    @Test
+    void should_UpdatePricing_When_ValidRequestAndOwnerMatches() {
+        // Arrange
+        Long hallId = 10L;
+        BigDecimal newPrice = new BigDecimal("150.00");
+        PricingUpdateRequest request = PricingUpdateRequest.builder()
+            .basePricing(newPrice)
+            .build();
+
+        StudyHall existingHall = createTestHall();
+        existingHall.setId(hallId);
+        existingHall.setBasePricing(new BigDecimal("100.00"));
+
+        when(studyHallRepository.findById(hallId)).thenReturn(Optional.of(existingHall));
+        when(studyHallRepository.save(any(StudyHall.class))).thenReturn(existingHall);
+
+        // Act
+        HallResponse response = hallService.updatePricing(hallId, 1L, request);
+
+        // Assert
+        assertThat(response).isNotNull();
+        assertThat(response.getId()).isEqualTo(hallId);
+        assertThat(response.getBasePricing()).isEqualByComparingTo(newPrice);
+
+        verify(studyHallRepository).findById(hallId);
+        verify(studyHallRepository).save(any(StudyHall.class));
+
+        ArgumentCaptor<StudyHall> hallCaptor = ArgumentCaptor.forClass(StudyHall.class);
+        verify(studyHallRepository).save(hallCaptor.capture());
+        StudyHall savedHall = hallCaptor.getValue();
+        assertThat(savedHall.getBasePricing()).isEqualByComparingTo(newPrice);
+    }
+
+    @Test
+    void should_ThrowResourceNotFoundException_When_HallNotFoundForPricingUpdate() {
+        // Arrange
+        Long hallId = 999L;
+        PricingUpdateRequest request = PricingUpdateRequest.builder()
+            .basePricing(new BigDecimal("150.00"))
+            .build();
+
+        when(studyHallRepository.findById(hallId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThatThrownBy(() -> hallService.updatePricing(hallId, 1L, request))
+            .isInstanceOf(ResourceNotFoundException.class)
+            .hasMessageContaining("Study Hall")
+            .hasMessageContaining("999");
+
+        verify(studyHallRepository).findById(hallId);
+        verify(studyHallRepository, never()).save(any());
+    }
+
+    @Test
+    void should_ThrowForbiddenException_When_OwnerDoesNotMatchForPricingUpdate() {
+        // Arrange
+        Long hallId = 10L;
+        Long wrongOwnerId = 999L;
+        PricingUpdateRequest request = PricingUpdateRequest.builder()
+            .basePricing(new BigDecimal("150.00"))
+            .build();
+
+        StudyHall existingHall = createTestHall();
+        existingHall.setId(hallId);
+        existingHall.setBasePricing(new BigDecimal("100.00"));
+        // Hall is owned by testOwner (id=1L), but we'll try to update with ownerId=999L
+
+        when(studyHallRepository.findById(hallId)).thenReturn(Optional.of(existingHall));
+
+        // Act & Assert
+        assertThatThrownBy(() -> hallService.updatePricing(hallId, wrongOwnerId, request))
+            .isInstanceOf(ForbiddenException.class)
+            .hasMessageContaining("permission");
+
+        verify(studyHallRepository).findById(hallId);
+        verify(studyHallRepository, never()).save(any());
+    }
+
+    @Test
+    void should_UpdatePricingWithDecimalValues_When_ValidRequest() {
+        // Arrange
+        Long hallId = 10L;
+        BigDecimal newPrice = new BigDecimal("125.50"); // Test decimal pricing
+        PricingUpdateRequest request = PricingUpdateRequest.builder()
+            .basePricing(newPrice)
+            .build();
+
+        StudyHall existingHall = createTestHall();
+        existingHall.setId(hallId);
+        existingHall.setBasePricing(new BigDecimal("100.00"));
+
+        when(studyHallRepository.findById(hallId)).thenReturn(Optional.of(existingHall));
+        when(studyHallRepository.save(any(StudyHall.class))).thenReturn(existingHall);
+
+        // Act
+        HallResponse response = hallService.updatePricing(hallId, 1L, request);
+
+        // Assert
+        assertThat(response.getBasePricing()).isEqualByComparingTo(newPrice);
+        verify(studyHallRepository).save(any(StudyHall.class));
     }
 
     /**

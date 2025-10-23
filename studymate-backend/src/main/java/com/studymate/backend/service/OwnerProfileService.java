@@ -51,7 +51,8 @@ public class OwnerProfileService {
             .orElseThrow(() -> new ResourceNotFoundException("Owner", "id", ownerId));
 
         // Get the owner's study hall (may be null if not yet created)
-        StudyHall studyHall = studyHallRepository.findByOwnerId(ownerId).orElse(null);
+        StudyHall studyHall = studyHallRepository.findAllByOwnerId(ownerId).stream()
+                .findFirst().orElse(null);
 
         return OwnerProfileDTO.builder()
             .id(owner.getId())

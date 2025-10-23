@@ -50,7 +50,8 @@ public class UserManagementService {
         log.debug("Listing users for owner: {}, role: {}, search: {}", ownerId, role, search);
 
         // Get the owner's study hall
-        StudyHall hall = studyHallRepository.findByOwnerId(ownerId)
+        StudyHall hall = studyHallRepository.findAllByOwnerId(ownerId).stream()
+                .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Study hall not found for owner: " + ownerId));
 
         // Parse role if provided
@@ -79,7 +80,8 @@ public class UserManagementService {
         log.debug("Getting user details for user: {} by owner: {}", userId, ownerId);
 
         // Get the owner's study hall
-        StudyHall hall = studyHallRepository.findByOwnerId(ownerId)
+        StudyHall hall = studyHallRepository.findAllByOwnerId(ownerId).stream()
+                .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Study hall not found for owner: " + ownerId));
 
         // Find user and verify they belong to this hall
@@ -110,7 +112,8 @@ public class UserManagementService {
         }
 
         // Get the owner's study hall
-        StudyHall hall = studyHallRepository.findByOwnerId(ownerId)
+        StudyHall hall = studyHallRepository.findAllByOwnerId(ownerId).stream()
+                .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Study hall not found for owner: " + ownerId));
 
         // Create new user
@@ -151,7 +154,8 @@ public class UserManagementService {
         log.debug("Updating user: {} by owner: {}", userId, ownerId);
 
         // Get the owner's study hall
-        StudyHall hall = studyHallRepository.findByOwnerId(ownerId)
+        StudyHall hall = studyHallRepository.findAllByOwnerId(ownerId).stream()
+                .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Study hall not found for owner: " + ownerId));
 
         // Find user and verify they belong to this hall
@@ -216,7 +220,8 @@ public class UserManagementService {
         log.debug("Soft deleting user: {} by owner: {}", userId, ownerId);
 
         // Get the owner's study hall
-        StudyHall hall = studyHallRepository.findByOwnerId(ownerId)
+        StudyHall hall = studyHallRepository.findAllByOwnerId(ownerId).stream()
+                .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Study hall not found for owner: " + ownerId));
 
         // Find user and verify they belong to this hall

@@ -11,7 +11,6 @@ import com.studymate.backend.model.StudyHall;
 import com.studymate.backend.model.User;
 import com.studymate.backend.repository.SeatRepository;
 import com.studymate.backend.repository.StudyHallRepository;
-import com.studymate.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -32,14 +31,11 @@ public class SeatConfigurationService {
 
     private final StudyHallRepository studyHallRepository;
     private final SeatRepository seatRepository;
-    private final UserRepository userRepository;
 
     public SeatConfigurationService(StudyHallRepository studyHallRepository,
-                                   SeatRepository seatRepository,
-                                   UserRepository userRepository) {
+                                   SeatRepository seatRepository) {
         this.studyHallRepository = studyHallRepository;
         this.seatRepository = seatRepository;
-        this.userRepository = userRepository;
     }
 
     /**

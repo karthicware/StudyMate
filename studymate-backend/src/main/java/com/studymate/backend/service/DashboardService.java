@@ -9,7 +9,6 @@ import com.studymate.backend.model.User;
 import com.studymate.backend.repository.BookingRepository;
 import com.studymate.backend.repository.SeatRepository;
 import com.studymate.backend.repository.StudyHallRepository;
-import com.studymate.backend.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,16 +27,13 @@ public class DashboardService {
     private final StudyHallRepository hallRepository;
     private final SeatRepository seatRepository;
     private final BookingRepository bookingRepository;
-    private final UserRepository userRepository;
 
     public DashboardService(StudyHallRepository hallRepository,
                            SeatRepository seatRepository,
-                           BookingRepository bookingRepository,
-                           UserRepository userRepository) {
+                           BookingRepository bookingRepository) {
         this.hallRepository = hallRepository;
         this.seatRepository = seatRepository;
         this.bookingRepository = bookingRepository;
-        this.userRepository = userRepository;
     }
 
     /**

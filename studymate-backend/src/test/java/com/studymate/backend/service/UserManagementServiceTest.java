@@ -23,7 +23,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -87,7 +86,7 @@ class UserManagementServiceTest {
         List<User> users = List.of(testStudent);
         Page<User> userPage = new PageImpl<>(users, pageable, users.size());
 
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testHall));
         when(userRepository.findActiveUsersByHallAndFilters(eq(1L), isNull(), isNull(), eq(pageable)))
                 .thenReturn(userPage);
 
@@ -106,7 +105,7 @@ class UserManagementServiceTest {
     void listUsers_shouldThrowException_whenOwnerHasNoHall() {
         // Arrange
         Pageable pageable = PageRequest.of(0, 20);
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.empty());
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of());
 
         // Act & Assert
         assertThatThrownBy(() -> userManagementService.listUsers(1L, pageable, null, null))
@@ -117,7 +116,7 @@ class UserManagementServiceTest {
     @Test
     void getUserDetails_shouldReturnUserWithBookings() {
         // Arrange
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testHall));
         when(userRepository.findActiveByIdAndHallId(2L, 1L)).thenReturn(Optional.of(testStudent));
         when(bookingRepository.findRecentBookingsByUserId(2L)).thenReturn(new ArrayList<>());
 
@@ -135,7 +134,7 @@ class UserManagementServiceTest {
     @Test
     void getUserDetails_shouldThrowException_whenUserNotInHall() {
         // Arrange
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testHall));
         when(userRepository.findActiveByIdAndHallId(2L, 1L)).thenReturn(Optional.empty());
 
         // Act & Assert
@@ -159,7 +158,7 @@ class UserManagementServiceTest {
         savedUser.setEmail(request.getEmail());
 
         when(userRepository.existsByEmail(request.getEmail())).thenReturn(false);
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testHall));
         when(passwordEncoder.encode(request.getPassword())).thenReturn("hashed_password");
         when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
@@ -197,7 +196,7 @@ class UserManagementServiceTest {
         request.setLastName("Name");
         request.setPhone("1234567890");
 
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testHall));
         when(userRepository.findActiveByIdAndHallId(2L, 1L)).thenReturn(Optional.of(testStudent));
         when(userRepository.save(any(User.class))).thenReturn(testStudent);
         when(bookingRepository.findRecentBookingsByUserId(2L)).thenReturn(new ArrayList<>());
@@ -219,7 +218,7 @@ class UserManagementServiceTest {
         UpdateUserRequest request = new UpdateUserRequest();
         request.setEmail("duplicate@test.com");
 
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testHall));
         when(userRepository.findActiveByIdAndHallId(2L, 1L)).thenReturn(Optional.of(testStudent));
         when(userRepository.existsByEmail("duplicate@test.com")).thenReturn(true);
 
@@ -232,7 +231,7 @@ class UserManagementServiceTest {
     @Test
     void deleteUser_shouldSoftDeleteUser() {
         // Arrange
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testHall));
         when(userRepository.findActiveByIdAndHallId(2L, 1L)).thenReturn(Optional.of(testStudent));
         when(userRepository.save(any(User.class))).thenReturn(testStudent);
 
@@ -248,7 +247,7 @@ class UserManagementServiceTest {
     void deleteUser_shouldThrowException_whenDeletingOwner() {
         // Arrange
         testStudent.setRole(UserRole.ROLE_OWNER);
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testHall));
         when(userRepository.findActiveByIdAndHallId(2L, 1L)).thenReturn(Optional.of(testStudent));
 
         // Act & Assert
@@ -264,7 +263,7 @@ class UserManagementServiceTest {
         List<User> users = List.of(testStudent);
         Page<User> userPage = new PageImpl<>(users, pageable, users.size());
 
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testHall));
         when(userRepository.findActiveUsersByHallAndFilters(eq(1L), eq(UserRole.ROLE_STUDENT), isNull(), eq(pageable)))
                 .thenReturn(userPage);
 
@@ -284,7 +283,7 @@ class UserManagementServiceTest {
         List<User> users = List.of(testStudent);
         Page<User> userPage = new PageImpl<>(users, pageable, users.size());
 
-        when(studyHallRepository.findByOwnerId(1L)).thenReturn(Optional.of(testHall));
+        when(studyHallRepository.findAllByOwnerId(1L)).thenReturn(List.of(testHall));
         when(userRepository.findActiveUsersByHallAndFilters(eq(1L), isNull(), eq("john"), eq(pageable)))
                 .thenReturn(userPage);
 

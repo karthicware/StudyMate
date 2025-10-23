@@ -1,7 +1,6 @@
 package com.studymate.backend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.studymate.backend.dto.OwnerProfileDTO;
 import com.studymate.backend.dto.UpdateProfileRequest;
 import com.studymate.backend.model.Gender;
 import com.studymate.backend.model.User;
@@ -17,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;

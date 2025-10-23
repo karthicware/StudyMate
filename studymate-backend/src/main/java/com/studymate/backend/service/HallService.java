@@ -4,7 +4,9 @@ import com.studymate.backend.dto.HallCreateRequest;
 import com.studymate.backend.dto.HallListResponse;
 import com.studymate.backend.dto.HallResponse;
 import com.studymate.backend.dto.HallSummary;
+import com.studymate.backend.dto.PricingUpdateRequest;
 import com.studymate.backend.exception.DuplicateHallNameException;
+import com.studymate.backend.exception.ForbiddenException;
 import com.studymate.backend.exception.ResourceNotFoundException;
 import com.studymate.backend.model.StudyHall;
 import com.studymate.backend.model.User;
@@ -97,6 +99,45 @@ public class HallService {
         return HallListResponse.builder()
             .halls(summaries)
             .build();
+    }
+
+    /**
+     * Update base pricing for a study hall.
+     *
+     * @param hallId the study hall ID
+     * @param ownerId the owner's user ID
+     * @param request the pricing update request
+     * @return the updated hall response
+     * @throws ResourceNotFoundException if hall not found
+     * @throws ForbiddenException if user is not the owner of the hall
+     */
+    @Transactional
+    public HallResponse updatePricing(Long hallId, Long ownerId, PricingUpdateRequest request) {
+        log.debug("Updating pricing for hall ID: {} by owner ID: {}, new price: {}",
+            hallId, ownerId, request.getBasePricing());
+
+        // Verify hall exists
+        StudyHall hall = studyHallRepository.findById(hallId)
+            .orElseThrow(() -> new ResourceNotFoundException("Study Hall", "id", hallId));
+
+        // Verify owner
+        if (!hall.getOwner().getId().equals(ownerId)) {
+            log.warn("Forbidden: User {} attempted to update pricing for hall {} owned by {}",
+                ownerId, hallId, hall.getOwner().getId());
+            throw new ForbiddenException("You do not have permission to update this hall");
+        }
+
+        // Update base pricing
+        hall.setBasePricing(request.getBasePricing());
+        // updated_at will be automatically set by @PreUpdate
+
+        // Save to database
+        StudyHall updatedHall = studyHallRepository.save(hall);
+        log.info("Pricing updated successfully for hall ID: {}, new price: {}",
+            hallId, request.getBasePricing());
+
+        // Convert to response DTO
+        return mapToHallResponse(updatedHall);
     }
 
     /**
