@@ -4,4 +4,6 @@ export const environment = {
   apiBaseUrl: '', // TBD - to be configured during deployment
   enableDebug: false,
   enableVerboseLogging: false,
+  // Google Maps API Key (configure during deployment via environment variable)
+  googleMapsApiKey: '', // TBD - to be configured during deployment
 };

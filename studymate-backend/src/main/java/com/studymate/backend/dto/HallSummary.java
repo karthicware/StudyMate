@@ -1,5 +1,6 @@
 package com.studymate.backend.dto;
 
+import com.studymate.backend.model.HallStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,7 @@ public class HallSummary {
 
     private Long id;
     private String hallName;
-    private String status;
+    private HallStatus status;
     private String city;
     private LocalDateTime createdAt;
 }

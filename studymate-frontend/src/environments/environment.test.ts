@@ -8,4 +8,6 @@ export const environment = {
   apiBaseUrl: 'http://localhost:8081',
   enableDebug: true,
   enableVerboseLogging: true,
+  // Google Maps API Key (for E2E tests)
+  googleMapsApiKey: 'AIzaSyAlqTDoIdnH4D0NZho2fCYVGyccYHqMUqA'
 };

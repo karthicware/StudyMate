@@ -3,10 +3,13 @@ package com.studymate.backend.service;
 import com.studymate.backend.dto.HallCreateRequest;
 import com.studymate.backend.dto.HallListResponse;
 import com.studymate.backend.dto.HallResponse;
+import com.studymate.backend.dto.LocationUpdateRequest;
 import com.studymate.backend.dto.PricingUpdateRequest;
 import com.studymate.backend.exception.DuplicateHallNameException;
 import com.studymate.backend.exception.ForbiddenException;
 import com.studymate.backend.exception.ResourceNotFoundException;
+import com.studymate.backend.model.HallStatus;
+import com.studymate.backend.model.Region;
 import com.studymate.backend.model.StudyHall;
 import com.studymate.backend.model.User;
 import com.studymate.backend.model.UserRole;
@@ -94,7 +97,7 @@ class HallServiceTest {
         assertThat(response.getOwnerId()).isEqualTo(1L);
         assertThat(response.getHallName()).isEqualTo("Downtown Study Center");
         assertThat(response.getCity()).isEqualTo("Mumbai");
-        assertThat(response.getStatus()).isEqualTo("DRAFT");
+        assertThat(response.getStatus()).isEqualTo(HallStatus.DRAFT);
         assertThat(response.getSeatCount()).isEqualTo(0);
 
         verify(userRepository).findById(1L);
@@ -363,6 +366,117 @@ class HallServiceTest {
         verify(studyHallRepository).save(any(StudyHall.class));
     }
 
+    @Test
+    void should_UpdateLocation_When_ValidRequestAndOwnerMatches() {
+        // Arrange
+        Long hallId = 10L;
+        LocationUpdateRequest request = LocationUpdateRequest.builder()
+            .latitude(new BigDecimal("12.9716"))
+            .longitude(new BigDecimal("77.5946"))
+            .region(Region.SOUTH_ZONE)
+            .build();
+
+        StudyHall existingHall = createTestHall();
+        existingHall.setId(hallId);
+        existingHall.setStatus(HallStatus.DRAFT);
+
+        when(studyHallRepository.findById(hallId)).thenReturn(Optional.of(existingHall));
+        when(studyHallRepository.save(any(StudyHall.class))).thenReturn(existingHall);
+
+        // Act
+        HallResponse response = hallService.updateLocation(hallId, 1L, request);
+
+        // Assert
+        assertThat(response).isNotNull();
+        assertThat(response.getId()).isEqualTo(hallId);
+        assertThat(response.getLatitude()).isEqualByComparingTo(new BigDecimal("12.9716"));
+        assertThat(response.getLongitude()).isEqualByComparingTo(new BigDecimal("77.5946"));
+        assertThat(response.getRegion()).isEqualTo(Region.SOUTH_ZONE);
+        assertThat(response.getStatus()).isEqualTo(HallStatus.ACTIVE);
+
+        verify(studyHallRepository).findById(hallId);
+        verify(studyHallRepository).save(any(StudyHall.class));
+    }
+
+    @Test
+    void should_ChangeStatusToActive_When_UpdatingLocation() {
+        // Arrange
+        Long hallId = 10L;
+        LocationUpdateRequest request = LocationUpdateRequest.builder()
+            .latitude(new BigDecimal("28.6139"))
+            .longitude(new BigDecimal("77.2090"))
+            .region(Region.NORTH_ZONE)
+            .build();
+
+        StudyHall existingHall = createTestHall();
+        existingHall.setId(hallId);
+        existingHall.setStatus(HallStatus.DRAFT);
+
+        when(studyHallRepository.findById(hallId)).thenReturn(Optional.of(existingHall));
+        when(studyHallRepository.save(any(StudyHall.class))).thenReturn(existingHall);
+
+        // Act
+        hallService.updateLocation(hallId, 1L, request);
+
+        // Assert
+        ArgumentCaptor<StudyHall> hallCaptor = ArgumentCaptor.forClass(StudyHall.class);
+        verify(studyHallRepository).save(hallCaptor.capture());
+        StudyHall savedHall = hallCaptor.getValue();
+
+        assertThat(savedHall.getStatus()).isEqualTo(HallStatus.ACTIVE);
+        assertThat(savedHall.getLatitude()).isEqualByComparingTo(new BigDecimal("28.6139"));
+        assertThat(savedHall.getLongitude()).isEqualByComparingTo(new BigDecimal("77.2090"));
+        assertThat(savedHall.getRegion()).isEqualTo(Region.NORTH_ZONE);
+    }
+
+    @Test
+    void should_ThrowResourceNotFoundException_When_HallNotFoundForLocationUpdate() {
+        // Arrange
+        Long hallId = 999L;
+        LocationUpdateRequest request = LocationUpdateRequest.builder()
+            .latitude(new BigDecimal("12.9716"))
+            .longitude(new BigDecimal("77.5946"))
+            .region(Region.SOUTH_ZONE)
+            .build();
+
+        when(studyHallRepository.findById(hallId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThatThrownBy(() -> hallService.updateLocation(hallId, 1L, request))
+            .isInstanceOf(ResourceNotFoundException.class)
+            .hasMessageContaining("Study Hall")
+            .hasMessageContaining("999");
+
+        verify(studyHallRepository).findById(hallId);
+        verify(studyHallRepository, never()).save(any());
+    }
+
+    @Test
+    void should_ThrowForbiddenException_When_OwnerDoesNotMatchForLocationUpdate() {
+        // Arrange
+        Long hallId = 10L;
+        Long wrongOwnerId = 999L;
+        LocationUpdateRequest request = LocationUpdateRequest.builder()
+            .latitude(new BigDecimal("12.9716"))
+            .longitude(new BigDecimal("77.5946"))
+            .region(Region.SOUTH_ZONE)
+            .build();
+
+        StudyHall existingHall = createTestHall();
+        existingHall.setId(hallId);
+        existingHall.setStatus(HallStatus.DRAFT);
+
+        when(studyHallRepository.findById(hallId)).thenReturn(Optional.of(existingHall));
+
+        // Act & Assert
+        assertThatThrownBy(() -> hallService.updateLocation(hallId, wrongOwnerId, request))
+            .isInstanceOf(ForbiddenException.class)
+            .hasMessageContaining("permission");
+
+        verify(studyHallRepository).findById(hallId);
+        verify(studyHallRepository, never()).save(any());
+    }
+
     /**
      * Helper method to create a test study hall.
      */
@@ -376,7 +490,7 @@ class HallServiceTest {
         hall.setState("Maharashtra");
         hall.setPostalCode("400001");
         hall.setCountry("India");
-        hall.setStatus("DRAFT");
+        hall.setStatus(HallStatus.DRAFT);
         hall.setSeatCount(0);
         hall.setCreatedAt(LocalDateTime.now());
         hall.setUpdatedAt(LocalDateTime.now());

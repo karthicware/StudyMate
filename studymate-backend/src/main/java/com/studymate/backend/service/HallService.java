@@ -5,9 +5,11 @@ import com.studymate.backend.dto.HallListResponse;
 import com.studymate.backend.dto.HallResponse;
 import com.studymate.backend.dto.HallSummary;
 import com.studymate.backend.dto.PricingUpdateRequest;
+import com.studymate.backend.dto.LocationUpdateRequest;
 import com.studymate.backend.exception.DuplicateHallNameException;
 import com.studymate.backend.exception.ForbiddenException;
 import com.studymate.backend.exception.ResourceNotFoundException;
+import com.studymate.backend.model.HallStatus;
 import com.studymate.backend.model.StudyHall;
 import com.studymate.backend.model.User;
 import com.studymate.backend.repository.StudyHallRepository;
@@ -135,6 +137,55 @@ public class HallService {
         StudyHall updatedHall = studyHallRepository.save(hall);
         log.info("Pricing updated successfully for hall ID: {}, new price: {}",
             hallId, request.getBasePricing());
+
+        // Convert to response DTO
+        return mapToHallResponse(updatedHall);
+    }
+
+    /**
+     * Update hall location and activate hall (Story 0.1.8-backend - AC1, AC2).
+     *
+     * Updates latitude, longitude, and region for the study hall.
+     * Automatically changes hall status from DRAFT to ACTIVE, making it
+     * discoverable to students.
+     *
+     * @param hallId UUID of the hall to update
+     * @param ownerId UUID of the authenticated owner
+     * @param request LocationUpdateRequest containing coordinates and region
+     * @return HallResponse with updated location and ACTIVE status
+     * @throws ResourceNotFoundException if hall not found
+     * @throws ForbiddenException if hall doesn't belong to owner
+     */
+    @Transactional
+    public HallResponse updateLocation(Long hallId, Long ownerId, LocationUpdateRequest request) {
+        log.debug("Updating location for hall ID: {} by owner ID: {}, lat: {}, lng: {}, region: {}",
+            hallId, ownerId, request.getLatitude(), request.getLongitude(), request.getRegion());
+
+        // Verify hall exists
+        StudyHall hall = studyHallRepository.findById(hallId)
+            .orElseThrow(() -> new ResourceNotFoundException("Study Hall", "id", hallId));
+
+        // Verify owner
+        if (!hall.getOwner().getId().equals(ownerId)) {
+            log.warn("Forbidden: User {} attempted to update location for hall {} owned by {}",
+                ownerId, hallId, hall.getOwner().getId());
+            throw new ForbiddenException("You do not have permission to update this hall");
+        }
+
+        // Update location fields
+        hall.setLatitude(request.getLatitude());
+        hall.setLongitude(request.getLongitude());
+        hall.setRegion(request.getRegion());
+
+        // Activate hall (AC2: status changes to ACTIVE)
+        hall.setStatus(HallStatus.ACTIVE);
+
+        // updated_at will be automatically set by @PreUpdate
+
+        // Save to database
+        StudyHall updatedHall = studyHallRepository.save(hall);
+        log.info("Location updated and hall activated - ID: {}, status: ACTIVE, region: {}",
+            hallId, request.getRegion());
 
         // Convert to response DTO
         return mapToHallResponse(updatedHall);

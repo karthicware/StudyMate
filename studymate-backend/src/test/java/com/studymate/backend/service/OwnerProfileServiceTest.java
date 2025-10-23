@@ -124,7 +124,7 @@ class OwnerProfileServiceTest {
         );
 
         verify(userRepository).findById(999L);
-        verify(studyHallRepository, never()).findByOwnerId(anyLong());
+        verify(studyHallRepository, never()).findAllByOwnerId(anyLong());
     }
 
     @Test

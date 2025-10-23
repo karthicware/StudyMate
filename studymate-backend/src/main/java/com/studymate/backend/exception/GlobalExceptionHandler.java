@@ -1,9 +1,11 @@
 package com.studymate.backend.exception;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
@@ -35,6 +37,40 @@ public class GlobalExceptionHandler {
         response.put("errors", errors);
 
         log.warn("Validation failed: {}", errors);
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, Object>> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex) {
+        Map<String, String> errors = new HashMap<>();
+
+        // Handle invalid enum values
+        if (ex.getCause() instanceof InvalidFormatException invalidFormatException) {
+            String fieldName = invalidFormatException.getPath().get(0).getFieldName();
+            Class<?> targetType = invalidFormatException.getTargetType();
+
+            if (targetType.isEnum()) {
+                Object[] enumConstants = targetType.getEnumConstants();
+                StringBuilder validValues = new StringBuilder();
+                for (int i = 0; i < enumConstants.length; i++) {
+                    if (i > 0) validValues.append(", ");
+                    validValues.append(enumConstants[i].toString());
+                }
+                errors.put(fieldName, "Invalid value. Must be one of: " + validValues);
+            } else {
+                errors.put(fieldName, "Invalid format");
+            }
+        } else {
+            errors.put("message", "Invalid request format");
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.BAD_REQUEST.value());
+        response.put("errors", errors);
+
+        log.warn("Invalid request format: {}", ex.getMessage());
         return ResponseEntity.badRequest().body(response);
     }
 

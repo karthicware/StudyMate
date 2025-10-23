@@ -65,7 +65,7 @@ class AuthControllerIntegrationTest {
         );
 
         // When & Then
-        MvcResult result = mockMvc.perform(post("/auth/register")
+        mockMvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -73,8 +73,7 @@ class AuthControllerIntegrationTest {
                 .andExpect(jsonPath("$.user.email").value("student@test.com"))
                 .andExpect(jsonPath("$.user.role").value("ROLE_STUDENT"))
                 .andExpect(jsonPath("$.user.firstName").value("John"))
-                .andExpect(jsonPath("$.user.lastName").value("Doe"))
-                .andReturn();
+                .andExpect(jsonPath("$.user.lastName").value("Doe"));
 
         // Verify user was saved to database
         User savedUser = userRepository.findByEmail("student@test.com").orElseThrow();

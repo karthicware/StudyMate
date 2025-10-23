@@ -9,4 +9,6 @@ export const environment = {
   apiBaseUrl: '', // Empty - relies on Angular proxy to route /api requests to localhost:8080
   enableDebug: true,
   enableVerboseLogging: true,
+  // Google Maps API Key (obtain from https://console.cloud.google.com/google/maps-apis)
+  googleMapsApiKey: 'AIzaSyAlqTDoIdnH4D0NZho2fCYVGyccYHqMUqA'
 };

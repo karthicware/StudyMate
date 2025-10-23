@@ -1,7 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { HallManagementService } from './hall-management.service';
-import { Hall, HallCreateRequest, HallListResponse, HallSummary } from '../models/hall.model';
+import {
+  Hall,
+  HallCreateRequest,
+  HallListResponse,
+  HallSummary,
+  HallPricingUpdateResponse,
+} from '../models/hall.model';
 
 describe('HallManagementService', () => {
   let service: HallManagementService;
@@ -347,6 +353,158 @@ describe('HallManagementService', () => {
       });
 
       const req = httpMock.expectOne(`/api/owner/halls/${hallId}`);
+      req.flush(null, {
+        status: errorResponse.status,
+        statusText: errorResponse.statusText,
+      });
+    });
+  });
+
+  describe('updateHallPricing', () => {
+    it('should update hall pricing and return response (Story 0.1.7)', (done) => {
+      const hallId = '123e4567-e89b-12d3-a456-426614174000';
+      const basePricing = 150;
+
+      const mockResponse: HallPricingUpdateResponse = {
+        hallId,
+        basePricing: 150,
+        updatedAt: '2025-10-19T10:30:00Z',
+      };
+
+      service.updateHallPricing(hallId, basePricing).subscribe({
+        next: (response) => {
+          expect(response.hallId).toBe(hallId);
+          expect(response.basePricing).toBe(150);
+          expect(response.updatedAt).toBeDefined();
+          done();
+        },
+        error: (error) => {
+          fail(`Expected success but got error: ${error.message}`);
+          done();
+        },
+      });
+
+      const req = httpMock.expectOne(`/api/owner/halls/${hallId}/pricing`);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual({ basePricing: 150 });
+      req.flush(mockResponse);
+    });
+
+    it('should handle minimum valid pricing (₹50)', (done) => {
+      const hallId = '123e4567-e89b-12d3-a456-426614174000';
+      const basePricing = 50; // Minimum allowed
+
+      const mockResponse: HallPricingUpdateResponse = {
+        hallId,
+        basePricing: 50,
+        updatedAt: '2025-10-19T10:30:00Z',
+      };
+
+      service.updateHallPricing(hallId, basePricing).subscribe({
+        next: (response) => {
+          expect(response.basePricing).toBe(50);
+          done();
+        },
+      });
+
+      const req = httpMock.expectOne(`/api/owner/halls/${hallId}/pricing`);
+      req.flush(mockResponse);
+    });
+
+    it('should handle maximum valid pricing (₹5000)', (done) => {
+      const hallId = '123e4567-e89b-12d3-a456-426614174000';
+      const basePricing = 5000; // Maximum allowed
+
+      const mockResponse: HallPricingUpdateResponse = {
+        hallId,
+        basePricing: 5000,
+        updatedAt: '2025-10-19T10:30:00Z',
+      };
+
+      service.updateHallPricing(hallId, basePricing).subscribe({
+        next: (response) => {
+          expect(response.basePricing).toBe(5000);
+          done();
+        },
+      });
+
+      const req = httpMock.expectOne(`/api/owner/halls/${hallId}/pricing`);
+      req.flush(mockResponse);
+    });
+
+    it('should handle 400 Bad Request for invalid pricing', (done) => {
+      const hallId = '123e4567-e89b-12d3-a456-426614174000';
+      const basePricing = 10000; // Exceeds max allowed
+      const errorResponse = {
+        status: 400,
+        statusText: 'Bad Request',
+        error: { message: 'Pricing must be between ₹50 and ₹5000' },
+      };
+
+      service.updateHallPricing(hallId, basePricing).subscribe({
+        next: () => {
+          fail('Expected error but got success');
+          done();
+        },
+        error: (error) => {
+          expect(error.message).toContain('Pricing must be between ₹50 and ₹5000');
+          done();
+        },
+      });
+
+      const req = httpMock.expectOne(`/api/owner/halls/${hallId}/pricing`);
+      req.flush(errorResponse.error, {
+        status: errorResponse.status,
+        statusText: errorResponse.statusText,
+      });
+    });
+
+    it('should handle 404 Not Found error for non-existent hall', (done) => {
+      const hallId = 'non-existent-id';
+      const basePricing = 150;
+      const errorResponse = {
+        status: 404,
+        statusText: 'Not Found',
+      };
+
+      service.updateHallPricing(hallId, basePricing).subscribe({
+        next: () => {
+          fail('Expected error but got success');
+          done();
+        },
+        error: (error) => {
+          expect(error.message).toContain('Hall not found');
+          done();
+        },
+      });
+
+      const req = httpMock.expectOne(`/api/owner/halls/${hallId}/pricing`);
+      req.flush(null, {
+        status: errorResponse.status,
+        statusText: errorResponse.statusText,
+      });
+    });
+
+    it('should handle 401 Unauthorized error', (done) => {
+      const hallId = '123e4567-e89b-12d3-a456-426614174000';
+      const basePricing = 150;
+      const errorResponse = {
+        status: 401,
+        statusText: 'Unauthorized',
+      };
+
+      service.updateHallPricing(hallId, basePricing).subscribe({
+        next: () => {
+          fail('Expected error but got success');
+          done();
+        },
+        error: (error) => {
+          expect(error.message).toContain('Unauthorized');
+          done();
+        },
+      });
+
+      const req = httpMock.expectOne(`/api/owner/halls/${hallId}/pricing`);
       req.flush(null, {
         status: errorResponse.status,
         statusText: errorResponse.statusText,

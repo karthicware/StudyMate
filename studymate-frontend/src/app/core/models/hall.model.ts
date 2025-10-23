@@ -87,3 +87,58 @@ export const SUPPORTED_COUNTRIES = [
 ] as const;
 
 export type SupportedCountry = (typeof SUPPORTED_COUNTRIES)[number];
+
+/**
+ * Request payload for updating hall pricing
+ * Used by PUT /owner/halls/{hallId}/pricing endpoint
+ */
+export interface HallPricingUpdateRequest {
+  basePricing: number;
+}
+
+/**
+ * Response from pricing update endpoint
+ */
+export interface HallPricingUpdateResponse {
+  hallId: string;
+  basePricing: number;
+  updatedAt: string;
+}
+
+/**
+ * Region enum for hall location
+ */
+export type Region = 'NORTH_ZONE' | 'SOUTH_ZONE' | 'EAST_ZONE' | 'WEST_ZONE' | 'CENTRAL';
+
+/**
+ * Region options with display labels
+ */
+export const REGION_OPTIONS = [
+  { value: 'NORTH_ZONE', label: 'North Zone' },
+  { value: 'SOUTH_ZONE', label: 'South Zone' },
+  { value: 'EAST_ZONE', label: 'East Zone' },
+  { value: 'WEST_ZONE', label: 'West Zone' },
+  { value: 'CENTRAL', label: 'Central' },
+] as const;
+
+/**
+ * Request payload for updating hall location
+ * Used by PUT /owner/halls/{hallId}/location endpoint
+ */
+export interface HallLocationUpdateRequest {
+  latitude: number;
+  longitude: number;
+  region: Region;
+}
+
+/**
+ * Response from location update endpoint
+ */
+export interface HallLocationUpdateResponse {
+  hallId: string;
+  latitude: number;
+  longitude: number;
+  region: Region;
+  status: HallStatus;
+  updatedAt: string;
+}

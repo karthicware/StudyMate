@@ -97,7 +97,7 @@ class UserManagementServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().get(0).getEmail()).isEqualTo("student@test.com");
-        verify(studyHallRepository).findByOwnerId(1L);
+        verify(studyHallRepository).findAllByOwnerId(1L);
         verify(userRepository).findActiveUsersByHallAndFilters(eq(1L), isNull(), isNull(), eq(pageable));
     }
 

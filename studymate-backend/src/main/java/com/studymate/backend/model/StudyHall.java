@@ -68,9 +68,9 @@ public class StudyHall {
     @Column(length = 100)
     private String country;
 
-    @Size(max = 20)
+    @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private String status;
+    private HallStatus status;
 
     @Column(name = "base_pricing", precision = 10, scale = 2)
     private BigDecimal basePricing;
@@ -81,9 +81,9 @@ public class StudyHall {
     @Column(precision = 11, scale = 8)
     private BigDecimal longitude;
 
-    @Size(max = 50)
+    @Enumerated(EnumType.STRING)
     @Column(length = 50)
-    private String region;
+    private Region region;
 
     @Column(name = "seat_count", nullable = false)
     private Integer seatCount;
@@ -106,8 +106,8 @@ public class StudyHall {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
-        if (status == null || status.isBlank()) {
-            status = "DRAFT";
+        if (status == null) {
+            status = HallStatus.DRAFT;
         }
         if (country == null || country.isBlank()) {
             country = "India";

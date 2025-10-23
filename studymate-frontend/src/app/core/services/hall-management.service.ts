@@ -2,7 +2,16 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Hall, HallCreateRequest, HallListResponse, HallSummary } from '../models/hall.model';
+import {
+  Hall,
+  HallCreateRequest,
+  HallListResponse,
+  HallSummary,
+  HallPricingUpdateRequest,
+  HallPricingUpdateResponse,
+  HallLocationUpdateRequest,
+  HallLocationUpdateResponse,
+} from '../models/hall.model';
 import { environment } from '../../../environments/environment';
 
 /**
@@ -17,10 +26,10 @@ import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class HallManagementService {
   private http = inject(HttpClient);
-  // Use /api prefix for dev/unit tests (proxy handles routing), full URL for E2E tests
+  // Backend uses /owner/halls (no /api/v1 prefix yet)
   private readonly API_URL = environment.apiBaseUrl
-    ? `${environment.apiBaseUrl}/owner/halls`  // E2E: 'http://localhost:8081/owner/halls'
-    : '/api/owner/halls';                       // Dev/Unit: '/api/owner/halls' -> proxy rewrites to '/owner/halls'
+    ? `${environment.apiBaseUrl}/owner/halls` // E2E: 'http://localhost:8081/owner/halls'
+    : '/api/owner/halls'; // Dev/Unit: '/api/owner/halls' -> proxy rewrites to '/owner/halls'
 
   /**
    * Create a new study hall
@@ -121,6 +130,46 @@ export class HallManagementService {
    */
   deleteHall(hallId: string): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${hallId}`).pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Update hall pricing (Story 0.1.7)
+   *
+   * @param hallId - UUID of the hall to update pricing for
+   * @param basePricing - Base hourly rate in rupees (₹50 - ₹5000)
+   * @returns Observable<HallPricingUpdateResponse> - Updated pricing details
+   *
+   * @throws HttpErrorResponse
+   * - 400 Bad Request: Invalid pricing value (outside ₹50-₹5000 range)
+   * - 401 Unauthorized: Missing or invalid JWT token
+   * - 404 Not Found: Hall not found or not owned by current user
+   */
+  updateHallPricing(hallId: string, basePricing: number): Observable<HallPricingUpdateResponse> {
+    const request: HallPricingUpdateRequest = { basePricing };
+    return this.http
+      .put<HallPricingUpdateResponse>(`${this.API_URL}/${hallId}/pricing`, request)
+      .pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Update hall location (Story 0.1.8)
+   *
+   * @param hallId - UUID of the hall to update location for
+   * @param location - Location data with latitude, longitude, and region
+   * @returns Observable<HallLocationUpdateResponse> - Updated location details
+   *
+   * @throws HttpErrorResponse
+   * - 400 Bad Request: Invalid location data (missing required fields, invalid coordinates)
+   * - 401 Unauthorized: Missing or invalid JWT token
+   * - 404 Not Found: Hall not found or not owned by current user
+   */
+  updateHallLocation(
+    hallId: string,
+    location: HallLocationUpdateRequest,
+  ): Observable<HallLocationUpdateResponse> {
+    return this.http
+      .put<HallLocationUpdateResponse>(`${this.API_URL}/${hallId}/location`, location)
+      .pipe(catchError(this.handleError));
   }
 
   /**

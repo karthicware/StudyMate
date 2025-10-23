@@ -54,6 +54,7 @@
     "@angular/compiler": "20.3.4",
     "@angular/core": "20.3.4",
     "@angular/forms": "20.3.4",
+    "@angular/google-maps": "^20.2.10",
     "@angular/platform-browser": "20.3.4",
     "@angular/router": "20.3.4",
     "@ngrx/effects": "^20.0.1",

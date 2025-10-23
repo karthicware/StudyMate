@@ -6,7 +6,6 @@ import com.studymate.backend.repository.BookingRepository;
 import com.studymate.backend.repository.SeatRepository;
 import com.studymate.backend.repository.StudyHallRepository;
 import com.studymate.backend.repository.UserRepository;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,9 +48,6 @@ class DashboardServicePerformanceTest {
 
     @Autowired
     private BookingRepository bookingRepository;
-
-    @Autowired
-    private EntityManager entityManager;
 
     private com.studymate.backend.model.User testOwner;
     private StudyHall testHall;

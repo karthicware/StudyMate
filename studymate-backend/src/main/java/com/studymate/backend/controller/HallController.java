@@ -4,6 +4,7 @@ import com.studymate.backend.dto.HallCreateRequest;
 import com.studymate.backend.dto.HallListResponse;
 import com.studymate.backend.dto.HallResponse;
 import com.studymate.backend.dto.PricingUpdateRequest;
+import com.studymate.backend.dto.LocationUpdateRequest;
 import com.studymate.backend.model.User;
 import com.studymate.backend.service.HallService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -131,6 +132,43 @@ public class HallController {
 
         log.info("Pricing updated successfully - Hall ID: {}, Owner ID: {}, New Price: {}",
                  hallId, currentUser.getId(), request.getBasePricing());
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Update hall location and activate hall (Story 0.1.8-backend - AC1, AC2, AC4).
+     *
+     * @param hallId the study hall ID
+     * @param currentUser the authenticated owner from JWT
+     * @param request the location update request
+     * @return ResponseEntity containing the updated hall data with ACTIVE status
+     */
+    @PutMapping("/{hallId}/location")
+    @Operation(summary = "Update hall location and activate",
+               description = "Update location coordinates and region, automatically activating the hall")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Location updated and hall activated successfully"),
+        @ApiResponse(responseCode = "400", description = "Validation error - invalid coordinates or region"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid"),
+        @ApiResponse(responseCode = "403", description = "Forbidden - hall does not belong to authenticated owner"),
+        @ApiResponse(responseCode = "404", description = "Not Found - hall does not exist")
+    })
+    public ResponseEntity<HallResponse> updateLocation(
+            @PathVariable Long hallId,
+            @AuthenticationPrincipal User currentUser,
+            @Valid @RequestBody LocationUpdateRequest request) {
+        if (currentUser == null) {
+            throw new IllegalStateException("User authentication is required");
+        }
+
+        log.debug("PUT /owner/halls/{}/location - Owner ID: {}, Lat: {}, Lng: {}, Region: {}",
+                  hallId, currentUser.getId(), request.getLatitude(), request.getLongitude(), request.getRegion());
+
+        HallResponse response = hallService.updateLocation(hallId, currentUser.getId(), request);
+
+        log.info("Location updated and hall activated - Hall ID: {}, Owner ID: {}, Status: ACTIVE, Region: {}",
+                 hallId, currentUser.getId(), request.getRegion());
 
         return ResponseEntity.ok(response);
     }

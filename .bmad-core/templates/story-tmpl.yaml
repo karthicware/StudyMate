@@ -144,8 +144,10 @@ sections:
 
           🔐 **E2E Authentication Requirements** (docs/guidelines/e2e-authentication-mandatory.md):
           - ⚠️ ALL E2E tests MUST use REAL authentication (NO mocked tokens, NO bypassing login)
-          - ⚠️ Use `loginAsOwnerAPI(page)` or `loginAsStudentAPI(page)` from auth-helpers.ts
-          - ⚠️ Test credentials: test.owner@studymate.test / Test@123 (seeded in studymate database)
+          - ⚠️ Use `loginAsOwnerAPI(page)`, `loginAsStudentAPI(page)`, or `loginAsAdminAPI(page)` from auth-helpers.ts
+          - ⚠️ **Official Test Credentials:** `owner@studymate.com` / `Test@123` (ROLE_OWNER) OR `student@studymate.com` / `Test@123` (ROLE_STUDENT) OR `admin@studymate.com` / `Test@123` (ROLE_ADMIN)
+          - ⚠️ **Source:** V3__insert_test_users.sql migration - **CRITICAL**: See docs/testing/test-credentials-reference.md
+          - ⚠️ **WRONG Credentials (DO NOT USE):** test.owner@studymate.test, e2eowner@studymate.com (not in database)
           - ⚠️ Database: studymate (shared with development - no separate test database)
           - ⚠️ Backend test server MUST be running on port 8081
           - ⚠️ NO EXCEPTIONS - Mocked authentication = Story REJECTED
@@ -203,6 +205,248 @@ sections:
         owner: scrum-master
         editors: [scrum-master]
 
+      - id: api-url-construction
+        title: API URL Construction Standard
+        instruction: |
+          For ALL UI stories with backend API integration - MANDATORY API URL pattern documentation.
+
+          This section prevents repeated API URL construction errors that cause E2E test failures.
+
+          Copy the following template into the story's Tasks/Subtasks section OR Dev Notes section:
+
+          ---
+
+          ### API URL Construction Standard
+
+          **CRITICAL:** ALL Angular services MUST follow this exact pattern for API URL construction.
+
+          #### Universal Pattern (Use for ALL Services)
+
+          ```typescript
+          import { inject } from '@angular/core';
+          import { HttpClient } from '@angular/common/http';
+          import { environment } from '@env/environment';
+
+          @Injectable({ providedIn: 'root' })
+          export class YourService {
+            private http = inject(HttpClient);
+
+            // ✅ CORRECT - Universal pattern for ALL backend APIs
+            private readonly API_URL = environment.apiBaseUrl
+              ? `${environment.apiBaseUrl}/api/v1/your/endpoint`  // E2E: http://localhost:8081/api/v1/your/endpoint
+              : '/api/v1/your/endpoint';                          // Dev: /api/v1/your/endpoint (proxy rewrites)
+
+            // Example for specific endpoints:
+            // - Auth: `/api/v1/auth/login`
+            // - Halls: `/api/v1/owner/halls`
+            // - Pricing: `/api/v1/owner/halls/{id}/pricing`
+          }
+          ```
+
+          #### Why This Pattern Works
+
+          **Backend API Structure:**
+          - ALL backend endpoints are under `/api/v1/*` path
+          - Example: `POST /api/v1/auth/register`
+          - Example: `GET /api/v1/owner/halls`
+          - Example: `PUT /api/v1/owner/halls/{id}/pricing`
+
+          **Development Environment:**
+          - Angular proxy (proxy.conf.json) rewrites `/api/v1/*` → `http://localhost:8080/api/v1/*`
+          - Service uses: `/api/v1/owner/halls`
+          - Proxy forwards to: `http://localhost:8080/api/v1/owner/halls`
+
+          **E2E Test Environment:**
+          - `environment.apiBaseUrl = 'http://localhost:8081'`
+          - Service constructs: `http://localhost:8081/api/v1/owner/halls`
+          - Directly calls backend test server on port 8081
+
+          #### Common Mistakes (DO NOT USE)
+
+          ```typescript
+          // ❌ WRONG - Missing /api/v1 prefix in E2E
+          private readonly API_URL = environment.apiBaseUrl
+            ? `${environment.apiBaseUrl}/owner/halls`     // E2E fails: 404 Not Found
+            : '/api/v1/owner/halls';
+
+          // ❌ WRONG - Missing /v1 in dev environment
+          private readonly API_URL = environment.apiBaseUrl
+            ? `${environment.apiBaseUrl}/api/v1/owner/halls`
+            : '/api/owner/halls';                         // Dev fails: proxy mismatch
+
+          // ❌ WRONG - Inconsistent prefix
+          private readonly API_URL = environment.apiBaseUrl
+            ? `${environment.apiBaseUrl}/owner/halls`
+            : '/api/owner/halls';                         // Both environments fail
+
+          // ❌ WRONG - Hardcoded full URL
+          private readonly API_URL = 'http://localhost:8080/api/v1/owner/halls';  // Breaks E2E tests
+          ```
+
+          #### Verification Commands
+
+          **1. Verify Proxy Configuration (proxy.conf.json):**
+          ```json
+          {
+            "/api/v1": {
+              "target": "http://localhost:8080",
+              "secure": false,
+              "changeOrigin": true,
+              "logLevel": "debug"
+            }
+          }
+          ```
+
+          **2. Test API URL in Dev:**
+          ```bash
+          # Start frontend (port 4200)
+          npm start
+
+          # In browser console, check network tab:
+          # Request URL: http://localhost:4200/api/v1/owner/halls
+          # Proxied to: http://localhost:8080/api/v1/owner/halls
+          ```
+
+          **3. Test API URL in E2E:**
+          ```bash
+          # Start backend test server (port 8081)
+          cd studymate-backend && ./scripts/start-test-server.sh
+
+          # Verify endpoint exists
+          curl http://localhost:8081/api/v1/owner/halls -H "Authorization: Bearer $TOKEN"
+          # Expected: 200 OK with data
+          # NOT: 404 Not Found, 500 No endpoint
+          ```
+
+          #### Implementation Checklist
+
+          - [ ] Service uses universal pattern: `environment.apiBaseUrl ? '${apiBaseUrl}/api/v1/...' : '/api/v1/...'`
+          - [ ] ALL endpoint paths include `/api/v1` prefix
+          - [ ] Proxy configuration matches pattern in proxy.conf.json
+          - [ ] Dev environment tested (npm start + manual browser test)
+          - [ ] E2E environment tested (backend on 8081 + Playwright tests)
+          - [ ] No hardcoded URLs in service code
+
+          ---
+
+          When adding to story:
+          1. Replace `your/endpoint` with actual API endpoint path
+          2. Add to Dev Notes section for reference during implementation
+          3. Include in service implementation task checklist
+          4. Verify pattern during code review before marking story "Done"
+        elicit: true
+        owner: scrum-master
+        editors: [scrum-master]
+
+      - id: e2e-authentication
+        title: E2E Authentication Setup
+        instruction: |
+          For ALL UI stories with E2E tests - MANDATORY authentication documentation.
+
+          This section MUST be included in every UI story's Tasks section to prevent repeated authentication debugging cycles.
+
+          Copy the following template into the story's Tasks/Subtasks section (insert before the E2E testing task):
+
+          ---
+
+          ### Task X: E2E Authentication Setup (AC: All)
+
+          #### Authentication Prerequisites
+          **MANDATORY: Read BEFORE implementing E2E tests:**
+          - [ ] Read `docs/guidelines/e2e-authentication-mandatory.md`
+          - [ ] Read `docs/testing/test-credentials-reference.md`
+          - [ ] Read `docs/testing/e2e-authentication-checklist.md` (Quick Reference)
+
+          #### User Type & Test Credentials
+          **User Type:** [SPECIFY ONE: Owner | Student | Admin]
+
+          **Official Test Credentials:**
+          - **Email:** [SPECIFY from table below]
+          - **Password:** [SPECIFY from table below]
+          - **Role:** [SPECIFY: ROLE_OWNER | ROLE_STUDENT | ROLE_ADMIN]
+
+          **Official Credentials Table:**
+          | User Type | Email | Password | Role | Use Case |
+          |-----------|-------|----------|------|----------|
+          | Owner | `owner@studymate.com` | `Test@123` | ROLE_OWNER | Owner dashboard, hall management, onboarding |
+          | Student | `student@studymate.com` | `Test@123` | ROLE_STUDENT | Student dashboard, booking, seat selection |
+          | Admin | `admin@studymate.com` | `Test@123` | ROLE_ADMIN | Admin panel, user management, reports |
+
+          **Source:** `studymate-backend/src/main/resources/db/migration/V3__insert_test_users.sql`
+
+          **⚠️ WRONG Credentials (DO NOT USE):**
+          - ❌ `test.owner@studymate.test` / `Test@123` (not in database)
+          - ❌ `e2eowner@studymate.com` / `Test@1234` (not in database)
+          - ❌ `testowner@example.com` (not in database)
+
+          #### E2E Authentication Implementation Steps
+          1. **Import Authentication Helper:**
+             ```typescript
+             // In e2e/[feature].spec.ts
+             import { loginAsOwnerAPI, loginAsStudentAPI, loginAsAdminAPI } from './utils/auth-helpers';
+             ```
+
+          2. **Add beforeEach Authentication:**
+             ```typescript
+             test.beforeEach(async ({ page }) => {
+               // MANDATORY: Use real authentication (NO mocks, NO bypasses)
+               const token = await loginAsOwnerAPI(page); // or loginAsStudentAPI, loginAsAdminAPI
+               expect(token).toBeTruthy();
+             });
+             ```
+
+          3. **Verify Backend Running:**
+             ```bash
+             # Before running E2E tests
+             curl http://localhost:8081/auth/login
+             # Expected: 400 Bad Request (endpoint exists, awaiting POST body)
+             # NOT: Connection refused, 404 Not Found
+             ```
+
+          4. **Verify Test User Exists:**
+             ```bash
+             PGPASSWORD=studymate_user psql -h localhost -U studymate_user -d studymate \
+               -c "SELECT email, role FROM users WHERE email = 'owner@studymate.com';"
+             # Expected: 1 row with matching email and ROLE_OWNER
+             ```
+
+          5. **Verify Backend Compiled Successfully:**
+             ```bash
+             cd studymate-backend
+             ./scripts/verify-before-commit.sh
+             # Expected: ✅ Backend verification passed!
+             # NOT: BUILD FAILURE or compilation errors
+             ```
+
+          #### Common Authentication Errors
+          | Error Message | Root Cause | Solution |
+          |---------------|------------|----------|
+          | `❌ Login failed: 401 Invalid email or password` | Wrong credentials used | Use official credentials from table above |
+          | `Token is null` | Auth endpoint failed | Check backend logs, verify user exists |
+          | `Connection refused` on 8081 | Backend not running | Run `./scripts/start-test-server.sh` |
+          | `500 Internal Server Error` | Backend compilation failed | Run `./scripts/verify-before-commit.sh` |
+          | User not found in database | Migration not applied | Verify `V3__insert_test_users.sql` ran |
+
+          #### Task Checklist
+          - [ ] User type specified (Owner/Student/Admin)
+          - [ ] Credentials copied from official table above
+          - [ ] Auth helper imported in E2E test file
+          - [ ] `beforeEach` authentication added with token validation
+          - [ ] Backend running verification performed
+          - [ ] Test user existence verified in database
+          - [ ] Backend compilation verified before E2E execution
+
+          ---
+
+          When adding to story:
+          1. Replace `[SPECIFY ONE: Owner | Student | Admin]` with actual user type
+          2. Replace `[SPECIFY from table below]` with actual credentials from table
+          3. Replace `loginAsOwnerAPI` with appropriate helper (Owner/Student/Admin)
+          4. Add this task BEFORE the main E2E testing task (usually Task X-1)
+        elicit: true
+        owner: scrum-master
+        editors: [scrum-master]
+
       - id: e2e-execution-steps
         title: "E2E Test Execution Steps (Acceptance Criteria)"
         instruction: |
@@ -231,7 +475,11 @@ sections:
           - **Port**: 8081
           - **Verification**: Server logs show "Started StudyMateApplication" and "Flyway migration completed"
           - **Authentication Endpoint**: `http://localhost:8081/auth/login`
-          - **Test User**: `e2eowner@studymate.com` / `Test@1234`
+          - **Official Test Credentials:**
+            - Owner: `owner@studymate.com` / `Test@123` (ROLE_OWNER)
+            - Student: `student@studymate.com` / `Test@123` (ROLE_STUDENT)
+            - Admin: `admin@studymate.com` / `Test@123` (ROLE_ADMIN)
+          - **⚠️ CRITICAL:** See `docs/testing/test-credentials-reference.md` for complete credentials list
 
           **Step 2: Verify Backend Health**
           ```bash

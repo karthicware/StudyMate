@@ -308,6 +308,329 @@ test.describe('Owner Onboarding Wizard - Story 0.1.6', () => {
   });
 
   // ============================================
+  // STORY 0.1.7: Pricing Configuration Step
+  // ============================================
+  test('Story 0.1.7 - AC1: should display Step 2 (Pricing) after hall creation', async ({ page }) => {
+    await page.goto('/owner/onboarding');
+    await page.waitForLoadState('networkidle');
+
+    // Fill and submit hall creation form (Step 1)
+    const timestamp = Date.now();
+    await page.locator('[data-testid="hall-name-input"]').fill(`Pricing Test ${timestamp}`);
+    await page.locator('[data-testid="address-textarea"]').fill('123 Pricing Street');
+    await page.locator('[data-testid="city-input"]').fill('Mumbai');
+    await page.locator('[data-testid="state-input"]').fill('Maharashtra');
+    await page.locator('[data-testid="country-select"]').selectOption('India');
+
+    const createButton = page.locator('[data-testid="create-hall-button"]');
+    await createButton.click();
+
+    // Wait for success message
+    await expect(page.locator('[data-testid="success-message"]')).toBeVisible({ timeout: 3000 });
+
+    // Wait for navigation to Step 2
+    await page.waitForTimeout(1600);
+
+    // Take screenshot of Step 2
+    await page.screenshot({ path: 'e2e/screenshots/11-step2-pricing.png', fullPage: true });
+
+    // Verify Step 2 UI elements
+    await expect(page.locator('[data-testid="pricing-configuration-form"]')).toBeVisible();
+    await expect(page.getByText('Set Your Base Pricing')).toBeVisible();
+    await expect(page.locator('[data-testid="base-pricing-input"]')).toBeVisible();
+
+    // Verify progress indicator shows Step 2
+    const progressIndicator = page.locator('[data-testid="progress-indicator"]');
+    await expect(progressIndicator).toHaveAttribute('aria-valuenow', '2');
+
+    console.log('✅ Story 0.1.7 AC1: Step 2 pricing form displays correctly');
+  });
+
+  test('Story 0.1.7 - AC1: should have default pricing value ₹100', async ({ page }) => {
+    await page.goto('/owner/onboarding');
+    await page.waitForLoadState('networkidle');
+
+    // Create hall and advance to Step 2
+    const timestamp = Date.now();
+    await page.locator('[data-testid="hall-name-input"]').fill(`Default Pricing ${timestamp}`);
+    await page.locator('[data-testid="address-textarea"]').fill('456 Default Street');
+    await page.locator('[data-testid="city-input"]').fill('Delhi');
+    await page.locator('[data-testid="state-input"]').fill('Delhi');
+    await page.locator('[data-testid="country-select"]').selectOption('India');
+    await page.locator('[data-testid="create-hall-button"]').click();
+    await page.waitForTimeout(1600);
+
+    // Verify default value is ₹100
+    const pricingInput = page.locator('[data-testid="base-pricing-input"]');
+    await expect(pricingInput).toHaveValue('100');
+
+    console.log('✅ Story 0.1.7 AC1: Default pricing value ₹100 set correctly');
+  });
+
+  test('Story 0.1.7 - AC2: should save pricing and navigate to dashboard', async ({ page }) => {
+    await page.goto('/owner/onboarding');
+    await page.waitForLoadState('networkidle');
+
+    // Create hall and advance to Step 2
+    const timestamp = Date.now();
+    await page.locator('[data-testid="hall-name-input"]').fill(`Save Pricing ${timestamp}`);
+    await page.locator('[data-testid="address-textarea"]').fill('789 Save Street');
+    await page.locator('[data-testid="city-input"]').fill('Pune');
+    await page.locator('[data-testid="state-input"]').fill('Maharashtra');
+    await page.locator('[data-testid="country-select"]').selectOption('India');
+    await page.locator('[data-testid="create-hall-button"]').click();
+    await page.waitForTimeout(1600);
+
+    // Enter pricing
+    const pricingInput = page.locator('[data-testid="base-pricing-input"]');
+    await pricingInput.clear();
+    await pricingInput.fill('150');
+
+    // Take screenshot before submit
+    await page.screenshot({ path: 'e2e/screenshots/12-pricing-filled.png', fullPage: true });
+
+    // Click Continue
+    const continueButton = page.locator('[data-testid="continue-pricing-button"]');
+    await continueButton.click();
+
+    // Verify success message
+    await expect(page.locator('[data-testid="success-message"]')).toBeVisible({ timeout: 3000 });
+    await expect(page.locator('[data-testid="success-message"]')).toContainText('Pricing saved successfully');
+
+    // Take screenshot of success
+    await page.screenshot({ path: 'e2e/screenshots/13-pricing-saved.png', fullPage: true });
+
+    // Wait for navigation to dashboard
+    await page.waitForURL('/owner/dashboard', { timeout: 3000 });
+
+    console.log('✅ Story 0.1.7 AC2: Pricing saved and navigated to dashboard');
+  });
+
+  test('Story 0.1.7 - AC3: should validate minimum pricing (₹50)', async ({ page }) => {
+    await page.goto('/owner/onboarding');
+    await page.waitForLoadState('networkidle');
+
+    // Create hall and advance to Step 2
+    const timestamp = Date.now();
+    await page.locator('[data-testid="hall-name-input"]').fill(`Min Pricing ${timestamp}`);
+    await page.locator('[data-testid="address-textarea"]').fill('111 Min Street');
+    await page.locator('[data-testid="city-input"]').fill('Chennai');
+    await page.locator('[data-testid="state-input"]').fill('Tamil Nadu');
+    await page.locator('[data-testid="country-select"]').selectOption('India');
+    await page.locator('[data-testid="create-hall-button"]').click();
+    await page.waitForTimeout(1600);
+
+    // Enter pricing below minimum
+    const pricingInput = page.locator('[data-testid="base-pricing-input"]');
+    await pricingInput.clear();
+    await pricingInput.fill('30');
+
+    // Blur to trigger validation
+    await page.locator('body').click();
+    await page.waitForTimeout(300);
+
+    // Take screenshot of validation error
+    await page.screenshot({ path: 'e2e/screenshots/14-pricing-min-error.png', fullPage: true });
+
+    // Verify error message
+    await expect(page.locator('[data-testid="base-pricing-error-message"]')).toBeVisible();
+    await expect(page.locator('[data-testid="base-pricing-error-message"]')).toContainText('must be at least ₹50');
+
+    // Verify Continue button is disabled
+    const continueButton = page.locator('[data-testid="continue-pricing-button"]');
+    await expect(continueButton).toBeDisabled();
+
+    console.log('✅ Story 0.1.7 AC3: Minimum pricing validation works');
+  });
+
+  test('Story 0.1.7 - AC3: should validate maximum pricing (₹5000)', async ({ page }) => {
+    await page.goto('/owner/onboarding');
+    await page.waitForLoadState('networkidle');
+
+    // Create hall and advance to Step 2
+    const timestamp = Date.now();
+    await page.locator('[data-testid="hall-name-input"]').fill(`Max Pricing ${timestamp}`);
+    await page.locator('[data-testid="address-textarea"]').fill('222 Max Street');
+    await page.locator('[data-testid="city-input"]').fill('Kolkata');
+    await page.locator('[data-testid="state-input"]').fill('West Bengal');
+    await page.locator('[data-testid="country-select"]').selectOption('India');
+    await page.locator('[data-testid="create-hall-button"]').click();
+    await page.waitForTimeout(1600);
+
+    // Enter pricing above maximum
+    const pricingInput = page.locator('[data-testid="base-pricing-input"]');
+    await pricingInput.clear();
+    await pricingInput.fill('6000');
+
+    // Blur to trigger validation
+    await page.locator('body').click();
+    await page.waitForTimeout(300);
+
+    // Take screenshot of validation error
+    await page.screenshot({ path: 'e2e/screenshots/15-pricing-max-error.png', fullPage: true });
+
+    // Verify error message
+    await expect(page.locator('[data-testid="base-pricing-error-message"]')).toBeVisible();
+    await expect(page.locator('[data-testid="base-pricing-error-message"]')).toContainText('cannot exceed ₹5000');
+
+    // Verify Continue button is disabled
+    const continueButton = page.locator('[data-testid="continue-pricing-button"]');
+    await expect(continueButton).toBeDisabled();
+
+    console.log('✅ Story 0.1.7 AC3: Maximum pricing validation works');
+  });
+
+  test('Story 0.1.7: should skip pricing step and return to dashboard', async ({ page }) => {
+    await page.goto('/owner/onboarding');
+    await page.waitForLoadState('networkidle');
+
+    // Create hall and advance to Step 2
+    const timestamp = Date.now();
+    await page.locator('[data-testid="hall-name-input"]').fill(`Skip Pricing ${timestamp}`);
+    await page.locator('[data-testid="address-textarea"]').fill('333 Skip Street');
+    await page.locator('[data-testid="city-input"]').fill('Hyderabad');
+    await page.locator('[data-testid="state-input"]').fill('Telangana');
+    await page.locator('[data-testid="country-select"]').selectOption('India');
+    await page.locator('[data-testid="create-hall-button"]').click();
+    await page.waitForTimeout(1600);
+
+    // Click "Skip for now"
+    const skipButton = page.locator('[data-testid="skip-pricing-button"]');
+    await skipButton.click();
+
+    // Wait for navigation to dashboard
+    await page.waitForURL('/owner/dashboard', { timeout: 3000 });
+
+    // Take screenshot
+    await page.screenshot({ path: 'e2e/screenshots/16-pricing-skipped.png', fullPage: true });
+
+    expect(page.url()).toContain('/owner/dashboard');
+
+    console.log('✅ Story 0.1.7: Skip pricing functionality works');
+  });
+
+  // ============================================
+  // STORY 0.1.8: Location Configuration Step
+  // ============================================
+  test('Story 0.1.8 - AC1: should display Step 3 (Location) after pricing configuration', async ({ page }) => {
+    await page.goto('/owner/onboarding');
+    await page.waitForLoadState('networkidle');
+
+    // Complete Step 1 (Hall Creation)
+    const timestamp = Date.now();
+    await page.locator('[data-testid="hall-name-input"]').fill(`Location Test ${timestamp}`);
+    await page.locator('[data-testid="address-textarea"]').fill('123 Location Street');
+    await page.locator('[data-testid="city-input"]').fill('Mumbai');
+    await page.locator('[data-testid="state-input"]').fill('Maharashtra');
+    await page.locator('[data-testid="country-select"]').selectOption('India');
+    await page.locator('[data-testid="create-hall-button"]').click();
+    await page.waitForTimeout(1600);
+
+    // Complete Step 2 (Pricing)
+    await page.locator('[data-testid="base-pricing-input"]').fill('200');
+    await page.locator('[data-testid="continue-pricing-button"]').click();
+    await page.waitForTimeout(1600);
+
+    // Take screenshot of Step 3
+    await page.screenshot({ path: 'e2e/screenshots/20-step3-location.png', fullPage: true });
+
+    // Verify Step 3 UI elements
+    await expect(page.locator('[data-testid="location-configuration-form"]')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Set Your Location' })).toBeVisible();
+    await expect(page.locator('[data-testid="google-map"]')).toBeVisible();
+    await expect(page.locator('[data-testid="region-select"]')).toBeVisible();
+
+    // Verify progress indicator shows Step 3
+    const progressIndicator = page.locator('[data-testid="progress-indicator"]');
+    await expect(progressIndicator).toHaveAttribute('aria-valuenow', '3');
+
+    console.log('✅ Story 0.1.8 AC1: Step 3 location form displays correctly');
+  });
+
+  test('Story 0.1.8 - AC2: should validate required fields (region)', async ({ page }) => {
+    await page.goto('/owner/onboarding');
+    await page.waitForLoadState('networkidle');
+
+    // Complete Steps 1 and 2
+    const timestamp = Date.now();
+    await page.locator('[data-testid="hall-name-input"]').fill(`Validation Test ${timestamp}`);
+    await page.locator('[data-testid="address-textarea"]').fill('456 Validation Street');
+    await page.locator('[data-testid="city-input"]').fill('Delhi');
+    await page.locator('[data-testid="state-input"]').fill('Delhi');
+    await page.locator('[data-testid="country-select"]').selectOption('India');
+    await page.locator('[data-testid="create-hall-button"]').click();
+    await page.waitForTimeout(1600);
+    await page.locator('[data-testid="continue-pricing-button"]').click();
+    await page.waitForTimeout(1600);
+
+    // Verify Complete Setup button is disabled without location selection
+    const completeButton = page.locator('[data-testid="complete-setup-button"]');
+    await expect(completeButton).toBeDisabled();
+
+    console.log('✅ Story 0.1.8 AC2: Form validation works - button disabled without location');
+  });
+
+  test('Story 0.1.8 - AC3: should allow region selection', async ({ page }) => {
+    await page.goto('/owner/onboarding');
+    await page.waitForLoadState('networkidle');
+
+    // Complete Steps 1 and 2
+    const timestamp = Date.now();
+    await page.locator('[data-testid="hall-name-input"]').fill(`Region Test ${timestamp}`);
+    await page.locator('[data-testid="address-textarea"]').fill('789 Region Street');
+    await page.locator('[data-testid="city-input"]').fill('Pune');
+    await page.locator('[data-testid="state-input"]').fill('Maharashtra');
+    await page.locator('[data-testid="country-select"]').selectOption('India');
+    await page.locator('[data-testid="create-hall-button"]').click();
+    await page.waitForTimeout(1600);
+    await page.locator('[data-testid="continue-pricing-button"]').click();
+    await page.waitForTimeout(1600);
+
+    // Select region
+    const regionSelect = page.locator('[data-testid="region-select"]');
+    await regionSelect.selectOption('WEST_ZONE');
+
+    // Verify selection
+    await expect(regionSelect).toHaveValue('WEST_ZONE');
+
+    // Take screenshot
+    await page.screenshot({ path: 'e2e/screenshots/21-region-selected.png', fullPage: true });
+
+    console.log('✅ Story 0.1.8 AC3: Region selection works correctly');
+  });
+
+  test('Story 0.1.8: should skip location step and return to dashboard', async ({ page }) => {
+    await page.goto('/owner/onboarding');
+    await page.waitForLoadState('networkidle');
+
+    // Complete Steps 1 and 2
+    const timestamp = Date.now();
+    await page.locator('[data-testid="hall-name-input"]').fill(`Skip Location ${timestamp}`);
+    await page.locator('[data-testid="address-textarea"]').fill('111 Skip Street');
+    await page.locator('[data-testid="city-input"]').fill('Chennai');
+    await page.locator('[data-testid="state-input"]').fill('Tamil Nadu');
+    await page.locator('[data-testid="country-select"]').selectOption('India');
+    await page.locator('[data-testid="create-hall-button"]').click();
+    await page.waitForTimeout(1600);
+    await page.locator('[data-testid="continue-pricing-button"]').click();
+    await page.waitForTimeout(1600);
+
+    // Click "Skip for now"
+    const skipButton = page.locator('[data-testid="skip-location-button"]');
+    await skipButton.click();
+
+    // Wait for navigation to dashboard
+    await page.waitForURL('/owner/dashboard', { timeout: 3000 });
+
+    // Take screenshot
+    await page.screenshot({ path: 'e2e/screenshots/22-location-skipped.png', fullPage: true });
+
+    expect(page.url()).toContain('/owner/dashboard');
+
+    console.log('✅ Story 0.1.8: Skip location functionality works');
+  });
+
+  // ============================================
   // Zero Console Errors Check
   // ============================================
   test('should have zero console errors during onboarding flow', async ({ page }) => {
